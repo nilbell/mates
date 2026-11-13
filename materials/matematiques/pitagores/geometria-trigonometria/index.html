@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geometria i trigonometria</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:,">
+<style>
+:root{
+  --bg:#f6f4ee; --ink:#1f2933; --muted:#5b6770; --card:#fff; --line:#d9d4c8;
+  --blue:#2f7fd0; --blue-bg:#d3e6fa; --green:#2fa84f; --green-bg:#d4f1dc;
+  --red:#d9435a; --red-bg:#fbdadf; --orange:#ee8a22; --orange-bg:#fde3c4;
+  --purple:#7b4bb7; --purple-bg:#e8dcf6; --fs:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(16px * var(--fs))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,sans-serif;line-height:1.35}
+body.proj{--fs:1.3}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.fml,.m{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",serif}
+
+/* capçalera */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.1rem;padding:.55rem 1rem;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand h1{font-size:1.2rem;margin:0}
+.logo{width:2.3rem;height:2.3rem;flex:none;display:block}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.tabs button,.tools button{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.tabs button small{font-weight:500;color:var(--muted);font-size:.72em}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs button.on small{color:#cfd6dc}
+.tools{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+.tools button.on{background:var(--orange-bg);border-color:var(--orange)}
+
+main{max-width:1180px;margin:0 auto;padding:.8rem 1rem 3rem}
+body.proj main{max-width:1600px}
+section[hidden],.subview[hidden]{display:none}
+.sub{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 .8rem}
+.sub button{border:2px solid var(--line);background:#fff;border-radius:2rem;padding:.25rem .9rem;font-weight:600;color:var(--ink)}
+.sub button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+.teo{background:#fffbe6;border:2px solid #e9d97a;border-radius:1rem;padding:.5rem .9rem;margin-bottom:.8rem}
+.teo b{color:#6d5600}
+.view{display:grid;grid-template-columns:minmax(0,3fr) minmax(16rem,2fr);gap:1rem;align-items:start}
+@media(max-width:900px){.view{grid-template-columns:1fr}}
+.stage{background:#fff;border:3px solid var(--line);border-radius:1.2rem;padding:.3rem}
+.stage svg{display:block;width:100%;height:auto;max-height:82vh;touch-action:none;user-select:none;-webkit-user-select:none}
+.panel{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem .9rem}
+.panel h3{margin:.1rem 0 .4rem;font-size:1.05rem}
+.panel hr{border:0;border-top:1px solid var(--line);margin:.7rem 0}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.4rem 0}
+.row.grow>*{flex:1}
+.fml{font-size:1.2rem}
+.big{font-size:1.35rem}
+.note{color:var(--muted);font-size:.9rem}
+.sl{display:block;margin:.35rem 0;font-weight:600}
+.sl b.v{float:right;font-family:"Cambria Math",Cambria,serif}
+.sl input[type=range]{width:100%;margin:.15rem 0}
+.chk{display:flex;gap:.45rem;align-items:center;margin:.3rem 0;cursor:pointer}
+.chk input{width:1.15rem;height:1.15rem}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:.7rem;overflow:hidden}
+.seg button{border:0;background:#fff;padding:.3rem .7rem;font-weight:600;color:var(--ink)}
+.seg button+button{border-left:2px solid var(--line)}
+.seg button.on{background:var(--ink);color:#fff}
+.btn{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.3rem .8rem;font-weight:600;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.primary{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:.7rem;padding:.4rem 1rem;font-weight:700}
+.ghostbtn{background:#fff;border:2px solid var(--line);border-radius:.7rem;padding:.4rem 1rem;font-weight:600}
+.pill{display:inline-block;border-radius:2rem;padding:.1rem .7rem;font-weight:700;font-size:.92rem}
+.pill.ok{background:var(--green-bg);color:#17612e}
+.pill.no{background:var(--red-bg);color:#8f1d30}
+.pill.in{background:var(--blue-bg);color:#174f8a}
+.ca{color:var(--blue)} .cb{color:var(--green)} .cc{color:var(--red)} .co{color:var(--orange)} .cp{color:var(--purple)}
+.eq{font-family:"Cambria Math",Cambria,serif;font-size:1.15rem;line-height:1.7}
+.steps{margin:.3rem 0;padding-left:1.3rem;font-family:"Cambria Math",Cambria,serif;font-size:1.1rem}
+.steps li{margin:.25rem 0}
+input.num,select.sel,input.ans{border:2px solid var(--line);border-radius:.6rem;padding:.3rem .5rem;background:#fff;color:var(--ink)}
+input.num{width:6rem}
+input.ans{width:6.5rem}
+table.tb{border-collapse:collapse;width:100%;font-family:"Cambria Math",Cambria,serif}
+table.tb th,table.tb td{border-bottom:1px solid var(--line);padding:.25rem .4rem;text-align:left}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{border:2px solid var(--line);border-radius:.7rem;padding:.15rem .6rem;background:#fff;font-family:"Cambria Math",Cambria,serif;font-size:1.05rem}
+.chip.hot{border-color:var(--green);background:var(--green-bg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(26rem,1fr));gap:1rem}
+.card{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.6rem .8rem}
+.card h3{margin:0 0 .3rem;font-size:1.05rem}
+
+/* SVG */
+svg .lbl{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round;font-family:system-ui,"Segoe UI",sans-serif;font-weight:600;pointer-events:none}
+svg .lbl.m{font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-weight:600}
+circle.hdl{r:16px;cursor:grab;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+circle.hdl:active{cursor:grabbing}
+@media(max-width:700px){circle.hdl{r:26px}}
+body.proj circle.hdl{r:24px}
+svg.fig{width:100%;max-width:340px;height:auto}
+.stage svg.fig{max-width:520px;margin:0 auto}
+
+/* amaga resultats */
+.res{transition:filter .2s}
+body.hideres:not(.reveal) .res{filter:blur(7px);user-select:none}
+
+/* practica */
+.prac .qtext{font-size:1.12rem;margin:.3rem 0 .6rem}
+.prac .qfig svg{max-width:360px}
+.prac .qans{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:.5rem 0}
+.prac .qans label{display:flex;gap:.4rem;align-items:center;font-family:"Cambria Math",Cambria,serif;font-size:1.1rem}
+.prac input.ans.ok{border-color:var(--green);background:#effbf2}
+.prac input.ans.bad{border-color:var(--red);background:#fff3f5}
+.prac .opts{display:flex;flex-wrap:wrap;gap:.5rem}
+.prac .opt{border:2px solid var(--line);background:#fff;border-radius:.8rem;padding:.4rem 1rem;font-weight:600;font-size:1.05rem}
+.prac .opt.ok{border-color:var(--green);background:var(--green-bg)}
+.prac .opt.bad{border-color:var(--red);background:var(--red-bg)}
+.prac .fb{margin-top:.6rem;padding:.5rem .8rem;border-radius:.8rem;background:#f1f4f6}
+.prac .fb.ok{background:#effbf2;border:2px solid var(--green)}
+.prac .fb.bad{background:#fff3f5;border:2px solid var(--red)}
+.score{font-weight:700;margin-left:auto}
+
+@media print{
+  .top,.sub,.tools,.noprint,.row button,.seg,.prac .qbtn{display:none!important}
+  body{background:#fff}
+  main{padding:0;max-width:none}
+  .view{grid-template-columns:3fr 2fr}
+  .stage,.panel{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" id="logo"></span><h1>Geometria i trigonometria</h1></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="tools">
+    <button id="bProj" title="Lletra i controls més grans per a la pissarra">Projecció</button>
+    <button id="bHide" title="Amaga els resultats perquè els alumnes els prediguin">Amaga resultats</button>
+    <button id="bReveal" hidden>Mostra</button>
+    <button id="bPrint" title="Imprimeix o desa la pestanya com a PDF">Imprimir / PDF</button>
+  </div>
+</header>
+<main id="main"></main>
+<script>
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const rad=d=>d*Math.PI/180, deg=r=>r*180/Math.PI;
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+function fmt(x,d=2){
+  if(!isFinite(x))return '—';
+  let s=(+x).toFixed(d);
+  if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');
+  if(s==='-0')s='0';
+  return s.replace('.',',').replace('-','−');
+}
+function num(s){return parseFloat(String(s).trim().replace(',','.').replace('\u2212','-'));}
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const sq=x=>x*x;
+const isInt=x=>Math.abs(x-Math.round(x))<1e-9;
+const sgn=x=>x>=0?'+':'−';
+
+const LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#fff"/><path d="M10 52 L52 52 L52 14 Z" fill="#d3e6fa" stroke="#2f7fd0" stroke-width="4" stroke-linejoin="round"/><path d="M42 52 V42 H52" fill="none" stroke="#d9435a" stroke-width="3.5"/><path d="M24 52 A14 14 0 0 0 20.4 42.6" fill="none" stroke="#ee8a22" stroke-width="3.5" stroke-linecap="round"/></svg>';
+$('#logo').innerHTML=LOGO;
+$('#fav').href='data:image/svg+xml,'+encodeURIComponent(LOGO);
+
+/* ---------- Pissarra SVG amb coordenades matemàtiques ---------- */
+class Board{
+  constructor(host,o){
+    this.W=o.W||800;
+    this.svg=document.createElementNS(NS,'svg');
+    this.svg.setAttribute('class','board');
+    host.appendChild(this.svg);
+    this.g=this.mk('g',{},this.svg);
+    this.hg=this.mk('g',{},this.svg);
+    this.fit(o.x0,o.x1,o.y0,o.y1);
+  }
+  fit(x0,x1,y0,y1){
+    this.x0=x0;this.x1=x1;this.y0=y0;this.y1=y1;
+    this.px=this.W/(x1-x0);this.H=(y1-y0)*this.px;
+    this.svg.setAttribute('viewBox','0 0 '+this.W+' '+this.H);
+  }
+  mk(tag,at,parent){
+    const e=document.createElementNS(NS,tag);
+    for(const k in at)e.setAttribute(k,at[k]);
+    (parent||this.g).appendChild(e);return e;
+  }
+  X(x){return (x-this.x0)*this.px}
+  Y(y){return (this.y1-y)*this.px}
+  clear(){this.g.textContent='';}
+  line(a,b,c,d,at){return this.mk('line',Object.assign({x1:this.X(a),y1:this.Y(b),x2:this.X(c),y2:this.Y(d),stroke:'#1f2933','stroke-width':2.5,'stroke-linecap':'round'},at||{}));}
+  poly(pts,at){return this.mk('polygon',Object.assign({points:pts.map(p=>this.X(p[0]).toFixed(1)+','+this.Y(p[1]).toFixed(1)).join(' '),fill:'none',stroke:'#1f2933','stroke-width':2.5,'stroke-linejoin':'round'},at||{}));}
+  pline(pts,at){return this.mk('polyline',Object.assign({points:pts.map(p=>this.X(p[0]).toFixed(1)+','+this.Y(p[1]).toFixed(1)).join(' '),fill:'none',stroke:'#1f2933','stroke-width':2.5,'stroke-linejoin':'round'},at||{}));}
+  circ(x,y,r,at){return this.mk('circle',Object.assign({cx:this.X(x),cy:this.Y(y),r:r*this.px,fill:'none',stroke:'#1f2933','stroke-width':2.5},at||{}));}
+  dot(x,y,rp,at){return this.mk('circle',Object.assign({cx:this.X(x),cy:this.Y(y),r:rp||4,fill:'#1f2933'},at||{}));}
+  text(x,y,s,at){
+    at=Object.assign({},at||{});
+    const cls='lbl'+(at.class?' '+at.class:'');delete at.class;
+    const e=this.mk('text',Object.assign({x:this.X(x),y:this.Y(y),'text-anchor':'middle','font-size':17,'class':cls},at));
+    e.textContent=s;return e;
+  }
+  arc(cx,cy,r,a0,a1,at){
+    const p0=[this.X(cx+r*Math.cos(a0)),this.Y(cy+r*Math.sin(a0))],p1=[this.X(cx+r*Math.cos(a1)),this.Y(cy+r*Math.sin(a1))];
+    const rp=r*this.px,large=(a1-a0)>Math.PI?1:0;
+    return this.mk('path',Object.assign({d:'M'+p0[0]+' '+p0[1]+' A'+rp+' '+rp+' 0 '+large+' 0 '+p1[0]+' '+p1[1],fill:'none',stroke:'#1f2933','stroke-width':2.5},at||{}));
+  }
+  grid(step,at){
+    at=Object.assign({stroke:'#e4e1d8','stroke-width':1},at||{});
+    for(let x=Math.ceil(this.x0/step)*step;x<=this.x1+1e-9;x+=step)this.line(x,this.y0,x,this.y1,at);
+    for(let y=Math.ceil(this.y0/step)*step;y<=this.y1+1e-9;y+=step)this.line(this.x0,y,this.x1,y,at);
+  }
+  pt(e){
+    const s=this.svg,p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;
+    const q=p.matrixTransform(s.getScreenCTM().inverse());
+    return {x:q.x/this.px+this.x0,y:this.y1-q.y/this.px};
+  }
+  handle(x,y,color,fn){
+    const c=this.mk('circle',{'class':'hdl',fill:color,stroke:'#fff','stroke-width':3},this.hg);
+    const o={el:c,set:(x,y)=>{c.setAttribute('cx',this.X(x));c.setAttribute('cy',this.Y(y));},show:v=>{c.style.display=v?'':'none';}};
+    o.set(x,y);
+    c.addEventListener('pointerdown',e=>{c.setPointerCapture(e.pointerId);c._d=1;e.preventDefault();});
+    c.addEventListener('pointermove',e=>{if(c._d)fn(this.pt(e),e);});
+    const up=()=>{c._d=0;};
+    c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+    return o;
+  }
+}
+
+/* ---------- Components de la interfície ---------- */
+function view(host,teo,panel){
+  host.innerHTML=(teo?'<div class="teo">'+teo+'</div>':'')+'<div class="view"><div class="stage"></div><div class="panel">'+panel+'</div></div>';
+  return {stage:$('.stage',host),panel:$('.panel',host)};
+}
+function slider(k,label,min,max,step,val){
+  return '<label class="sl">'+label+' <b class="v" data-v="'+k+'"></b><input type="range" data-k="'+k+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val+'"></label>';
+}
+function bindRange(host,k,fn){
+  const r=$('[data-k="'+k+'"]',host);
+  r.addEventListener('input',()=>fn(parseFloat(r.value)));
+  return r;
+}
+function setRange(host,k,val,txt){
+  const r=$('[data-k="'+k+'"]',host);if(!r)return;
+  if(+r.value!==+val)r.value=val;
+  const v=$('[data-v="'+k+'"]',host);if(v)v.textContent=txt;
+}
+function segment(host,k,opts,cur,fn){
+  const d=$('[data-seg="'+k+'"]',host);
+  d.innerHTML=opts.map(o=>'<button data-o="'+o[0]+'">'+o[1]+'</button>').join('');
+  const mark=v=>$$('button',d).forEach(b=>b.classList.toggle('on',b.dataset.o===String(v)));
+  mark(cur);
+  d.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mark(b.dataset.o);fn(b.dataset.o);});
+  return {mark};
+}
+
+/* ---------- Figures SVG en text (per als exercicis) ---------- */
+const S={
+  line:(x1,y1,x2,y2,c,w)=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+(c||'#1f2933')+'" stroke-width="'+(w||2.5)+'" stroke-linecap="round"/>',
+  poly:(pts,fill,c,w)=>'<polygon points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="'+(fill||'none')+'" stroke="'+(c||'#1f2933')+'" stroke-width="'+(w||2.5)+'" stroke-linejoin="round"/>',
+  pl:(pts,c,w)=>'<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="'+(c||'#1f2933')+'" stroke-width="'+(w||2)+'"/>',
+  txt:(x,y,s,anchor,col)=>{
+    s=String(s);if(s==='')return '';
+    const q=s.indexOf('?')>=0;
+    return '<text x="'+x+'" y="'+y+'" text-anchor="'+(anchor||'middle')+'" font-size="16" class="lbl m" fill="'+(col||(q?'#d9435a':'#1f2933'))+'">'+s+'</text>';
+  },
+  svg:(w,h,inner)=>'<svg class="fig" viewBox="0 0 '+w+' '+h+'" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>'
+};
+function figRight(la,lb,lc,lA,lB){
+  const A=[40,165],C=[260,165],B=[260,55];
+  return S.svg(320,205,
+    S.poly([A,C,B],'#eef5fc')+S.pl([[246,165],[246,151],[260,151]],'#d9435a',2)+
+    (lA?'<path d="M70 165 A30 30 0 0 0 66.8 151.6" fill="none" stroke="#ee8a22" stroke-width="2.5"/>'+S.txt(84,158,lA,'start','#b35f00'):'')+
+    (lB?S.txt(238,92,lB,'end','#b35f00'):'')+
+    S.txt(275,115,la,'start')+S.txt(150,189,lb)+S.txt(140,96,lc,'end')+
+    S.txt(26,178,'A','end')+S.txt(262,45,'B')+S.txt(274,182,'C','start'));
+}
+function figTales(l){ // l: AD, DB, AE, EC, DE, BC
+  const A=[150,20],B=[30,170],C=[290,170],D=[84,102.5],E=[227,102.5];
+  return S.svg(320,205,
+    S.poly([A,B,C],'#fff7e6')+S.line(D[0],D[1],E[0],E[1],'#ee8a22',3)+
+    S.txt(104,58,l[0],'end')+S.txt(54,138,l[1],'end')+S.txt(202,58,l[2],'start')+S.txt(262,138,l[3],'start')+
+    S.txt(155,94,l[4])+S.txt(160,191,l[5])+
+    S.txt(150,12,'A')+S.txt(22,184,'B')+S.txt(300,184,'C')+S.txt(70,106,'D','end')+S.txt(240,106,'E','start'));
+}
+function figSecants(a,b,ap,bp){
+  const r=y=>70+(y-10)*0.35,s=y=>280-(y-10)*0.3,ys=[40,100,180];
+  let o='';
+  ys.forEach(y=>{o+=S.line(20,y,300,y,'#2f7fd0',2.5);});
+  o+=S.line(r(10),10,r(200),200)+S.line(s(10),10,s(200),200);
+  ys.forEach((y,i)=>{o+='<circle cx="'+r(y)+'" cy="'+y+'" r="4" fill="#1f2933"/><circle cx="'+s(y)+'" cy="'+y+'" r="4" fill="#1f2933"/>';
+    o+=S.txt(r(y)-10,y-8,['A','B','C'][i],'end')+S.txt(s(y)+10,y-8,["A'","B'","C'"][i],'start');});
+  o+=S.txt(r(70)-12,74,a,'end')+S.txt(r(140)-12,144,b,'end')+S.txt(s(70)+12,74,ap,'start')+S.txt(s(140)+12,144,bp,'start');
+  return S.svg(320,205,o);
+}
+function figGen(sa,sb,sc,aA,aB,aC){ // triangle qualsevol: costats a (BC), b (CA), c (AB) i angles
+  const A=[40,170],B=[280,170],C=[110,40];
+  return S.svg(320,205,
+    S.poly([A,B,C],'#f3ecfb')+
+    S.txt(160,192,sc)+S.txt(62,100,sb,'end')+S.txt(206,100,sa,'start')+
+    S.txt(76,162,aA,'start','#7b4bb7')+S.txt(250,162,aB,'end','#7b4bb7')+S.txt(110,80,aC,'middle','#7b4bb7')+
+    S.txt(28,183,'A','end')+S.txt(292,183,'B','start')+S.txt(110,30,'C'));
+}
+function figElev(d,h,al){
+  return S.svg(320,205,
+    S.line(10,170,310,170,'#7a6a3a',3)+S.poly([[250,170],[250,50],[280,50],[280,170]],'#e9e4d6')+
+    S.line(60,170,250,50,'#ee8a22',2)+S.line(60,170,250,170,'#1f2933',2)+S.line(250,170,250,50,'#1f2933',2)+
+    '<circle cx="60" cy="158" r="6" fill="#2f7fd0"/>'+S.line(60,164,60,170,'#2f7fd0',3)+
+    '<path d="M92 170 A32 32 0 0 0 87 153" fill="none" stroke="#ee8a22" stroke-width="2.5"/>'+
+    S.txt(100,160,al,'start','#b35f00')+S.txt(155,190,d)+S.txt(238,115,h,'end'));
+}
+function figLadder(L,x,h){
+  return S.svg(320,205,
+    S.line(10,180,310,180,'#7a6a3a',3)+S.poly([[250,180],[250,20],[290,20],[290,180]],'#e9e4d6')+
+    S.line(90,180,250,60,'#a86a1b',5)+S.line(90,180,250,180)+S.line(250,180,250,60)+
+    S.pl([[236,180],[236,166],[250,166]],'#d9435a',2)+
+    S.txt(155,196,x)+S.txt(238,125,h,'end')+S.txt(150,108,L,'end'));
+}
+
+/* ---------- Pràctica ---------- */
+function practice(host,gens,teo){
+  host.innerHTML=(teo?'<div class="teo">'+teo+'</div>':'')+'<div class="panel prac"><div class="row"><label>Tipus d\'exercici: <select class="sel pk"></select></label><span class="score"></span></div><div class="qbox"></div></div>';
+  const sel=$('.pk',host),score=$('.score',host),qbox=$('.qbox',host);
+  sel.add(new Option('Barreja de tot','-1'));
+  gens.forEach((g,i)=>sel.add(new Option(g.name,String(i))));
+  const sc={ok:0,n:0};let q,counted=false,solved=false;
+  const upd=()=>{score.textContent='Encerts: '+sc.ok+' de '+sc.n;};
+  function next(){
+    const g=sel.value==='-1'?pick(gens):gens[+sel.value];
+    q=g.make();counted=false;solved=false;render();
+  }
+  function render(){
+    let ans='';
+    if(q.fields)ans=q.fields.map((f,i)=>'<label>'+f.label+' <input class="ans" data-i="'+i+'" inputmode="decimal" autocomplete="off"> '+(f.unit||'')+'</label>').join('');
+    else ans='<div class="opts">'+q.options.map((o,i)=>'<button class="opt" data-i="'+i+'">'+o+'</button>').join('')+'</div>';
+    qbox.innerHTML='<div class="qtext">'+q.text+'</div>'+(q.fig?'<div class="qfig">'+q.fig+'</div>':'')+
+      '<div class="qans">'+ans+'</div><div class="qbtn row">'+(q.fields?'<button class="primary chkb">Comprova</button>':'')+
+      '<button class="ghostbtn solb">Mostra la solució</button><button class="ghostbtn nxt">Exercici nou</button></div><div class="fb" hidden></div>';
+    upd();
+    const fb=$('.fb',qbox);
+    const show=(cls,html)=>{fb.hidden=false;fb.className='fb '+cls;fb.innerHTML=html;};
+    const count=ok=>{if(!counted){counted=true;sc.n++;if(ok)sc.ok++;upd();}};
+    if(q.fields){
+      const check=()=>{
+        let all=true,any=false;
+        $$('input.ans',qbox).forEach(inp=>{
+          const f=q.fields[+inp.dataset.i],v=num(inp.value);
+          inp.classList.remove('ok','bad');
+          if(inp.value.trim()==='' || isNaN(v)){all=false;return;}
+          any=true;
+          const ok=Math.abs(v-f.ans)<=(f.tol!=null?f.tol:Math.max(0.02,Math.abs(f.ans)*0.01));
+          inp.classList.add(ok?'ok':'bad');if(!ok)all=false;
+        });
+        if(!any){show('bad','Escriu la resposta (amb coma o punt decimal).');return;}
+        count(all);
+        if(all){solved=true;show('ok','<b>Molt bé!</b><div class="eq">'+q.sol+'</div>');}
+        else show('bad','Encara no és correcte. Revisa-ho i torna a provar, o mira la solució.');
+      };
+      $('.chkb',qbox).onclick=check;
+      $$('input.ans',qbox).forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')check();}));
+      const f0=$('input.ans',qbox);if(f0&&!('ontouchstart' in window))f0.focus();
+    }else{
+      $$('.opt',qbox).forEach(b=>b.onclick=()=>{
+        if(solved)return;
+        const i=+b.dataset.i,ok=i===q.correct;
+        b.classList.add(ok?'ok':'bad');count(ok);
+        if(ok){solved=true;show('ok','<b>Correcte!</b><div class="eq">'+q.sol+'</div>');}
+        else show('bad','No és aquesta. Prova una altra opció.');
+      });
+    }
+    $('.solb',qbox).onclick=()=>{count(false);show('in','<b>Solució</b><div class="eq">'+q.sol+'</div>');fb.className='fb';};
+    $('.nxt',qbox).onclick=next;
+  }
+  sel.onchange=next;
+  next();
+}
+
+/* ---------- Estructura de pestanyes ---------- */
+const TABS=[];
+const addTab=t=>TABS.push(t);
+const store={get(k){try{return localStorage.getItem('geo.'+k);}catch(e){return null;}},set(k,v){try{localStorage.setItem('geo.'+k,v);}catch(e){}}};
+function showTab(t){
+  TABS.forEach(x=>{x.sec.hidden=x!==t;});
+  $$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t.id));
+  store.set('tab',t.id);
+  showSub(t,t.subs.find(s=>s.id===store.get('sub-'+t.id))||t.subs[0]);
+}
+function showSub(t,s){
+  t.subs.forEach(x=>{x.el.hidden=x!==s;});
+  $$('.sub button',t.sec).forEach(b=>b.classList.toggle('on',b.dataset.s===s.id));
+  if(!s.built){
+    s.built=true;
+    try{s.build(s.el);}catch(err){s.el.innerHTML='<div class="panel">Error en carregar aquesta secció: '+err.message+'</div>';console.error(err);}
+  }
+  store.set('sub-'+t.id,s.id);
+}
+function boot(){
+  const nav=$('#tabs'),main=$('#main');
+  TABS.forEach(t=>{
+    const b=document.createElement('button');
+    b.innerHTML=t.title+(t.note?' <small>'+t.note+'</small>':'');b.dataset.t=t.id;
+    b.onclick=()=>showTab(t);nav.appendChild(b);
+    const sec=document.createElement('section');sec.hidden=true;
+    sec.innerHTML='<div class="sub"></div>';main.appendChild(sec);t.sec=sec;
+    t.subs.forEach(s=>{
+      const sb=document.createElement('button');sb.textContent=s.title;sb.dataset.s=s.id;
+      sb.onclick=()=>showSub(t,s);$('.sub',sec).appendChild(sb);
+      const d=document.createElement('div');d.className='subview';d.hidden=true;sec.appendChild(d);s.el=d;
+    });
+  });
+  showTab(TABS.find(t=>t.id===location.hash.slice(1))||TABS.find(t=>t.id===store.get('tab'))||TABS[0]);
+  const proj=$('#bProj'),hide=$('#bHide'),rev=$('#bReveal');
+  proj.onclick=()=>{document.body.classList.toggle('proj');proj.classList.toggle('on');};
+  hide.onclick=()=>{
+    const on=document.body.classList.toggle('hideres');
+    hide.classList.toggle('on',on);rev.hidden=!on;
+    document.body.classList.remove('reveal');rev.classList.remove('on');rev.textContent='Mostra';
+  };
+  rev.onclick=()=>{const on=document.body.classList.toggle('reveal');rev.classList.toggle('on',on);rev.textContent=on?'Torna a amagar':'Mostra';};
+  $('#bPrint').onclick=()=>window.print();
+}
+
+/* ====================================================================
+   PITÀGORES
+   ==================================================================== */
+const TRIPLES=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29],[9,40,41]];
+function triple(){const t=pick(TRIPLES);const k=t[0]<=5?pick([1,2,3]):(t[0]<=8?pick([1,2]):1);return t.map(x=>x*k);}
+
+function pitExplora(host){
+  const st={a:3,b:4,int:true,L:5};
+  const P=view(host,
+    '<b>Teorema de Pitàgores.</b> En un triangle rectangle, l\'àrea del quadrat de la hipotenusa és la suma de les àrees dels quadrats dels catets: <span class="fml"><b>a² + b² = c²</b></span>.',
+    `<div class="eq" data-r="eq"></div>
+     <div data-r="msg" style="margin:.4rem 0;min-height:1.8rem"></div><hr>
+     <label class="chk"><input type="checkbox" data-c="int" checked> Costats enters (triangles perfectes)</label>
+     ${slider('a','Catet a',1,5,1,3)}${slider('b','Catet b',1,5,1,4)}
+     <div class="row"><span>Mida del dibuix:</span><span class="seg" data-seg="L"></span></div>
+     <div class="row"><span>Ternes:</span><span data-r="pre"></span></div>
+     <p class="note">Arrossega els punts blau i verd del triangle, o fes servir els lliscadors.</p>`);
+  const B=new Board(P.stage,{x0:-5.5,x1:10.5,y0:-5.5,y1:10.5});
+  const snap=v=>st.int?Math.round(v):Math.round(v*10)/10;
+  const hb=B.handle(3,0,'#2f7fd0',p=>{st.a=clamp(snap(p.x),1,st.L);sync();});
+  const ha=B.handle(0,4,'#2fa84f',p=>{st.b=clamp(snap(p.y),1,st.L);sync();});
+  const seg=segment(host,'L',[[5,'fins a 5'],[8,'fins a 8'],[12,'fins a 12']],5,v=>{st.L=+v;st.a=Math.min(st.a,st.L);st.b=Math.min(st.b,st.L);sync();});
+  $('[data-r="pre"]',host).innerHTML=[[3,4],[6,8],[5,12],[9,12]].map(t=>'<button class="btn" data-p="'+t+'">'+t[0]+'-'+t[1]+'-'+Math.hypot(t[0],t[1])+'</button>').join(' ');
+  $('[data-r="pre"]',host).onclick=e=>{
+    const b=e.target.closest('button');if(!b)return;
+    const t=b.dataset.p.split(',').map(Number);
+    st.int=true;$('[data-c="int"]',host).checked=true;
+    st.L=Math.max(...t)<=5?5:(Math.max(...t)<=8?8:12);seg.mark(st.L);
+    st.a=t[0];st.b=t[1];sync();
+  };
+  $('[data-c="int"]',host).onchange=e=>{st.int=e.target.checked;if(st.int){st.a=Math.round(st.a);st.b=Math.round(st.b);}sync();};
+  bindRange(host,'a',v=>{st.a=snap(v);sync();});
+  bindRange(host,'b',v=>{st.b=snap(v);sync();});
+  const cells=(P0,u,v,n,at)=>{
+    for(let k=1;k<n-1e-9;k++){
+      B.line(P0[0]+u[0]*k,P0[1]+u[1]*k,P0[0]+u[0]*k+v[0]*n,P0[1]+u[1]*k+v[1]*n,at);
+      B.line(P0[0]+v[0]*k,P0[1]+v[1]*k,P0[0]+v[0]*k+u[0]*n,P0[1]+v[1]*k+u[1]*n,at);
+    }
+  };
+  function sync(){
+    const {a,b,L}=st,c=Math.hypot(a,b);
+    B.fit(-L-.5,2*L+.5,-L-.5,2*L+.5);
+    ['a','b'].forEach(k=>{const r=$('[data-k="'+k+'"]',host);r.max=L;r.step=st.int?1:0.1;setRange(host,k,st[k],fmt(st[k],1));});
+    B.clear();
+    B.grid(1,{stroke:'#ece9e0'});
+    const sqA=[[0,0],[a,0],[a,-a],[0,-a]],sqB=[[0,0],[0,b],[-b,b],[-b,0]],sqC=[[a,0],[0,b],[b,b+a],[a+b,a]];
+    B.poly(sqA,{fill:'rgba(47,127,208,.28)',stroke:'#2f7fd0'});
+    B.poly(sqB,{fill:'rgba(47,168,79,.28)',stroke:'#2fa84f'});
+    B.poly(sqC,{fill:'rgba(217,67,90,.25)',stroke:'#d9435a'});
+    if(st.int){
+      const g={stroke:'rgba(0,0,0,.28)','stroke-width':1.2};
+      if(isInt(a))cells([0,0],[1,0],[0,-1],a,g);
+      if(isInt(b))cells([0,0],[0,1],[-1,0],b,g);
+      if(isInt(c))cells([a,0],[-a/c,b/c],[b/c,a/c],c,g);
+    }
+    B.poly([[0,0],[a,0],[0,b]],{fill:'#fff'});
+    const m=Math.min(.5,a/3,b/3);
+    B.pline([[m,0],[m,m],[0,m]],{'stroke-width':2});
+    B.text(a/2,.35,'a = '+fmt(a,1),{fill:'#1c5ea8','font-size':18,class:'m'});
+    B.text(.3,b/2,'b = '+fmt(b,1),{fill:'#17612e','text-anchor':'start','font-size':18,class:'m'});
+    const mx=a/2+.62*b/c,my=b/2+.62*a/c;
+    B.text(mx,my-.1,'c = '+fmt(c,2),{fill:'#a82339','font-size':18,class:'m res'});
+    B.text(a/2,-a/2-.1,'a² = '+fmt(a*a,2),{'font-size':22,class:'m res',fill:'#1c5ea8'});
+    B.text(-b/2,b/2-.1,'b² = '+fmt(b*b,2),{'font-size':22,class:'m res',fill:'#17612e'});
+    B.text((a+b)/2,(a+b)/2-.1,'c² = '+fmt(c*c,2),{'font-size':22,class:'m res',fill:'#a82339'});
+    hb.set(a,0);ha.set(0,b);
+    const s2=a*a+b*b;
+    $('[data-r="eq"]',host).innerHTML=
+      '<span class="ca">a²</span> + <span class="cb">b²</span> = <span class="cc">c²</span><br>'+
+      '<span class="res"><span class="ca">'+fmt(a,1)+'²</span> + <span class="cb">'+fmt(b,1)+'²</span> = '+fmt(a*a,2)+' + '+fmt(b*b,2)+' = <span class="cc">'+fmt(s2,2)+'</span><br>'+
+      'c = √'+fmt(s2,2)+' '+(isInt(c)?'=':'≈')+' <b>'+fmt(c,2)+'</b></span>';
+    $('[data-r="msg"]',host).innerHTML=(isInt(a)&&isInt(b)&&isInt(c))?
+      '<span class="pill ok res">Terna pitagòrica: '+a+', '+b+', '+c+'</span>':
+      (st.int?'<span class="pill in res">c no és enter: √'+fmt(s2,0)+' ≈ '+fmt(c,2)+'</span>':'');
+  }
+  sync();
+}
+
+function pitDem(host){
+  const st={a:3,b:4,t:0};
+  const P=view(host,
+    '<b>Demostració per recol·locació.</b> Dins d\'un quadrat de costat <b>a + b</b> hi posem 4 triangles iguals. L\'àrea que queda lliure és la mateixa, la disposem com la disposem: per això <span class="fml"><b>c² = a² + b²</b></span>. Mou el lliscador!',
+    `<div data-r="cap" style="min-height:3.2rem;font-weight:600"></div>
+     <input type="range" data-k="t" min="0" max="1000" value="0" style="width:100%">
+     <div class="row"><button class="primary" data-r="play">▶ Animació</button><button class="btn" data-r="reset">Torna a l'inici</button></div><hr>
+     ${slider('a','Catet a',1,8,1,3)}${slider('b','Catet b',1,8,1,4)}
+     <div class="eq res" data-r="calc"></div>`);
+  const B=new Board(P.stage,{x0:-.6,x1:7.6,y0:-.6,y1:7.6});
+  const M=[0,2,3,1];
+  const cen=T=>[(T[0][0]+T[1][0]+T[2][0])/3,(T[0][1]+T[1][1]+T[2][1])/3];
+  function tri(cf,i,u){
+    const A=cf.A[i],X=cf.X[M[i]],cA=cen(A),cX=cen(X);
+    let th=Math.atan2(X[1][1]-X[0][1],X[1][0]-X[0][0])-Math.atan2(A[1][1]-A[0][1],A[1][0]-A[0][0]);
+    th=Math.atan2(Math.sin(th),Math.cos(th));
+    const r=th*u,c=[cA[0]+(cX[0]-cA[0])*u,cA[1]+(cX[1]-cA[1])*u];
+    return A.map(p=>{const dx=p[0]-cA[0],dy=p[1]-cA[1];return [c[0]+dx*Math.cos(r)-dy*Math.sin(r),c[1]+dx*Math.sin(r)+dy*Math.cos(r)];});
+  }
+  function draw(){
+    const {a,b,t}=st,s=a+b,u=t*t*(3-2*t);
+    const cf={A:[[[0,0],[a,0],[0,b]],[[s,0],[s,a],[a,0]],[[s,s],[b,s],[s,a]],[[0,s],[0,b],[b,s]]],
+              X:[[[0,a],[a,a],[0,s]],[[a,s],[0,s],[a,a]],[[s,0],[s,a],[a,0]],[[a,a],[a,0],[s,a]]]};
+    B.fit(-.6,s+.6,-.6,s+.6);B.clear();
+    B.poly([[0,0],[s,0],[s,s],[0,s]],{fill:'#fff'});
+    B.poly([[a,0],[s,a],[b,s],[0,b]],{fill:'rgba(217,67,90,.4)',stroke:'#d9435a',opacity:1-u});
+    B.poly([[0,0],[a,0],[a,a],[0,a]],{fill:'rgba(47,127,208,.4)',stroke:'#2f7fd0',opacity:u});
+    B.poly([[a,a],[s,a],[s,s],[a,s]],{fill:'rgba(47,168,79,.4)',stroke:'#2fa84f',opacity:u});
+    const win=[[0,.4],[0,.01],[.6,1],[.3,.7]],sm=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
+    for(let i=0;i<4;i++)B.poly(tri(cf,i,sm((t-win[i][0])/(win[i][1]-win[i][0]))),{fill:'#fff3b8',stroke:'#8a6d00','stroke-width':2.2});
+    B.poly([[0,0],[s,0],[s,s],[0,s]],{stroke:'#1f2933','stroke-width':3});
+    const fs=Math.max(18,30-s);
+    B.text(s/2,s/2-.15,'c²',{'font-size':fs+8,class:'m',fill:'#a82339',opacity:1-u});
+    B.text(a/2,a/2-.15,'a²',{'font-size':fs+8,class:'m',fill:'#1c5ea8',opacity:u});
+    B.text(a+b/2,a+b/2-.15,'b²',{'font-size':fs+8,class:'m',fill:'#17612e',opacity:u});
+    B.text(s/2,-.2+.01,'a + b = '+(a+b),{'font-size':16,class:'m'});
+    $('[data-r="cap"]',host).textContent=t<.03?'Quatre triangles rectangles i un quadrat inclinat de costat c (la hipotenusa) dins del quadrat gran.':
+      t>.97?'Els mateixos quatre triangles ocupen un altre lloc: ara deixen lliures un quadrat de costat a i un de costat b.':'Els triangles es mouen sense canviar de mida: l\'àrea lliure és sempre la mateixa.';
+    const big=s*s,tr=4*a*b/2;
+    $('[data-r="calc"]',host).innerHTML='Quadrat gran: (a + b)² = '+s+'² = '+big+'<br>4 triangles: 4 · (a·b/2) = '+fmt(tr,1)+'<br>Àrea lliure: '+big+' − '+fmt(tr,1)+' = <b>'+fmt(big-tr,1)+'</b><br>c² = '+fmt(big-tr,1)+' &nbsp; a² + b² = '+a*a+' + '+b*b+' = '+(a*a+b*b);
+    setRange(host,'a',a,a);setRange(host,'b',b,b);
+    $('[data-k="t"]',host).value=Math.round(t*1000);
+  }
+  bindRange(host,'t',v=>{st.t=v/1000;stop();draw();});
+  bindRange(host,'a',v=>{st.a=v;draw();});
+  bindRange(host,'b',v=>{st.b=v;draw();});
+  let raf=0;
+  const btn=$('[data-r="play"]',host);
+  function stop(){if(raf){cancelAnimationFrame(raf);raf=0;}btn.textContent='▶ Animació';}
+  btn.onclick=()=>{
+    if(raf){stop();return;}
+    if(st.t>=.999)st.t=0;
+    btn.textContent='⏸ Pausa';
+    let last=performance.now();
+    const step=now=>{
+      st.t=Math.min(1,st.t+(now-last)/4500);last=now;draw();
+      if(st.t>=1){stop();return;}
+      raf=requestAnimationFrame(step);
+    };
+    raf=requestAnimationFrame(step);
+  };
+  $('[data-r="reset"]',host).onclick=()=>{stop();st.t=0;draw();};
+  draw();
+}
+
+function pitCalc(host){
+  const st={k:'c',v:{a:3,b:4,c:5}};
+  const P=view(host,
+    '<b>Calculadora pas a pas.</b> Si coneixes dos costats d\'un triangle rectangle, el tercer surt de <span class="fml"><b>c² = a² + b²</b></span>. Recorda: la hipotenusa <b>c</b> és el costat més llarg (davant de l\'angle recte).',
+    `<div class="row"><span>Què busquem?</span><span class="seg" data-seg="k"></span></div>
+     <div class="row" data-r="in"></div><div data-r="out"></div><hr>
+     <h3>És rectangle?</h3>
+     <div class="row"><input class="num" data-x="0" value="5"><input class="num" data-x="1" value="12"><input class="num" data-x="2" value="13"></div>
+     <div data-r="chk"></div>`);
+  const labels={c:['a','b'],a:['c','b'],b:['c','a']};
+  const defs={c:{a:3,b:4},a:{c:13,b:12},b:{c:10,a:6}};
+  segment(host,'k',[['c','Hipotenusa c'],['a','Catet a'],['b','Catet b']],'c',k=>{st.k=k;st.v=Object.assign({},defs[k]);inputs();calc();});
+  function inputs(){
+    const box=$('[data-r="in"]',host);
+    box.innerHTML=labels[st.k].map(n=>'<label class="m">'+n+' = <input class="num" data-n="'+n+'" value="'+fmt(st.v[n],2)+'"></label>').join(' ');
+    $$('input',box).forEach(i=>i.oninput=()=>{st.v[i.dataset.n]=num(i.value);calc();});
+  }
+  function calc(){
+    const k=st.k,v=st.v,out=$('[data-r="out"]',host);
+    const lab=(n,known)=>known?n+' = '+fmt(v[n],2):n+' = ?';
+    let steps='',err='',known={c:false,a:false,b:false};
+    labels[k].forEach(n=>known[n]=true);
+    if(k==='c'){
+      const {a,b}=v;
+      if(!(a>0&&b>0))err='Escriu dos nombres positius.';
+      else{const s=a*a+b*b,c=Math.sqrt(s);
+        steps='<li>c² = a² + b²</li><li class="res">c² = '+fmt(a,2)+'² + '+fmt(b,2)+'² = '+fmt(a*a,3)+' + '+fmt(b*b,3)+' = '+fmt(s,3)+'</li><li class="res">c = √'+fmt(s,3)+' '+(isInt(c)?'=':'≈')+' <b>'+fmt(c,2)+'</b></li>';}
+    }else{
+      const c=v.c,o=k==='a'?v.b:v.a,n2=k==='a'?'b':'a';
+      if(!(c>0&&o>0))err='Escriu dos nombres positius.';
+      else if(c<=o)err='La hipotenusa c ha de ser més llarga que l\'altre catet.';
+      else{const s=c*c-o*o,x=Math.sqrt(s);
+        steps='<li>'+k+'² = c² − '+n2+'²</li><li class="res">'+k+'² = '+fmt(c,2)+'² − '+fmt(o,2)+'² = '+fmt(c*c,3)+' − '+fmt(o*o,3)+' = '+fmt(s,3)+'</li><li class="res">'+k+' = √'+fmt(s,3)+' '+(isInt(x)?'=':'≈')+' <b>'+fmt(x,2)+'</b></li>';}
+    }
+    out.innerHTML=err?'<div class="pill no">'+err+'</div>':'<ol class="steps">'+steps+'</ol>';
+    let a='?',b='?',c='?';
+    if(k==='c'){a=lab('a',1);b=lab('b',1);c=lab('c',0);}
+    if(k==='a'){a=lab('a',0);b=lab('b',1);c=lab('c',1);}
+    if(k==='b'){a=lab('a',1);b=lab('b',0);c=lab('c',1);}
+    P.stage.innerHTML=figRight(a,b,c,'','');
+    P.stage.style.textAlign='center';
+  }
+  const chk=()=>{
+    const xs=$$('[data-x]',host).map(i=>num(i.value)),o=$('[data-r="chk"]',host);
+    if(xs.some(x=>!(x>0))){o.innerHTML='<div class="pill no">Escriu tres nombres positius.</div>';return;}
+    xs.sort((p,q)=>p-q);const [p,q,r]=xs,l=p*p+q*q,rr=r*r;
+    let verdict;
+    if(p+q<=r)verdict='<span class="pill no">No formen cap triangle (p + q ≤ r)</span>';
+    else if(Math.abs(l-rr)<1e-9*Math.max(1,rr))verdict='<span class="pill ok">Sí és rectangle: '+fmt(p,2)+'² + '+fmt(q,2)+'² = '+fmt(r,2)+'²</span>';
+    else if(l>rr)verdict='<span class="pill in">No és rectangle: a² + b² &gt; c² (acutangle)</span>';
+    else verdict='<span class="pill in">No és rectangle: a² + b² &lt; c² (obtusangle)</span>';
+    o.innerHTML='<ol class="steps"><li>El costat més llarg és '+fmt(r,2)+'.</li><li class="res">'+fmt(p,2)+'² + '+fmt(q,2)+'² = '+fmt(p*p,3)+' + '+fmt(q*q,3)+' = '+fmt(l,3)+'</li><li class="res">'+fmt(r,2)+'² = '+fmt(rr,3)+'</li></ol><div class="res">'+verdict+'</div>';
+  };
+  $$('[data-x]',host).forEach(i=>i.oninput=chk);
+  inputs();calc();chk();
+}
+
+function pitTernes(host){
+  host.innerHTML=`<div class="teo"><b>Ternes pitagòriques.</b> Són tres nombres enters que compleixen <span class="fml">a² + b² = c²</span>, com 3-4-5. Euclides en va trobar una fórmula: amb dos nombres <b>m &gt; n</b>, surt <span class="fml">a = m² − n², b = 2mn, c = m² + n²</span>. Després, dues aplicacions amb Pitàgores.</div>
+  <div class="cards">
+   <div class="card" data-c="eu"><h3>Generador de ternes (Euclides)</h3>
+     ${slider('m','m',2,10,1,2)}${slider('n','n',1,9,1,1)}
+     <div class="eq" data-r="eu"></div>
+     <h3 style="margin-top:.7rem">Ternes primitives</h3><div class="chips" data-r="list"></div>
+     <p class="note">Una terna multiplicada per un nombre també és terna (3-4-5 → 6-8-10).</p></div>
+   <div class="card" data-c="dist"><h3>Distància entre dos punts</h3><div class="stage" data-r="sd"></div><div class="eq" data-r="id"></div>
+     <p class="note">Arrossega els punts P i Q.</p></div>
+   <div class="card" data-c="esc"><h3>L'escala contra la paret</h3><div class="stage" data-r="se"></div>
+     ${slider('L','Longitud de l\'escala (m)',3,9,0.5,5)}<div class="eq" data-r="ie"></div>
+     <p class="note">Arrossega el peu de l'escala.</p></div>
+  </div>`;
+  /* Euclides */
+  const eu={m:2,n:1};
+  function euc(){
+    const {m,n}=eu,a=m*m-n*n,b=2*m*n,c=m*m+n*n,prim=gcd(m,n)===1&&(m-n)%2===1;
+    const r=$('[data-k="n"]',host);r.max=m-1;if(eu.n>m-1)eu.n=m-1;
+    setRange(host,'m',m,m);setRange(host,'n',eu.n,eu.n);
+    $('[data-r="eu"]',host).innerHTML='a = '+m+'² − '+eu.n+'² = <b>'+(m*m-eu.n*eu.n)+'</b><br>b = 2·'+m+'·'+eu.n+' = <b>'+(2*m*eu.n)+'</b><br>c = '+m+'² + '+eu.n+'² = <b>'+(m*m+eu.n*eu.n)+'</b><br>'+
+      (m*m-eu.n*eu.n)+'² + '+(2*m*eu.n)+'² = '+sq(m*m-eu.n*eu.n)+' + '+sq(2*m*eu.n)+' = '+sq(m*m+eu.n*eu.n)+' = '+(m*m+eu.n*eu.n)+'² ✓<br>'+
+      (gcd(m,eu.n)===1&&(m-eu.n)%2===1?'<span class="pill ok">Terna primitiva</span>':'<span class="pill in">Terna no primitiva (múltiple d\'una altra)</span>');
+  }
+  bindRange(host,'m',v=>{eu.m=v;euc();});
+  bindRange(host,'n',v=>{eu.n=v;euc();});
+  const prims=[];
+  for(let m=2;m<=9;m++)for(let n=1;n<m;n++)if(gcd(m,n)===1&&(m-n)%2===1)prims.push([m*m-n*n,2*m*n,m*m+n*n].sort((x,y)=>x-y));
+  prims.sort((x,y)=>x[2]-y[2]);
+  $('[data-r="list"]',host).innerHTML=prims.slice(0,12).map(t=>'<span class="chip">'+t.join(', ')+'</span>').join('');
+  euc();
+  /* distància */
+  const D=new Board($('[data-r="sd"]',host),{x0:-.5,x1:12.5,y0:-.5,y1:8.5});
+  const dp={p:[2,2],q:[9,6]};
+  const hp=D.handle(2,2,'#2f7fd0',p=>{dp.p=[clamp(Math.round(p.x),0,12),clamp(Math.round(p.y),0,8)];dd();});
+  const hq=D.handle(9,6,'#d9435a',p=>{dp.q=[clamp(Math.round(p.x),0,12),clamp(Math.round(p.y),0,8)];dd();});
+  function dd(){
+    const [x1,y1]=dp.p,[x2,y2]=dp.q,dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),d=Math.hypot(dx,dy);
+    D.clear();D.grid(1,{stroke:'#e9e6dd'});
+    D.line(0,-.5,0,8.5,{stroke:'#9aa3aa','stroke-width':1.5});D.line(-.5,0,12.5,0,{stroke:'#9aa3aa','stroke-width':1.5});
+    const cx=x2,cy=y1;
+    D.poly([[x1,y1],[x2,y1],[x2,y2]],{fill:'rgba(47,127,208,.12)',stroke:'#7a8a99','stroke-dasharray':'6 5','stroke-width':2});
+    D.line(x1,y1,x2,y2,{stroke:'#d9435a','stroke-width':3.5});
+    if(dx)D.text((x1+x2)/2,y1+(y2>=y1?-.35:.55),'dx = '+dx,{class:'m','font-size':16,fill:'#1c5ea8'});
+    if(dy)D.text(x2+(x2>=x1?.3:-.3),(y1+y2)/2,'dy = '+dy,{class:'m','font-size':16,fill:'#17612e','text-anchor':x2>=x1?'start':'end'});
+    D.text(x1,y1+(y2>=y1?-.6:.9)+(y2>=y1?0:0),'P('+x1+', '+y1+')',{'font-size':15,class:'m'});
+    D.text(x2,y2+(y2>=y1?.45:-.8),'Q('+x2+', '+y2+')',{'font-size':15,class:'m'});
+    hp.set(x1,y1);hq.set(x2,y2);
+    $('[data-r="id"]',host).innerHTML='d = √(dx² + dy²)<br><span class="res">d = √('+dx+'² + '+dy+'²) = √'+(dx*dx+dy*dy)+' '+(isInt(d)?'=':'≈')+' <b>'+fmt(d,2)+'</b></span>';
+  }
+  dd();
+  /* escala */
+  const E=new Board($('[data-r="se"]',host),{x0:-1.5,x1:10.5,y0:-1,y1:9.5});
+  const es={L:5,x:3};
+  const he=E.handle(3,0,'#ee8a22',p=>{es.x=clamp(Math.round(p.x*2)/2,0.5,es.L-0.5);ee();});
+  bindRange(host,'L',v=>{es.L=v;es.x=Math.min(es.x,v-0.5);ee();});
+  function ee(){
+    const {L,x}=es,h=Math.sqrt(L*L-x*x);
+    setRange(host,'L',L,fmt(L,1)+' m');
+    E.clear();
+    E.poly([[-1.5,-1],[10.5,-1],[10.5,0],[-1.5,0]],{fill:'#cdbf93',stroke:'none'});
+    E.poly([[-1.5,0],[0,0],[0,9.5],[-1.5,9.5]],{fill:'#e3ddd0',stroke:'#8a806a','stroke-width':2});
+    E.line(0,0,10.5,0,{'stroke-width':3});
+    E.line(x,0,0,h,{stroke:'#a86a1b','stroke-width':7});
+    E.line(x,0,0,0,{'stroke-dasharray':'6 5','stroke-width':2,stroke:'#1f2933'});E.line(0,0,0,h,{'stroke-dasharray':'6 5','stroke-width':2,stroke:'#1f2933'});
+    E.pline([[0,.5],[.5,.5],[.5,0]],{'stroke-width':2,stroke:'#d9435a'});
+    E.text(x/2,-.5,'x = '+fmt(x,1)+' m',{class:'m','font-size':16});
+    E.text(.35,h/2,'h = '+fmt(h,2)+' m',{class:'m res','font-size':16,'text-anchor':'start',fill:'#a82339'});
+    E.text(x/2+.1,h/2+.5,'L = '+fmt(L,1)+' m',{class:'m','font-size':16,'text-anchor':'start'});
+    he.set(x,0);
+    $('[data-r="ie"]',host).innerHTML='h = √(L² − x²)<br><span class="res">h = √('+fmt(L,1)+'² − '+fmt(x,1)+'²) = √'+fmt(L*L-x*x,2)+' ≈ <b>'+fmt(h,2)+' m</b></span>';
+  }
+  ee();
+}
+
+function pitPractica(host){
+  const sqrts=n=>'√'+fmt(n,2)+(isInt(Math.sqrt(n))?' = ':' ≈ ')+fmt(Math.sqrt(n),2);
+  practice(host,[
+    {name:'Calcula la hipotenusa',make(){
+      let a,b;if(Math.random()<.5){const t=triple();a=t[0];b=t[1];}else{a=rnd(2,12);b=rnd(2,12);}
+      const c=Math.hypot(a,b);
+      return {text:'Calcula la hipotenusa del triangle rectangle de catets '+a+' cm i '+b+' cm. (Arrodoneix a 2 decimals si cal.)',
+        fig:figRight('a = '+a+' cm','b = '+b+' cm','c = ?','',''),fields:[{label:'c =',unit:'cm',ans:c}],
+        sol:'c² = '+a+'² + '+b+'² = '+a*a+' + '+b*b+' = '+(a*a+b*b)+'<br>c = '+sqrts(a*a+b*b)+' cm'};}},
+    {name:'Calcula un catet',make(){
+      let a,b,c;if(Math.random()<.5){const t=triple();a=t[0];b=t[1];c=t[2];}else{b=rnd(3,12);c=b+rnd(2,8);a=Math.sqrt(c*c-b*b);}
+      return {text:'En un triangle rectangle la hipotenusa mesura '+c+' cm i un catet '+b+' cm. Calcula l\'altre catet. (Arrodoneix a 2 decimals si cal.)',
+        fig:figRight('a = ?','b = '+b+' cm','c = '+c+' cm','',''),fields:[{label:'a =',unit:'cm',ans:a}],
+        sol:'a² = c² − b² = '+c+'² − '+b+'² = '+c*c+' − '+b*b+' = '+(c*c-b*b)+'<br>a = '+sqrts(c*c-b*b)+' cm'};}},
+    {name:'És rectangle?',make(){
+      let t=triple().slice(),yes=Math.random()<.5;
+      if(!yes){const i=rnd(0,2);t[i]+=pick([-2,-1,1,2]);if(t[i]<1)t[i]=2;}
+      t=shuffle(t);
+      const s=t.slice().sort((x,y)=>x-y),ok=s[0]*s[0]+s[1]*s[1]===s[2]*s[2];
+      return {text:'Un triangle té costats de '+t.join(' cm, ')+' cm. És un triangle rectangle?',options:['Sí','No'],correct:ok?0:1,
+        sol:'El costat més llarg és '+s[2]+'.<br>'+s[0]+'² + '+s[1]+'² = '+(s[0]*s[0])+' + '+(s[1]*s[1])+' = '+(s[0]*s[0]+s[1]*s[1])+' i '+s[2]+'² = '+s[2]*s[2]+'.<br>'+(ok?'Són iguals: sí és rectangle.':'No són iguals: no és rectangle.')};}},
+    {name:'L\'escala i la paret',make(){
+      const L=rnd(4,10),x=rnd(1,L-2),h=Math.sqrt(L*L-x*x);
+      return {text:'Una escala de '+L+' m s\'ha posat contra una paret, amb el peu a '+x+' m de la paret. A quina alçada arriba? (2 decimals)',
+        fig:figLadder('L = '+L+' m','x = '+x+' m','h = ?'),fields:[{label:'h =',unit:'m',ans:h}],
+        sol:'h² = L² − x² = '+L+'² − '+x+'² = '+(L*L-x*x)+'<br>h = '+sqrts(L*L-x*x)+' m'};}},
+    {name:'Distància entre dos punts',make(){
+      const x1=rnd(-4,4),y1=rnd(-4,4);let x2,y2;do{x2=rnd(-4,6);y2=rnd(-4,6);}while(x1===x2||y1===y2);
+      const dx=Math.abs(x2-x1),dy=Math.abs(y2-y1);
+      return {text:'Calcula la distància entre els punts P('+x1+', '+y1+') i Q('+x2+', '+y2+'). (2 decimals si cal)',fields:[{label:'d =',unit:'',ans:Math.hypot(dx,dy)}],
+        sol:'dx = '+dx+', dy = '+dy+'<br>d = √('+dx+'² + '+dy+'²) = '+sqrts(dx*dx+dy*dy)};}},
+    {name:'Diagonal d\'un rectangle',make(){
+      const w=rnd(3,20),h=rnd(3,15);
+      return {text:'Un rectangle fa '+w+' cm de llarg i '+h+' cm d\'alt. Quant mesura la seva diagonal? (2 decimals)',fields:[{label:'d =',unit:'cm',ans:Math.hypot(w,h)}],
+        sol:'d² = '+w+'² + '+h+'² = '+(w*w+h*h)+'<br>d = '+sqrts(w*w+h*h)+' cm'};}}
+  ],'<b>Practica.</b> Exercicis nous cada vegada. Escriu la resposta i prem <b>Comprova</b>.');
+}
+addTab({id:'pit',title:'Pitàgores',subs:[
+  {id:'exp',title:'Explora',build:pitExplora},
+  {id:'dem',title:'Demostració',build:pitDem},
+  {id:'cal',title:'Calculadora',build:pitCalc},
+  {id:'ter',title:'Ternes i aplicacions',build:pitTernes},
+  {id:'pra',title:'Practica',build:pitPractica}]});
+
+/* ====================================================================
+   TALES
+   ==================================================================== */
+function talExplora(host){
+  const st={A:[8,7.2],B:[3.5,2],C:[12.5,2],t:.5};
+  const P=view(host,
+    '<b>Teorema de Tales.</b> Si tallem un triangle amb una recta <b>paral·lela</b> a un dels costats, obtenim un triangle <b>semblant</b> i tots els segments són proporcionals: <span class="fml"><b>AD/AB = AE/AC = DE/BC</b></span>.',
+    `<div class="eq" data-r="eq"></div><hr>
+     ${slider('t','Posició de la paral·lela (k = AD/AB)',0.1,1.6,0.05,0.5)}
+     <p class="note">Arrossega el punt taronja D, o els vèrtexs A, B i C del triangle. Prova de passar-te de B: la paral·lela surt fora i el triangle gran també és semblant.</p>`);
+  const B=new Board(P.stage,{x0:0,x1:16,y0:0,y1:10});
+  const inside=p=>p[0]>=.3&&p[0]<=15.7&&p[1]>=.3&&p[1]<=9.7;
+  const lim=p=>[clamp(p.x,.3,15.7),clamp(p.y,.3,9.7)];
+  const hA=B.handle(8,7.2,'#1f2933',p=>{st.A=lim(p);draw();});
+  const hB=B.handle(3.5,2,'#1f2933',p=>{st.B=lim(p);draw();});
+  const hC=B.handle(12.5,2,'#1f2933',p=>{st.C=lim(p);draw();});
+  const hD=B.handle(5,4,'#ee8a22',p=>{
+    const {A,B:Bb}=st,v=[Bb[0]-A[0],Bb[1]-A[1]],den=v[0]*v[0]+v[1]*v[1];
+    if(den<1e-6)return;
+    st.t=Math.round(((p.x-A[0])*v[0]+(p.y-A[1])*v[1])/den*100)/100;draw();});
+  bindRange(host,'t',v=>{st.t=v;draw();});
+  const mid=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];
+  const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+  function draw(){
+    const {A,B:Bv,C}=st;
+    const at=t=>[[A[0]+t*(Bv[0]-A[0]),A[1]+t*(Bv[1]-A[1])],[A[0]+t*(C[0]-A[0]),A[1]+t*(C[1]-A[1])]];
+    let t=clamp(st.t,.1,1.6);
+    while(t>.1&&!(inside(at(t)[0])&&inside(at(t)[1])))t-=.01;
+    t=Math.round(t*100)/100;st.t=t;
+    const [D,E]=at(t);
+    B.clear();B.grid(1,{stroke:'#efece3'});
+    B.poly([A,D,E],{fill:'#fde3c4',stroke:'#ee8a22','stroke-width':2.5});
+    B.poly([A,Bv,C],{fill:'rgba(255,255,255,.35)',stroke:'#1f2933','stroke-width':2.8});
+    if(t>1){B.line(Bv[0],Bv[1],D[0],D[1],{stroke:'#1f2933','stroke-dasharray':'6 5','stroke-width':2});B.line(C[0],C[1],E[0],E[1],{stroke:'#1f2933','stroke-dasharray':'6 5','stroke-width':2});}
+    B.line(D[0],D[1],E[0],E[1],{stroke:'#ee8a22','stroke-width':4});
+    const AB=dist(A,Bv),AC=dist(A,C),AD=dist(A,D),AE=dist(A,E),DE=dist(D,E),BC=dist(Bv,C),DB=dist(D,Bv),EC=dist(E,C);
+    const L=(p,q,s,dx,dy,an,col)=>{const m=mid(p,q);B.text(m[0]+dx,m[1]+dy,s,{class:'m','font-size':16,'text-anchor':an||'middle',fill:col||'#1f2933'});};
+    L(A,D,'AD = '+fmt(AD,1),-.35,.2,'end','#b35f00');L(A,E,'AE = '+fmt(AE,1),.35,.2,'start','#b35f00');
+    if(Math.abs(t-1)>.04){L(D,Bv,'DB = '+fmt(DB,1),-.35,0,'end');L(E,C,'EC = '+fmt(EC,1),.35,0,'start');}
+    L(D,E,'DE = '+fmt(DE,1),0,t>1?-.75:.5,'middle','#b35f00');
+    L(Bv,C,'BC = '+fmt(BC,1),0,t>1?.5:-.75);
+    B.text(A[0],A[1]+.6,'A',{'font-size':20});B.text(Bv[0]-.5,Bv[1]-.7,'B',{'font-size':20});B.text(C[0]+.5,C[1]-.7,'C',{'font-size':20});
+    B.text(D[0]-.55,D[1]+.25,'D',{'font-size':20,fill:'#b35f00'});B.text(E[0]+.55,E[1]+.25,'E',{'font-size':20,fill:'#b35f00'});
+    hA.set(A[0],A[1]);hB.set(Bv[0],Bv[1]);hC.set(C[0],C[1]);hD.set(D[0],D[1]);
+    setRange(host,'t',t,fmt(t,2));
+    const k=t;
+    $('[data-r="eq"]',host).innerHTML=
+      '<span class="res">AD / AB = '+fmt(AD,1)+' / '+fmt(AB,1)+' = <b>'+fmt(AD/AB,3)+'</b><br>'+
+      'AE / AC = '+fmt(AE,1)+' / '+fmt(AC,1)+' = <b>'+fmt(AE/AC,3)+'</b><br>'+
+      'DE / BC = '+fmt(DE,1)+' / '+fmt(BC,1)+' = <b>'+fmt(DE/BC,3)+'</b>'+
+      (Math.abs(t-1)>.04?'<br>AD / DB = '+fmt(AD,1)+' / '+fmt(DB,1)+' = AE / EC = '+fmt(AE,1)+' / '+fmt(EC,1)+' = <b>'+fmt(AD/DB,3)+'</b>':'')+'</span>'+
+      '<div style="margin-top:.5rem"><span class="pill ok res">Les tres raons són iguals: k = '+fmt(k,2)+'</span></div>';
+  }
+  draw();
+}
+
+function talSecants(host){
+  const st={phi:12,d:[-2.2,.3,2.6],P:[3.2,9],Q:[5.5,1],R:[12.3,9],S:[9.8,1]};
+  const c0=[7.5,5],SL=5.5;
+  const P=view(host,
+    '<b>Tales amb paral·leles i secants.</b> Si tres (o més) rectes paral·leles tallen dues rectes qualssevol (secants), els segments que determinen són proporcionals: <span class="fml"><b>a / b = a\' / b\'</b></span>.',
+    `<div class="eq" data-r="eq"></div><hr>
+     ${slider('phi','Inclinació de les paral·leles',-25,25,1,12)}
+     <p class="note">Arrossega els punts grisos (paral·leles) i els punts de les dues secants.</p>`);
+  const B=new Board(P.stage,{x0:0,x1:16,y0:0,y1:10});
+  const geo=()=>{const f=rad(st.phi);return {u:[Math.cos(f),Math.sin(f)],n:[-Math.sin(f),Math.cos(f)]};};
+  const hs=[0,1,2].map(i=>B.handle(8,5,'#7a8a99',p=>{
+    const {n}=geo(),d=n[0]*(p.x-c0[0])+n[1]*(p.y-c0[1]);
+    st.d[i]=clamp(d,i>0?st.d[i-1]+.7:-2.8,i<2?st.d[i+1]-.7:2.8);draw();}));
+  const mkH=(k,col)=>B.handle(0,0,col,p=>{st[k]=[clamp(p.x,.3,15.7),clamp(p.y,.3,9.7)];draw();});
+  const hP=mkH('P','#1f2933'),hQ=mkH('Q','#1f2933'),hR=mkH('R','#d9435a'),hS=mkH('S','#d9435a');
+  bindRange(host,'phi',v=>{st.phi=v;draw();});
+  const dist=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+  function draw(){
+    const {u,n}=geo();
+    B.clear();B.grid(1,{stroke:'#efece3'});
+    const inter=(P0,Q0,d)=>{
+      const v=[Q0[0]-P0[0],Q0[1]-P0[1]],den=n[0]*v[0]+n[1]*v[1];
+      if(Math.abs(den)<1e-4)return null;
+      const lam=(d-(n[0]*(P0[0]-c0[0])+n[1]*(P0[1]-c0[1])))/den;
+      return [P0[0]+lam*v[0],P0[1]+lam*v[1]];
+    };
+    st.d.forEach((d,i)=>{
+      const o=[c0[0]+n[0]*d,c0[1]+n[1]*d];
+      B.line(o[0]-u[0]*14,o[1]-u[1]*14,o[0]+u[0]*14,o[1]+u[1]*14,{stroke:'#2f7fd0','stroke-width':3});
+      hs[i].set(o[0]+u[0]*SL,o[1]+u[1]*SL);
+    });
+    const ext=(p,q)=>{const v=[q[0]-p[0],q[1]-p[1]];return [[p[0]-v[0]*6,p[1]-v[1]*6],[q[0]+v[0]*6,q[1]+v[1]*6]];};
+    [['P','Q','#1f2933'],['R','S','#d9435a']].forEach(([a,b,c])=>{const e=ext(st[a],st[b]);B.line(e[0][0],e[0][1],e[1][0],e[1][1],{stroke:c,'stroke-width':3});});
+    hP.set(...st.P);hQ.set(...st.Q);hR.set(...st.R);hS.set(...st.S);
+    const A=st.d.map(d=>inter(st.P,st.Q,d)),Bp=st.d.map(d=>inter(st.R,st.S,d));
+    const eq=$('[data-r="eq"]',host);
+    if(A.some(x=>!x)||Bp.some(x=>!x)){eq.innerHTML='<span class="pill no">Una secant és paral·lela a les rectes: mou-la.</span>';return;}
+    const cols=['#2fa84f','#ee8a22'];
+    [[A,'#1f2933',-1,['A','B','C'],['a','b']],[Bp,'#d9435a',1,["A'","B'","C'"],["a'","b'"]]].forEach(([pts,col,side,names,segs])=>{
+      for(let i=0;i<2;i++){
+        B.line(pts[i][0],pts[i][1],pts[i+1][0],pts[i+1][1],{stroke:cols[i],'stroke-width':7,'stroke-opacity':.85});
+        const m=[(pts[i][0]+pts[i+1][0])/2,(pts[i][1]+pts[i+1][1])/2];
+        B.text(m[0]+side*.5,m[1]+.1,segs[i]+' = '+fmt(dist(pts[i],pts[i+1]),1),{class:'m','font-size':16,'text-anchor':side<0?'end':'start',fill:i?'#a85a00':'#17612e'});
+      }
+      pts.forEach((p,i)=>{B.dot(p[0],p[1],5,{fill:col});B.text(p[0]+side*.45,p[1]+.45,names[i],{'font-size':17,'text-anchor':side<0?'end':'start'});});
+    });
+    const a=dist(A[0],A[1]),b=dist(A[1],A[2]),ap=dist(Bp[0],Bp[1]),bp=dist(Bp[1],Bp[2]);
+    eq.innerHTML='<span class="res"><span class="cb">a</span> / <span class="co">b</span> = '+fmt(a,1)+' / '+fmt(b,1)+' = <b>'+fmt(a/b,3)+'</b><br>'+
+      '<span class="cb">a\'</span> / <span class="co">b\'</span> = '+fmt(ap,1)+' / '+fmt(bp,1)+' = <b>'+fmt(ap/bp,3)+'</b><br>'+
+      'a / a\' = '+fmt(a/ap,3)+' &nbsp;·&nbsp; b / b\' = '+fmt(b/bp,3)+'</span><div style="margin-top:.5rem"><span class="pill ok res">a / b = a\' / b\'</span></div>';
+  }
+  draw();
+}
+
+function talAlcades(host){
+  const st={H:9,al:48,kind:'tree'},hp=1.7,px0=3,xp=31;
+  const P=view(host,
+    '<b>Mesurar alçades amb ombres.</b> Al mateix moment, els raigs del sol són paral·lels: l\'objecte i la seva ombra formen un triangle semblant al de la persona i la seva ombra. Per Tales: <span class="fml"><b>H / ombra = alçada persona / ombra persona</b></span>.',
+    `<div class="row"><span>Objecte:</span><span class="seg" data-seg="kind"></span></div>
+     ${slider('H','Alçada de l\'objecte (l\'has de descobrir!)',3,15,0.5,9)}
+     ${slider('al','Alçada del sol sobre l\'horitzó',30,70,1,48)}
+     <hr><div class="eq" data-r="eq"></div>
+     <p class="note">La persona fa 1,7 m. Mesura les dues ombres i calcula l'alçada de l'objecte.</p>`);
+  $('[data-v="H"]',host).classList.add('res');
+  const B=new Board(P.stage,{x0:-1,x1:38,y0:-3,y1:18});
+  segment(host,'kind',[['tree','Arbre'],['bld','Edifici'],['pole','Pal']],'tree',k=>{st.kind=k;draw();});
+  bindRange(host,'H',v=>{st.H=v;draw();});bindRange(host,'al',v=>{st.al=v;draw();});
+  function draw(){
+    const {H,al,kind}=st,a=rad(al),ta=Math.tan(a),so=H/ta,sp=hp/ta;
+    B.clear();
+    B.poly([[-1,-3],[38,-3],[38,0],[-1,0]],{fill:'#d8cfae',stroke:'none'});
+    B.line(-1,0,38,0,{stroke:'#7a6a3a','stroke-width':3});
+    // sol i raigs
+    B.circ(1.8,15.8,1.1,{fill:'#ffd24d',stroke:'#e0a800'});
+    B.text(1.8,13.9,'☀',{'font-size':20,fill:'#e0a800'});
+    const ray=(x,y)=>B.line(x-9*Math.cos(a),y+9*Math.sin(a),x+y/ta,0,{stroke:'#e0a800','stroke-width':2,'stroke-dasharray':'7 5'});
+    ray(px0,H);ray(xp,hp);
+    // ombres
+    B.line(px0,0,px0+so,0,{stroke:'#333','stroke-width':7,'stroke-opacity':.55});
+    B.line(xp,0,xp+sp,0,{stroke:'#333','stroke-width':7,'stroke-opacity':.55});
+    // objecte
+    if(kind==='tree'){
+      B.line(px0,0,px0,H*.45,{stroke:'#7a4a1a','stroke-width':9});
+      B.circ(px0,H*.68,Math.max(1.1,H*.26),{fill:'#4caf50',stroke:'#2e7d32'});
+      B.dot(px0,H,4,{fill:'#d9435a'});
+    }else if(kind==='bld'){
+      B.poly([[px0-3,0],[px0,0],[px0,H],[px0-3,H]],{fill:'#c9d4de',stroke:'#4b5c6b'});
+      for(let y=1.2;y<H-.8;y+=2)for(let x=px0-2.6;x<px0-.6;x+=1.2)B.poly([[x,y],[x+.7,y],[x+.7,y+1],[x,y+1]],{fill:'#fff',stroke:'#4b5c6b','stroke-width':1});
+      B.dot(px0,H,4,{fill:'#d9435a'});
+    }else{
+      B.line(px0,0,px0,H,{stroke:'#555','stroke-width':6});B.dot(px0,H,5,{fill:'#d9435a'});
+    }
+    // persona
+    B.line(xp,0,xp,hp*.55,{stroke:'#2f7fd0','stroke-width':5});B.line(xp,hp*.5,xp,hp*.85,{stroke:'#2f7fd0','stroke-width':5});
+    B.circ(xp,hp*.92,hp*.12,{fill:'#fde3c4',stroke:'#2f7fd0'});B.dot(xp,hp,3,{fill:'#d9435a'});
+    // triangles
+    B.line(px0,0,px0,H,{stroke:'#1f2933','stroke-width':1.5,'stroke-dasharray':'3 3'});
+    const so1=Math.round(so*10)/10,sp1=Math.round(sp*10)/10;
+    B.text(px0+so/2,-1.3,'ombra = '+fmt(so1,1)+' m',{class:'m','font-size':17});
+    B.text(xp+sp/2,-1.3,'ombra = '+fmt(sp1,1)+' m',{class:'m','font-size':17});
+    B.text(xp,hp+1.1,'1,7 m',{class:'m','font-size':17,fill:'#1c5ea8'});
+    B.text(px0+.7,H+.9,'H = ?',{class:'m','font-size':20,fill:'#a82339','text-anchor':'start'});
+    $('[data-r="eq"]',host).innerHTML=
+      'H / '+fmt(so1,1)+' = 1,7 / '+fmt(sp1,1)+'<br><span class="res">H = 1,7 · '+fmt(so1,1)+' / '+fmt(sp1,1)+' = <b>'+fmt(hp*so1/sp1,1)+' m</b></span>';
+    setRange(host,'H',H,fmt(H,1)+' m');setRange(host,'al',al,al+'°');
+  }
+  draw();
+}
+
+function talEscala(host){
+  const st={k:2};
+  const shape=[[0,0],[4,0],[4,3],[2,5],[0,3]];
+  const area=p=>Math.abs(p.reduce((s,q,i)=>{const r=p[(i+1)%p.length];return s+q[0]*r[1]-r[0]*q[1];},0))/2;
+  const per=p=>p.reduce((s,q,i)=>{const r=p[(i+1)%p.length];return s+Math.hypot(q[0]-r[0],q[1]-r[1]);},0);
+  const A0=area(shape),P0=per(shape);
+  const P=view(host,
+    '<b>Semblança i escales.</b> Dues figures són semblants si una és una ampliació o reducció de l\'altra amb una <b>raó de semblança k</b>. Les longituds es multipliquen per <b>k</b>, però les àrees es multipliquen per <b>k²</b>.',
+    `${slider('k','Raó de semblança k',0.5,3,0.5,2)}
+     <table class="tb"><tr><th></th><th>Original</th><th>Còpia</th><th>Còpia ÷ original</th></tr>
+       <tr><td>Base</td><td>4</td><td class="res" data-r="b1"></td><td class="res" data-r="b2"></td></tr>
+       <tr><td>Perímetre</td><td>${fmt(P0,2)}</td><td class="res" data-r="p1"></td><td class="res" data-r="p2"></td></tr>
+       <tr><td>Àrea</td><td>${fmt(A0,0)}</td><td class="res" data-r="a1"></td><td class="res" data-r="a2"></td></tr></table>
+     <p class="note">Compta els quadradets: si k = 2, l'àrea es multiplica per 4.</p><hr>
+     <h3>Escales de mapes</h3>
+     <div class="row"><label>Escala 1 : <select class="sel" data-m="E"><option>100</option><option>500</option><option>1000</option><option>5000</option><option>25000</option><option selected>50000</option><option>100000</option><option>200000</option></select></label></div>
+     <div class="row"><label>Al mapa: <input class="num" data-m="cm" value="6,5"> cm</label></div>
+     <div class="eq res" data-r="map"></div>`);
+  const B=new Board(P.stage,{x0:-1,x1:25,y0:-1,y1:16});
+  bindRange(host,'k',v=>{st.k=v;draw();});
+  function draw(){
+    const k=st.k,sh=shape.map(p=>[p[0]*k+7,p[1]*k]);
+    B.clear();B.grid(1,{stroke:'#e4e1d8'});
+    B.line(-1,0,25,0,{stroke:'#9aa3aa','stroke-width':1.5});
+    B.poly(shape,{fill:'rgba(47,127,208,.35)',stroke:'#2f7fd0','stroke-width':3});
+    B.poly(sh,{fill:'rgba(238,138,34,.35)',stroke:'#ee8a22','stroke-width':3});
+    B.text(2,-.7,'base = 4',{class:'m','font-size':16});
+    B.text(7+2*k,-.7,'base = '+fmt(4*k,1),{class:'m res','font-size':16});
+    B.text(2,2,'Àrea = '+fmt(A0,0),{class:'m','font-size':17});
+    B.text(7+2*k,2.5*k,'Àrea = '+fmt(A0*k*k,2),{class:'m res','font-size':17});
+    setRange(host,'k',k,fmt(k,1));
+    $('[data-r="b1"]',host).textContent=fmt(4*k,1);$('[data-r="b2"]',host).textContent='× '+fmt(k,1);
+    $('[data-r="p1"]',host).textContent=fmt(P0*k,2);$('[data-r="p2"]',host).textContent='× '+fmt(k,1);
+    $('[data-r="a1"]',host).textContent=fmt(A0*k*k,2);$('[data-r="a2"]',host).textContent='× '+fmt(k*k,2);
+  }
+  const map=()=>{
+    const E=+$('[data-m="E"]',host).value,cm=num($('[data-m="cm"]',host).value);
+    $('[data-r="map"]',host).innerHTML=isNaN(cm)?'Escriu una distància.':fmt(cm,2)+' cm · '+E+' = '+fmt(cm*E,0)+' cm = <b>'+fmt(cm*E/100,1)+' m</b> = <b>'+fmt(cm*E/100000,3)+' km</b>';
+  };
+  $('[data-m="E"]',host).onchange=map;$('[data-m="cm"]',host).oninput=map;
+  draw();map();
+}
+
+function talPractica(host){
+  practice(host,[
+    {name:'Tales en un triangle (segments)',make(){
+      const AD=rnd(2,8),DB=rnd(2,8),AE=rnd(2,9),EC=AE*DB/AD;
+      return {text:'En el triangle ABC, la recta DE és paral·lela a BC. Calcula EC. (2 decimals si cal)',
+        fig:figTales([AD,DB,AE,'?','','']),fields:[{label:'EC =',ans:EC}],
+        sol:'AD / DB = AE / EC<br>'+AD+' / '+DB+' = '+AE+' / EC<br>EC = '+AE+' · '+DB+' / '+AD+' = <b>'+fmt(EC,2)+'</b>'};}},
+    {name:'Tales en un triangle (costat paral·lel)',make(){
+      const AD=rnd(2,6),DB=rnd(2,6),BC=rnd(6,16),DE=BC*AD/(AD+DB);
+      return {text:'DE és paral·lela a BC. Calcula DE. (2 decimals si cal)',
+        fig:figTales([AD,DB,'','','?',BC]),fields:[{label:'DE =',ans:DE}],
+        sol:'AB = '+AD+' + '+DB+' = '+(AD+DB)+'<br>DE / BC = AD / AB<br>DE / '+BC+' = '+AD+' / '+(AD+DB)+'<br>DE = '+BC+' · '+AD+' / '+(AD+DB)+' = <b>'+fmt(DE,2)+'</b>'};}},
+    {name:'Paral·leles i secants',make(){
+      const a=rnd(2,7),b=rnd(2,7),ap=rnd(2,8),bp=ap*b/a;
+      return {text:'Tres rectes paral·leles tallen dues secants. Calcula b\'. (2 decimals si cal)',
+        fig:figSecants(a,b,ap,'?'),fields:[{label:'b\' =',ans:bp}],
+        sol:'a / b = a\' / b\'<br>'+a+' / '+b+' = '+ap+' / b\'<br>b\' = '+ap+' · '+b+' / '+a+' = <b>'+fmt(bp,2)+'</b>'};}},
+    {name:'Alçada amb l\'ombra',make(){
+      const hp=pick([1.5,1.6,1.7,1.8]),sp=pick([0.8,1,1.2,1.5,2]),S=rnd(6,40),H=hp*S/sp;
+      return {text:'Una persona de '+fmt(hp,1)+' m fa una ombra de '+fmt(sp,1)+' m. En el mateix moment, un arbre fa una ombra de '+S+' m. Quina alçada té l\'arbre? (2 decimals si cal)',
+        fields:[{label:'H =',unit:'m',ans:H}],
+        sol:'Triangles semblants: H / '+S+' = '+fmt(hp,1)+' / '+fmt(sp,1)+'<br>H = '+fmt(hp,1)+' · '+S+' / '+fmt(sp,1)+' = <b>'+fmt(H,2)+' m</b>'};}},
+    {name:'Escales de mapes',make(){
+      const E=pick([1000,5000,25000,50000,100000]);
+      if(Math.random()<.5){
+        const cm=pick([2,3,4,5,6,7.5,8,12]);
+        return {text:'En un mapa a escala 1 : '+E.toLocaleString('ca-ES')+', dues ciutats són a '+fmt(cm,1)+' cm. Quina és la distància real en <b>metres</b>?',fields:[{label:'d =',unit:'m',ans:cm*E/100}],
+          sol:fmt(cm,1)+' cm · '+E+' = '+fmt(cm*E,0)+' cm = <b>'+fmt(cm*E/100,0)+' m</b>'};
+      }
+      const km=pick([1,2,3,5,10]),cm=km*100000/E;
+      return {text:'Un camí real de '+km+' km, quants <b>centímetres</b> ocupa en un mapa a escala 1 : '+E.toLocaleString('ca-ES')+'?',fields:[{label:'d =',unit:'cm',ans:cm}],
+        sol:km+' km = '+(km*100000)+' cm<br>'+(km*100000)+' / '+E+' = <b>'+fmt(cm,2)+' cm</b>'};}},
+    {name:'Raó de semblança, perímetre i àrea',make(){
+      const k=pick([2,3,4,0.5]);
+      if(Math.random()<.5){const A=pick([6,8,10,12,15]);
+        return {text:'Dues figures són semblants amb raó de semblança k = '+fmt(k,1)+'. La figura petita té una àrea de '+A+' cm². Quina àrea té l\'altra figura?',fields:[{label:'Àrea =',unit:'cm²',ans:A*k*k}],
+          sol:'Les àrees es multipliquen per k² = '+fmt(k,1)+'² = '+fmt(k*k,2)+'<br>'+A+' · '+fmt(k*k,2)+' = <b>'+fmt(A*k*k,2)+' cm²</b>'};}
+      const p=pick([8,10,12,15,20]);
+      return {text:'Dues figures són semblants amb raó de semblança k = '+fmt(k,1)+'. La primera té un perímetre de '+p+' cm. Quin perímetre té la segona?',fields:[{label:'Perímetre =',unit:'cm',ans:p*k}],
+        sol:'Els perímetres es multipliquen per k = '+fmt(k,1)+'<br>'+p+' · '+fmt(k,1)+' = <b>'+fmt(p*k,2)+' cm</b>'};}}
+  ],'<b>Practica.</b> Recorda: costats corresponents de figures semblants són proporcionals.');
+}
+addTab({id:'tal',title:'Tales',subs:[
+  {id:'exp',title:'Triangles semblants',build:talExplora},
+  {id:'sec',title:'Paral·leles i secants',build:talSecants},
+  {id:'alc',title:'Mesurar alçades',build:talAlcades},
+  {id:'esc',title:'Escales i semblança',build:talEscala},
+  {id:'pra',title:'Practica',build:talPractica}]});
+
+/* ====================================================================
+   TRIGONOMETRIA
+   ==================================================================== */
+const sinD=d=>Math.sin(rad(d)),cosD=d=>Math.cos(rad(d)),tanD=d=>Math.tan(rad(d));
+const C_OPP='#d9435a',C_ADJ='#2f7fd0',C_HYP='#7b4bb7';
+
+function trigRaons(host){
+  const st={al:38,h:7,ref:'a'};
+  const P=view(host,
+    '<b>Raons trigonomètriques.</b> En un triangle rectangle, el quocient entre dos costats només depèn de l\'angle, no de la mida del triangle: <span class="fml"><b>sin α = oposat / hipotenusa &nbsp; cos α = adjacent / hipotenusa &nbsp; tan α = oposat / adjacent</b></span>.',
+    `<div class="row"><span>Angle de referència:</span><span class="seg" data-seg="ref"></span></div>
+     ${slider('al','Angle α',5,85,0.5,38)}${slider('h','Hipotenusa (mida del triangle)',2,8,0.1,7)}
+     <div class="row"><span>Angles coneguts:</span>${[30,45,60].map(x=>'<button class="btn" data-q="'+x+'">'+x+'°</button>').join('')}</div>
+     <hr><div class="eq" data-r="eq"></div>
+     <p class="note">Mou l'angle i després només la mida: les tres raons <b>no canvien</b>.</p>`);
+  const B=new Board(P.stage,{x0:-.5,x1:11.5,y0:-.5,y1:9.5});
+  const A0=[1,1];
+  const hB=B.handle(5,5,C_HYP,p=>{
+    const dx=p.x-A0[0],dy=p.y-A0[1];
+    st.h=clamp(Math.hypot(dx,dy),2,8);st.al=clamp(deg(Math.atan2(dy,dx)),5,85);draw();});
+  segment(host,'ref',[['a','Angle α (a A)'],['b','Angle β (a B)']],'a',v=>{st.ref=v;draw();});
+  bindRange(host,'al',v=>{st.al=v;draw();});bindRange(host,'h',v=>{st.h=v;draw();});
+  $$('[data-q]',host).forEach(b=>b.onclick=()=>{st.al=+b.dataset.q;draw();});
+  function draw(){
+    const {al,h,ref}=st,a=rad(al);
+    const Ax=A0[0],Ay=A0[1],Bx=Ax+h*Math.cos(a),By=Ay+h*Math.sin(a),Cx=Bx,Cy=Ay;
+    const v=h*Math.sin(a),w=h*Math.cos(a); // BC vertical, AC horitzontal
+    const opp=ref==='a'?v:w,adj=ref==='a'?w:v,th=ref==='a'?al:90-al,L=ref==='a'?'α':'β';
+    B.clear();B.grid(1,{stroke:'#efece3'});
+    B.poly([[Ax,Ay],[Cx,Cy],[Bx,By]],{fill:'#f3ecfb',stroke:'none'});
+    B.line(Ax,Ay,Bx,By,{stroke:C_HYP,'stroke-width':5});
+    B.line(Cx,Cy,Bx,By,{stroke:ref==='a'?C_OPP:C_ADJ,'stroke-width':5});
+    B.line(Ax,Ay,Cx,Cy,{stroke:ref==='a'?C_ADJ:C_OPP,'stroke-width':5});
+    const m=Math.min(.5,v/3,w/3);
+    B.pline([[Cx-m,Cy],[Cx-m,Cy+m],[Cx,Cy+m]],{'stroke-width':2});
+    if(ref==='a')B.arc(Ax,Ay,1.1,0,a,{stroke:'#ee8a22','stroke-width':3.5});
+    else B.arc(Bx,By,1.1,Math.PI+a,1.5*Math.PI,{stroke:'#ee8a22','stroke-width':3.5});
+    const lab=(x,y,s,col,an)=>B.text(x,y,s,{fill:col,'font-size':18,class:'m','text-anchor':an||'middle'});
+    lab((Ax+Bx)/2-.2,(Ay+By)/2+.55,'hipotenusa = '+fmt(h,2),'#5a3590','end');
+    lab(Cx+.2,(Cy+By)/2,(ref==='a'?'oposat = ':'adjacent = ')+fmt(v,2),ref==='a'?'#a82339':'#1c5ea8','start');
+    lab((Ax+Cx)/2,Ay-.65,(ref==='a'?'adjacent = ':'oposat = ')+fmt(w,2),ref==='a'?'#1c5ea8':'#a82339');
+    lab(Ax-.4,Ay-.4,'A','#1f2933','end');lab(Bx+.15,By+.5,'B','#1f2933','start');lab(Cx+.4,Cy-.6,'C','#1f2933','start');
+    if(ref==='a')lab(Ax+1.5,Ay+.35,'α = '+fmt(al,1)+'°','#b35f00','start');
+    else lab(Bx-.2,By-1.45,'β = '+fmt(90-al,1)+'°','#b35f00','end');
+    hB.set(Bx,By);
+    setRange(host,'al',al,fmt(al,1)+'°');setRange(host,'h',h,fmt(h,2));
+    const s=opp/h,c=adj/h,t=opp/adj;
+    $('[data-r="eq"]',host).innerHTML=
+      (ref==='b'?'<span class="note">β = 90° − '+fmt(al,1)+'° = '+fmt(th,1)+'°</span><br>':'')+
+      '<span class="cc">oposat</span> = costat davant de '+L+', <span class="ca">adjacent</span> = costat al costat de '+L+'<br><span class="res">'+
+      'sin '+L+' = <span class="cc">'+fmt(opp,2)+'</span> / <span class="cp">'+fmt(h,2)+'</span> = <b>'+fmt(s,3)+'</b><br>'+
+      'cos '+L+' = <span class="ca">'+fmt(adj,2)+'</span> / <span class="cp">'+fmt(h,2)+'</span> = <b>'+fmt(c,3)+'</b><br>'+
+      'tan '+L+' = <span class="cc">'+fmt(opp,2)+'</span> / <span class="ca">'+fmt(adj,2)+'</span> = <b>'+fmt(t,3)+'</b><br>'+
+      '<span class="note">Calculadora: sin '+fmt(th,1)+'° = '+fmt(sinD(th),3)+', cos '+fmt(th,1)+'° = '+fmt(cosD(th),3)+', tan '+fmt(th,1)+'° = '+fmt(tanD(th),3)+'</span></span>';
+  }
+  draw();
+}
+
+/* ---- valors exactes i radians ---- */
+const EX={0:['0','1','0'],30:['1/2','√3/2','√3/3'],45:['√2/2','√2/2','1'],60:['√3/2','1/2','√3'],90:['1','0',null]};
+function exactVals(d){
+  d=((d%360)+360)%360;
+  const ref=d<=90?d:d<=180?180-d:d<=270?d-180:360-d;
+  if(!(ref in EX))return null;
+  const sg=x=>Math.abs(x)<1e-9?0:Math.sign(x);
+  const s=sg(sinD(d)),c=sg(cosD(d));
+  const sign=v=>v==null?'no existeix':(v==='0'?'0':(v.startsWith('-')?v:v));
+  const mk=(base,sig)=>base==null?'no existeix':(base==='0'?'0':(sig<0?'−':'')+base);
+  const b=EX[ref];
+  return [mk(b[0],s),mk(b[1],c),b[2]==null?'no existeix':mk(b[2],s*c||1)];
+}
+function fracPi(d){
+  d=Math.round(d);const g=gcd(d,180);if(d===0)return '0';
+  const p=d/g,q=180/g;
+  return (p===1?'π':p+'π')+(q===1?'':'/'+q);
+}
+
+function trigCercle(host){
+  const st={d:40,snap:false,s:true,c:true,t:true};
+  const P=view(host,
+    '<b>Cercle goniomètric.</b> És el cercle de radi 1. Si el punt <b>P</b> gira un angle <b>θ</b>, les seves coordenades són <span class="fml"><b>P = (cos θ, sin θ)</b></span>, i la <b>tangent</b> és el tros de la recta x = 1 que talla el radi prolongat.',
+    `<div class="eq" data-r="eq"></div><div data-r="ex" class="res" style="margin:.3rem 0"></div><hr>
+     ${slider('d','Angle θ',0,360,1,40)}
+     <label class="chk"><input type="checkbox" data-c="snap"> Salta de 15° en 15°</label>
+     <div class="row"><label class="chk"><input type="checkbox" data-c="s" checked><b class="cc">sin</b></label><label class="chk"><input type="checkbox" data-c="c" checked><b class="ca">cos</b></label><label class="chk"><input type="checkbox" data-c="t" checked><b class="cb">tan</b></label></div>
+     <div class="chips" data-r="nots"></div>`);
+  const B=new Board(P.stage,{W:680,x0:-1.6,x1:2.6,y0:-2.1,y1:2.1});
+  const h=B.handle(1,0,'#ee8a22',p=>{
+    let d=deg(Math.atan2(p.y,p.x));if(d<0)d+=360;
+    st.d=st.snap?Math.round(d/15)*15%360:Math.round(d);draw();});
+  bindRange(host,'d',v=>{st.d=st.snap?Math.round(v/15)*15:v;draw();});
+  ['snap','s','c','t'].forEach(k=>$('[data-c="'+k+'"]',host).onchange=e=>{st[k]=e.target.checked;if(k==='snap'&&st.snap)st.d=Math.round(st.d/15)*15%360;draw();});
+  const nots=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+  $('[data-r="nots"]',host).innerHTML=nots.map(x=>'<button class="btn" data-n="'+x+'">'+x+'°</button>').join('');
+  $('[data-r="nots"]',host).onclick=e=>{const b=e.target.closest('button');if(b){st.d=+b.dataset.n;draw();}};
+  function draw(){
+    const d=st.d,a=rad(d),c=Math.cos(a),s=Math.sin(a),t=Math.tan(a),tOk=Math.abs(c)>1e-6;
+    B.clear();B.grid(.5,{stroke:'#f0ede4'});
+    B.line(-1.6,0,2.6,0,{stroke:'#9aa3aa','stroke-width':1.6});B.line(0,-2.1,0,2.1,{stroke:'#9aa3aa','stroke-width':1.6});
+    B.line(1,-2.1,1,2.1,{stroke:'#bfe3c8','stroke-width':3});
+    B.circ(0,0,1,{stroke:'#1f2933','stroke-width':2.5,fill:'rgba(255,255,255,.4)'});
+    [[1,0,'1',14,22],[-1,0,'−1',-14,22],[0,1,'1',-14,-4],[0,-1,'−1',-18,18]].forEach(q=>B.text(q[0],q[1],q[2],{'font-size':14,dx:q[3],dy:q[4],fill:'#5b6770'}));
+    [['I',.62,.62],['II',-.62,.62],['III',-.62,-.62],['IV',.62,-.62]].forEach(q=>B.text(q[1],q[2]-.08,q[0],{'font-size':22,fill:'#c8c2b0'}));
+    // sector
+    const pts=[[0,0]];for(let i=0;i<=40;i++){const x=a*i/40;pts.push([.28*Math.cos(x),.28*Math.sin(x)]);}
+    B.poly(pts,{fill:'rgba(238,138,34,.3)',stroke:'#ee8a22','stroke-width':2});
+    // tangent
+    if(st.t&&tOk){
+      const ty=clamp(t,-2.05,2.05),xe=Math.abs(t)>2.05?2.05/Math.abs(t):1;
+      B.line(0,0,xe,ty,{stroke:'#2fa84f','stroke-dasharray':'6 5','stroke-width':2});
+      B.line(1,0,1,ty,{stroke:'#2fa84f','stroke-width':7});
+      B.text(1.12,ty/2,Math.abs(t)>2.05?'tan θ = '+fmt(t,2)+' (continua)':'tan θ',{'font-size':17,class:'m','text-anchor':'start',fill:'#17612e'});
+    }
+    if(st.c){B.line(0,0,c,0,{stroke:'#2f7fd0','stroke-width':7});B.text(c/2,s>=0?-.18:.28,'cos θ',{'font-size':17,class:'m',fill:'#1c5ea8'});}
+    if(st.s){B.line(c,0,c,s,{stroke:'#d9435a','stroke-width':7});B.text(c+(c>=0?.07:-.07),s/2,'sin θ',{'font-size':17,class:'m','text-anchor':c>=0?'start':'end',fill:'#a82339'});}
+    B.line(0,0,c,s,{stroke:'#1f2933','stroke-width':3});
+    B.dot(c,s,5,{fill:'#1f2933'});
+    h.set(c,s);
+    setRange(host,'d',d,d+'°');
+    const q=d<90?'I':d<180?'II':d<270?'III':'IV',qq=(d%90===0)?'(sobre un eix)':'quadrant '+q;
+    const sg=x=>Math.abs(x)<1e-9?'0':(x>0?'+':'−');
+    $('[data-r="eq"]',host).innerHTML=
+      'θ = <b>'+d+'°</b> = <b>'+fracPi(d)+'</b> rad'+(d%15?' ≈ '+fmt(a,3)+' rad':'')+' &nbsp; <span class="note">'+qq+'</span><br>'+
+      '<span class="res"><span class="cc">sin θ = '+fmt(s,3)+'</span> ('+sg(s)+')<br><span class="ca">cos θ = '+fmt(c,3)+'</span> ('+sg(c)+')<br>'+
+      '<span class="cb">tan θ = '+(tOk?fmt(t,3):'no existeix')+'</span> ('+(tOk?sg(t):'—')+')</span>';
+    const ex=exactVals(d);
+    $('[data-r="ex"]',host).innerHTML=ex?'<span class="pill in">Valors exactes: sin = '+ex[0]+' · cos = '+ex[1]+' · tan = '+ex[2]+'</span>':'';
+  }
+  draw();
+}
+
+function trigFonamental(host){
+  const st={d:40};
+  const P=view(host,
+    '<b>Regla fonamental.</b> En el cercle de radi 1 el triangle té hipotenusa 1 i catets |cos θ| i |sin θ|. Per Pitàgores: <span class="fml"><b>sin² θ + cos² θ = 1</b></span>. A més, <span class="fml"><b>tan θ = sin θ / cos θ</b></span>.',
+    `<div class="eq" data-r="eq"></div>
+     <div data-r="bar" class="res" style="margin:.5rem 0"></div>
+     ${slider('d','Angle θ',0,360,1,40)}`);
+  const B=new Board(P.stage,{W:700,x0:-2.4,x1:2.4,y0:-2.4,y1:2.4});
+  const h=B.handle(1,0,'#ee8a22',p=>{let d=deg(Math.atan2(p.y,p.x));if(d<0)d+=360;st.d=Math.round(d);draw();});
+  bindRange(host,'d',v=>{st.d=v;draw();});
+  function draw(){
+    const d=st.d,a=rad(d),c=Math.cos(a),s=Math.sin(a);
+    B.clear();B.grid(.5,{stroke:'#f0ede4'});
+    B.line(-2.4,0,2.4,0,{stroke:'#9aa3aa','stroke-width':1.5});B.line(0,-2.4,0,2.4,{stroke:'#9aa3aa','stroke-width':1.5});
+    B.circ(0,0,1,{'stroke-width':2.5,stroke:'#1f2933'});
+    const O=[0,0],Cx=[c,0],Pp=[c,s],cen=[c*2/3,s/3];
+    const outward=(p,q)=>{ // quadrat sobre p-q, cap a fora del triangle
+      const dx=q[0]-p[0],dy=q[1]-p[1];let n=[-dy,dx];
+      const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;
+      if(n[0]*(cen[0]-mx)+n[1]*(cen[1]-my)>0)n=[-n[0],-n[1]];
+      return [p,q,[q[0]+n[0],q[1]+n[1]],[p[0]+n[0],p[1]+n[1]]];
+    };
+    const cx=(a1)=>[a1.reduce((x,p)=>x+p[0],0)/4,a1.reduce((x,p)=>x+p[1],0)/4];
+    if(Math.abs(c)>.003){const q=outward(O,Cx);B.poly(q,{fill:'rgba(47,127,208,.3)',stroke:'#2f7fd0'});const m=cx(q);B.text(m[0],m[1]-.05,'cos² = '+fmt(c*c,3),{class:'m res','font-size':Math.abs(c)>.4?16:12,fill:'#1c5ea8'});}
+    if(Math.abs(s)>.003){const q=outward(Cx,Pp);B.poly(q,{fill:'rgba(217,67,90,.3)',stroke:'#d9435a'});const m=cx(q);B.text(m[0],m[1]-.05,'sin² = '+fmt(s*s,3),{class:'m res','font-size':Math.abs(s)>.4?16:12,fill:'#a82339'});}
+    const qh=outward(O,Pp);B.poly(qh,{fill:'rgba(123,75,183,.22)',stroke:'#7b4bb7'});const mh=cx(qh);B.text(mh[0],mh[1]-.05,'1² = 1',{class:'m','font-size':18,fill:'#5a3590'});
+    B.poly([O,Cx,Pp],{fill:'rgba(255,255,255,.7)',stroke:'#1f2933','stroke-width':3});
+    B.dot(c,s,5,{fill:'#1f2933'});
+    h.set(c,s);
+    setRange(host,'d',d,d+'°');
+    $('[data-r="eq"]',host).innerHTML='sin² θ + cos² θ = 1<br><span class="res">('+fmt(s,3)+')² + ('+fmt(c,3)+')² = '+fmt(s*s,3)+' + '+fmt(c*c,3)+' = <b>'+fmt(s*s+c*c,3)+'</b></span>';
+    $('[data-r="bar"]',host).innerHTML='<div style="display:flex;height:2rem;border:2px solid var(--ink);border-radius:.5rem;overflow:hidden"><div style="width:'+(c*c*100)+'%;background:#9ec6ee"></div><div style="width:'+(s*s*100)+'%;background:#f0a0ac"></div></div><div class="note" style="display:flex;justify-content:space-between"><span class="ca">cos² θ = '+fmt(c*c,3)+'</span><span class="cc">sin² θ = '+fmt(s*s,3)+'</span></div>';
+  }
+  draw();
+  host.insertAdjacentHTML('beforeend',`<div class="panel" style="margin-top:1rem"><h3>Troba les altres raons</h3>
+    <p class="note">Si en coneixes una i saps en quin quadrant és l'angle, les altres surten de la regla fonamental.</p>
+    <div class="row"><label>Coneixem: <select class="sel" data-t="k"><option value="sin">sin θ</option><option value="cos">cos θ</option><option value="tan">tan θ</option></select></label>
+    <label>valor: <input class="num" data-t="v" value="0,6"></label>
+    <label>quadrant: <select class="sel" data-t="q"><option value="1">1r</option><option value="2">2n</option><option value="3">3r</option><option value="4">4t</option></select></label></div>
+    <div data-r="out"></div></div>`);
+  function solve(){
+    const k=$('[data-t="k"]',host).value,v=num($('[data-t="v"]',host).value),q=+$('[data-t="q"]',host).value,out=$('[data-r="out"]',host);
+    const ss=(q===1||q===2)?1:-1,cs=(q===1||q===4)?1:-1,qn=['1r','2n','3r','4t'][q-1];
+    if(isNaN(v)){out.innerHTML='<span class="pill no">Escriu un valor.</span>';return;}
+    let sI,cI,steps='';
+    if(k==='sin'||k==='cos'){
+      if(Math.abs(v)>1){out.innerHTML='<span class="pill no">El sinus i el cosinus estan entre −1 i 1.</span>';return;}
+      const sign=k==='sin'?ss:cs;
+      if(v!==0&&Math.sign(v)!==sign){out.innerHTML='<span class="pill no">Al '+qn+' quadrant el '+k+' és '+(sign>0?'positiu':'negatiu')+'.</span>';return;}
+      const o=Math.sqrt(1-v*v),osign=k==='sin'?cs:ss,oname=k==='sin'?'cos':'sin',ov=osign*o;
+      steps='<li>'+(k==='sin'?'sin² θ + cos² θ = 1 → cos² θ = 1 − sin² θ':'sin² θ + cos² θ = 1 → sin² θ = 1 − cos² θ')+'</li>'+
+        '<li class="res">'+oname+'² θ = 1 − ('+fmt(v,3)+')² = '+fmt(1-v*v,4)+'</li>'+
+        '<li class="res">'+oname+' θ = '+(osign<0?'−':'+')+'√'+fmt(1-v*v,4)+' = <b>'+fmt(ov,4)+'</b> (al '+qn+' quadrant és '+(osign>0?'positiu':'negatiu')+')</li>';
+      sI=k==='sin'?v:ov;cI=k==='sin'?ov:v;
+    }else{
+      if((v>0?1:-1)!==ss*cs&&v!==0){out.innerHTML='<span class="pill no">Al '+qn+' quadrant la tangent és '+(ss*cs>0?'positiva':'negativa')+'.</span>';return;}
+      const cc=cs/Math.sqrt(1+v*v);
+      steps='<li>1 + tan² θ = 1 / cos² θ</li><li class="res">cos² θ = 1 / (1 + ('+fmt(v,3)+')²) = '+fmt(1/(1+v*v),4)+'</li><li class="res">cos θ = '+(cs<0?'−':'+')+'√'+fmt(1/(1+v*v),4)+' = <b>'+fmt(cc,4)+'</b></li><li class="res">sin θ = tan θ · cos θ = '+fmt(v,3)+' · '+fmt(cc,4)+' = <b>'+fmt(v*cc,4)+'</b></li>';
+      cI=cc;sI=v*cc;
+    }
+    const tv=Math.abs(cI)<1e-9?null:sI/cI;
+    out.innerHTML='<ol class="steps">'+steps+'</ol><div class="res">Resultat: sin θ = <b>'+fmt(sI,4)+'</b> · cos θ = <b>'+fmt(cI,4)+'</b> · tan θ = <b>'+(tv==null?'no existeix':fmt(tv,4))+'</b> &nbsp; (θ ≈ '+fmt(((deg(Math.atan2(sI,cI))+360)%360),1)+'°)</div>';
+  }
+  $$('[data-t]',host).forEach(i=>{i.oninput=solve;i.onchange=solve;});
+  solve();
+}
+
+function trigGrafiques(host){
+  const st={d:50,fn:'sin',play:false};
+  const P=view(host,
+    '<b>Gràfiques de sinus i cosinus.</b> Mentre el punt gira pel cercle, l\'alçada del punt (sinus) i el seu desplaçament horitzontal (cosinus) dibuixen una <b>ona</b> amb període 2π. <span class="fml">−1 ≤ sin θ ≤ 1 &nbsp; −1 ≤ cos θ ≤ 1</span>',
+    `<div class="eq" data-r="eq"></div><hr>
+     <div class="row"><span>Mostra:</span><span class="seg" data-seg="fn"></span></div>
+     ${slider('d','Angle θ',0,360,1,50)}
+     <div class="row"><button class="primary" data-r="play">▶ Gira</button></div>
+     <p class="note">Arrossega el punt del cercle. La ona es va dibuixant.</p>`);
+  const B=new Board(P.stage,{W:900,x0:-3.6,x1:7.2,y0:-1.7,y1:1.7});
+  const cx0=-2.2;
+  const h=B.handle(cx0+1,0,'#ee8a22',p=>{let d=deg(Math.atan2(p.y,p.x-cx0));if(d<0)d+=360;st.d=Math.round(d);stopP();draw();});
+  segment(host,'fn',[['sin','sin'],['cos','cos'],['both','sin i cos']],'sin',v=>{st.fn=v;draw();});
+  bindRange(host,'d',v=>{st.d=v;stopP();draw();});
+  const curve=(f,upto,at)=>{const pts=[];for(let i=0;i<=upto*60;i++){const x=i/60;pts.push([x,f(x)]);}pts.push([upto,f(upto)]);B.pline(pts,at);};
+  function draw(){
+    const d=st.d,a=rad(d),c=Math.cos(a),s=Math.sin(a);
+    B.clear();B.grid(.5,{stroke:'#f0ede4'});
+    // cercle
+    B.line(cx0-1.4,0,cx0+1.4,0,{stroke:'#9aa3aa','stroke-width':1.5});B.line(cx0,-1.4,cx0,1.4,{stroke:'#9aa3aa','stroke-width':1.5});
+    B.circ(cx0,0,1,{stroke:'#1f2933'});
+    // eixos de la gràfica
+    B.line(-.4,0,6.9,0,{stroke:'#1f2933','stroke-width':1.8});B.line(0,-1.35,0,1.35,{stroke:'#1f2933','stroke-width':1.8});
+    for(let k=1;k<=4;k++){const x=k*Math.PI/2;B.line(x,-.06,x,.06,{stroke:'#1f2933','stroke-width':2});B.text(x,-.27,['π/2','π','3π/2','2π'][k-1],{'font-size':15,class:'m'});}
+    B.text(-.2,1,'1',{'font-size':14,'text-anchor':'end'});B.text(-.2,-1,'−1',{'font-size':14,'text-anchor':'end'});
+    B.line(-.08,1,6.6,1,{stroke:'#ddd','stroke-dasharray':'4 4'});B.line(-.08,-1,6.6,-1,{stroke:'#ddd','stroke-dasharray':'4 4'});
+    const fs=st.fn!=='cos',fc=st.fn!=='sin';
+    if(fs)curve(Math.sin,2*Math.PI,{stroke:'#f3b7c0','stroke-width':3});
+    if(fc)curve(Math.cos,2*Math.PI,{stroke:'#a9cdf0','stroke-width':3});
+    if(fs)curve(Math.sin,a,{stroke:'#d9435a','stroke-width':4.5});
+    if(fc)curve(Math.cos,a,{stroke:'#2f7fd0','stroke-width':4.5});
+    // segments al cercle
+    if(fc)B.line(cx0,0,cx0+c,0,{stroke:'#2f7fd0','stroke-width':6});
+    if(fs)B.line(cx0+c,0,cx0+c,s,{stroke:'#d9435a','stroke-width':6});
+    B.line(cx0,0,cx0+c,s,{stroke:'#1f2933','stroke-width':3});
+    B.arc(cx0,0,.3,0,Math.max(a,.001),{stroke:'#ee8a22','stroke-width':3});
+    if(fs){B.line(cx0+c,s,a,s,{stroke:'#d9435a','stroke-dasharray':'5 4','stroke-width':1.8});B.line(a,0,a,s,{stroke:'#d9435a','stroke-width':3});B.dot(a,s,6,{fill:'#d9435a'});}
+    if(fc){B.line(a,0,a,c,{stroke:'#2f7fd0','stroke-width':3});B.dot(a,c,6,{fill:'#2f7fd0'});}
+    h.set(cx0+c,s);
+    setRange(host,'d',d,d+'°');
+    $('[data-r="eq"]',host).innerHTML='θ = <b>'+d+'°</b> = <b>'+fracPi(d)+'</b> rad ≈ '+fmt(a,2)+'<br><span class="res"><span class="cc">sin θ = '+fmt(s,3)+'</span><br><span class="ca">cos θ = '+fmt(c,3)+'</span></span>';
+  }
+  let raf=0;const btn=$('[data-r="play"]',host);
+  function stopP(){if(raf){cancelAnimationFrame(raf);raf=0;}btn.textContent='▶ Gira';}
+  btn.onclick=()=>{
+    if(raf){stopP();return;}
+    btn.textContent='⏸ Atura';let last=performance.now();
+    const step=now=>{st.d+=(now-last)*0.045;last=now;if(st.d>=360)st.d-=360;draw_(st.d);raf=requestAnimationFrame(step);};
+    raf=requestAnimationFrame(step);
+  };
+  function draw_(x){st.d=Math.round(x*10)/10;draw();}
+  draw();
+}
+
+function trigResol(host){
+  const P=view(host,
+    '<b>Resolució de triangles rectangles.</b> Resoldre és trobar tots els costats i angles. Amb <b>dues dades</b> (una almenys és un costat) i les raons sin, cos i tan, s\'hi arriba sempre. Convenció: <b>a</b> és el catet oposat a α, <b>b</b> l\'adjacent i <b>c</b> la hipotenusa.',
+    `<h3>Escriu dues dades i prem Resol</h3>
+     <div class="row"><label class="m">a = <input class="num" data-f="a"></label><label class="m">b = <input class="num" data-f="b"></label><label class="m">c = <input class="num" data-f="c"></label><label class="m">α = <input class="num" data-f="A"> °</label></div>
+     <div class="row"><button class="primary" data-r="go">Resol</button><button class="btn" data-r="clr">Esborra</button></div>
+     <div data-r="out"></div>`);
+  const B=new Board(P.stage,{W:760,x0:-1,x1:11,y0:-1.5,y1:7});
+  $('[data-f="c"]',host).value='10';$('[data-f="A"]',host).value='35';
+  function solve(){
+    const f=k=>{const v=num($('[data-f="'+k+'"]',host).value);return isNaN(v)?null:v;};
+    const v={a:f('a'),b:f('b'),c:f('c'),A:f('A')},given=Object.keys(v).filter(k=>v[k]!=null);
+    const out=$('[data-r="out"]',host);
+    if(given.length!==2){out.innerHTML='<span class="pill no">Escriu exactament dues dades (fixa\'t que n\'has escrit '+given.length+').</span>';return null;}
+    if(given.some(k=>!(v[k]>0))){out.innerHTML='<span class="pill no">Les dades han de ser positives.</span>';return null;}
+    if(v.A!=null&&v.A>=90){out.innerHTML='<span class="pill no">α ha de ser menor de 90°.</span>';return null;}
+    let {a,b,c,A}=v,st=[];const key=given.sort().join('');
+    const N=x=>fmt(x,2);
+    if(key==='ab'){c=Math.hypot(a,b);A=deg(Math.atan(a/b));st.push('c = √(a² + b²) = √('+N(a)+'² + '+N(b)+'²) = '+N(c),'tan α = a / b = '+N(a)+' / '+N(b)+' = '+fmt(a/b,4)+' → α = arctan('+fmt(a/b,4)+') = '+fmt(A,2)+'°');}
+    else if(key==='ac'){if(a>=c){out.innerHTML='<span class="pill no">La hipotenusa ha de ser més llarga que el catet.</span>';return null;}b=Math.sqrt(c*c-a*a);A=deg(Math.asin(a/c));st.push('b = √(c² − a²) = √('+N(c)+'² − '+N(a)+'²) = '+N(b),'sin α = a / c = '+fmt(a/c,4)+' → α = arcsin('+fmt(a/c,4)+') = '+fmt(A,2)+'°');}
+    else if(key==='bc'){if(b>=c){out.innerHTML='<span class="pill no">La hipotenusa ha de ser més llarga que el catet.</span>';return null;}a=Math.sqrt(c*c-b*b);A=deg(Math.acos(b/c));st.push('a = √(c² − b²) = √('+N(c)+'² − '+N(b)+'²) = '+N(a),'cos α = b / c = '+fmt(b/c,4)+' → α = arccos('+fmt(b/c,4)+') = '+fmt(A,2)+'°');}
+    else if(key==='Aa'){b=a/tanD(A);c=a/sinD(A);st.push('tan α = a / b → b = a / tan α = '+N(a)+' / tan '+N(A)+'° = '+N(b),'sin α = a / c → c = a / sin α = '+N(a)+' / sin '+N(A)+'° = '+N(c));}
+    else if(key==='Ab'){a=b*tanD(A);c=b/cosD(A);st.push('tan α = a / b → a = b · tan α = '+N(b)+' · tan '+N(A)+'° = '+N(a),'cos α = b / c → c = b / cos α = '+N(b)+' / cos '+N(A)+'° = '+N(c));}
+    else{a=c*sinD(A);b=c*cosD(A);st.push('sin α = a / c → a = c · sin α = '+N(c)+' · sin '+N(A)+'° = '+N(a),'cos α = b / c → b = c · cos α = '+N(c)+' · cos '+N(A)+'° = '+N(b));}
+    const Bt=90-A;st.push('β = 90° − α = 90° − '+fmt(A,2)+'° = '+fmt(Bt,2)+'°');
+    out.innerHTML='<ol class="steps res">'+st.map(s=>'<li>'+s+'</li>').join('')+'</ol><div class="res"><span class="pill ok">a = '+N(a)+' · b = '+N(b)+' · c = '+N(c)+' · α = '+fmt(A,2)+'° · β = '+fmt(Bt,2)+'°</span></div>';
+    return {a,b,c,A};
+  }
+  function drawT(r){
+    B.clear();
+    if(!r){B.text(5,3,'Escriu dues dades i prem «Resol»',{'font-size':22,fill:'#9aa3aa'});return;}
+    const {a,b,c,A}=r,mg=.18*Math.max(a,b),w=b+2*mg,hh=a+2*mg;
+    let x0=-mg,x1=b+mg,y0=-mg,y1=a+mg;
+    if(w<hh*1.5){const ex=(hh*1.5-w)/2;x0-=ex;x1+=ex;}
+    if(hh<w*.5){const ey=(w*.5-hh)/2;y0-=ey;y1+=ey;}
+    B.fit(x0,x1,y0,y1);
+    const k=Math.max(b,a)/9,fs=18;
+    B.poly([[0,0],[b,0],[b,a]],{fill:'#f3ecfb',stroke:'none'});
+    B.line(0,0,b,a,{stroke:C_HYP,'stroke-width':5});B.line(b,0,b,a,{stroke:C_OPP,'stroke-width':5});B.line(0,0,b,0,{stroke:C_ADJ,'stroke-width':5});
+    const m=Math.min(b,a)*.1;B.pline([[b-m,0],[b-m,m],[b,m]],{'stroke-width':2});
+    B.arc(0,0,Math.min(a,b)*.25,0,rad(A),{stroke:'#ee8a22','stroke-width':3.5});
+    B.text(b/2,-mg*.75,'b = '+fmt(b,2),{class:'m','font-size':fs,fill:'#1c5ea8'});
+    B.text(b+mg*.2,a/2,'a = '+fmt(a,2),{class:'m','font-size':fs,fill:'#a82339','text-anchor':'start'});
+    B.text(b/2-mg*.4,a/2+mg*.7,'c = '+fmt(c,2),{class:'m','font-size':fs,fill:'#5a3590','text-anchor':'end'});
+    B.text(Math.min(a,b)*.3,Math.min(a,b)*.05+mg*.15,'α = '+fmt(A,1)+'°',{class:'m','font-size':fs,fill:'#b35f00','text-anchor':'start'});
+    B.text(b-mg*.15,a-mg*.9,'β = '+fmt(90-A,1)+'°',{class:'m','font-size':fs,fill:'#b35f00','text-anchor':'end'});
+  }
+  $('[data-r="go"]',host).onclick=()=>drawT(solve());
+  $('[data-r="clr"]',host).onclick=()=>{$$('[data-f]',host).forEach(i=>i.value='');$('[data-r="out"]',host).innerHTML='';drawT(null);};
+  $$('[data-f]',host).forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')drawT(solve());}));
+  drawT(solve());
+}
+
+function trigAplic(host){
+  host.innerHTML=`<div class="teo"><b>Aplicacions.</b> La trigonometria permet mesurar allò que no es pot mesurar directament: l'alçada d'una torre o el pendent d'una rampa.</div>
+  <div class="cards">
+   <div class="card"><h3>Angle d'elevació d'una torre</h3><div class="stage" data-r="st1"></div>
+     ${slider('d','Distància a la torre',5,30,1,20)}${slider('al','Angle d\'elevació',10,55,1,35)}
+     <div class="eq" data-r="e1"></div></div>
+   <div class="card"><h3>Pendent d'una rampa</h3><div class="stage" data-r="st2"></div>
+     ${slider('r','Angle de la rampa',1,25,0.5,6)}
+     <div class="eq" data-r="e2"></div></div>
+  </div>`;
+  const T=new Board($('[data-r="st1"]',host),{W:600,x0:-1,x1:25,y0:-1,y1:20}),R=new Board($('[data-r="st2"]',host),{W:600,x0:-1,x1:13,y0:-1.5,y1:6});
+  const s1={d:20,al:35},s2={r:6};
+  bindRange(host,'d',v=>{s1.d=v;d1();});bindRange(host,'al',v=>{s1.al=v;d1();});bindRange(host,'r',v=>{s2.r=v;d2();});
+  function d1(){
+    const {d,al}=s1,eye=1.6,h=d*tanD(al);
+    const x1=d*1.18,y1=Math.max(h+eye,d*.6)*1.15;
+    T.fit(-.12*d,x1,-.12*y1,y1);T.clear();
+    const u=y1/20;
+    T.poly([[-.12*d,-.12*y1],[x1,-.12*y1],[x1,0],[-.12*d,0]],{fill:'#d8cfae',stroke:'none'});
+    T.line(-.12*d,0,x1,0,{stroke:'#7a6a3a','stroke-width':3});
+    T.poly([[d,0],[d,h+eye],[d+d*.08,h+eye],[d+d*.08,0]],{fill:'#cfd8e0',stroke:'#4b5c6b'});
+    T.line(0,eye,d,eye,{stroke:'#1f2933','stroke-dasharray':'6 5','stroke-width':2});
+    T.line(0,eye,d,h+eye,{stroke:'#ee8a22','stroke-width':3.5});
+    T.line(0,0,0,eye,{stroke:'#2f7fd0','stroke-width':6});T.dot(0,eye,7,{fill:'#2f7fd0'});
+    T.arc(0,eye,d*.18,0,rad(al),{stroke:'#ee8a22','stroke-width':3});
+    T.text(d*.24,eye+d*.05,al+'°',{class:'m','font-size':17,fill:'#b35f00','text-anchor':'start'});
+    T.text(d/2,-.07*y1,'d = '+d+' m',{class:'m','font-size':16});
+    T.text(d-d*.03,eye+h/2,'h = ?',{class:'m','font-size':17,fill:'#a82339','text-anchor':'end'});
+    setRange(host,'d',d,d+' m');setRange(host,'al',al,al+'°');
+    $('[data-r="e1"]',host).innerHTML='tan '+al+'° = h / '+d+'<br><span class="res">h = '+d+' · tan '+al+'° = '+fmt(h,2)+' m<br>Alçada total = '+fmt(h,2)+' + '+fmt(eye,1)+' (ulls) = <b>'+fmt(h+eye,2)+' m</b></span>';
+  }
+  function d2(){
+    const r=s2.r,run=10,rise=run*tanD(r);
+    R.clear();
+    R.poly([[0,0],[run,0],[run,rise]],{fill:'rgba(238,138,34,.25)',stroke:'#ee8a22','stroke-width':3.5});
+    R.line(-1,0,13,0,{stroke:'#7a6a3a','stroke-width':3});
+    R.line(run,0,run,rise,{stroke:'#d9435a','stroke-width':5});
+    R.arc(0,0,2,0,rad(r),{stroke:'#1f2933','stroke-width':2.5});
+    R.text(2.5,.3,r+'°',{class:'m','font-size':17,'text-anchor':'start'});
+    R.text(5,-.6,'10 m horitzontals',{class:'m','font-size':16});
+    R.text(run+.3,rise/2+.1,fmt(rise,2)+' m',{class:'m res','font-size':17,'text-anchor':'start',fill:'#a82339'});
+    setRange(host,'r',r,r+'°');
+    $('[data-r="e2"]',host).innerHTML='pendent = alçada / distància horitzontal = tan α<br><span class="res">tan '+fmt(r,1)+'° = '+fmt(tanD(r),4)+' → <b>'+fmt(tanD(r)*100,1)+' %</b><br>Cada 100 m en horitzontal, puges '+fmt(tanD(r)*100,1)+' m.</span>';
+  }
+  d1();d2();
+}
+
+function trigPractica(host){
+  const TRI=[[3,4,5],[5,12,13],[8,15,17],[6,8,10],[7,24,25]];
+  const q4=['1r','2n','3r','4t'];
+  const exList=['1/2','√2/2','√3/2','√3/3','1','√3','0'];
+  practice(host,[
+    {name:'Raons d\'un triangle',make(){
+      const t=pick(TRI),[a,b,c]=Math.random()<.5?[t[0],t[1],t[2]]:[t[1],t[0],t[2]];
+      const w=pick(['sin','cos','tan']),ans=w==='sin'?a/c:w==='cos'?b/c:a/b;
+      return {text:'En aquest triangle rectangle, calcula <b>'+w+' α</b> (3 decimals).',fig:figRight('a = '+a,'b = '+b,'c = '+c,'α',''),fields:[{label:w+' α =',ans,tol:.004}],
+        sol:'α és a A: l\'oposat és a = '+a+', l\'adjacent és b = '+b+' i la hipotenusa c = '+c+'.<br>'+(w==='sin'?'sin α = a / c = '+a+' / '+c:w==='cos'?'cos α = b / c = '+b+' / '+c:'tan α = a / b = '+a+' / '+b)+' = <b>'+fmt(ans,3)+'</b>'};}},
+    {name:'Troba un costat',make(){
+      const al=rnd(20,70),t=rnd(0,2);
+      if(t===0){const c=rnd(6,20),a=c*sinD(al);
+        return {text:'Calcula el catet <b>a</b> (2 decimals).',fig:figRight('a = ?','','c = '+c+' cm','α = '+al+'°',''),fields:[{label:'a =',unit:'cm',ans:a}],
+          sol:'sin α = a / c → a = c · sin α = '+c+' · sin '+al+'° = <b>'+fmt(a,2)+' cm</b>'};}
+      if(t===1){const b=rnd(5,18),a=b*tanD(al);
+        return {text:'Calcula el catet <b>a</b> (2 decimals).',fig:figRight('a = ?','b = '+b+' cm','','α = '+al+'°',''),fields:[{label:'a =',unit:'cm',ans:a}],
+          sol:'tan α = a / b → a = b · tan α = '+b+' · tan '+al+'° = <b>'+fmt(a,2)+' cm</b>'};}
+      const a=rnd(4,15),c=a/sinD(al);
+      return {text:'Calcula la hipotenusa <b>c</b> (2 decimals).',fig:figRight('a = '+a+' cm','','c = ?','α = '+al+'°',''),fields:[{label:'c =',unit:'cm',ans:c}],
+        sol:'sin α = a / c → c = a / sin α = '+a+' / sin '+al+'° = <b>'+fmt(c,2)+' cm</b>'};}},
+    {name:'Troba un angle',make(){
+      const a=rnd(3,12),b=rnd(3,12),A=deg(Math.atan(a/b));
+      return {text:'Calcula l\'angle α (1 decimal). Recorda la tecla de la calculadora tan<sup>−1</sup>.',fig:figRight('a = '+a,'b = '+b,'','α = ?',''),fields:[{label:'α =',unit:'°',ans:A,tol:.15}],
+        sol:'tan α = a / b = '+a+' / '+b+' = '+fmt(a/b,4)+'<br>α = tan<sup>−1</sup>('+fmt(a/b,4)+') = <b>'+fmt(A,1)+'°</b>'};}},
+    {name:'Regla fonamental',make(){
+      const t=pick(TRI),q=rnd(1,4),ss=(q<=2)?1:-1,cs=(q===1||q===4)?1:-1;
+      const sv=ss*t[0]/t[2],cv=cs*t[1]/t[2];
+      if(Math.random()<.5)return {text:'Sabem que sin α = '+fmt(sv,3)+' i que α és del <b>'+q4[q-1]+' quadrant</b>. Calcula cos α (3 decimals).',fields:[{label:'cos α =',ans:cv,tol:.004}],
+        sol:'cos² α = 1 − sin² α = 1 − '+fmt(sv*sv,4)+' = '+fmt(1-sv*sv,4)+'<br>cos α = '+(cs<0?'−':'+')+'√'+fmt(1-sv*sv,4)+' = <b>'+fmt(cv,3)+'</b> (al '+q4[q-1]+' quadrant el cosinus és '+(cs>0?'positiu':'negatiu')+')'};
+      return {text:'Sabem que cos α = '+fmt(cv,3)+' i que α és del <b>'+q4[q-1]+' quadrant</b>. Calcula sin α (3 decimals).',fields:[{label:'sin α =',ans:sv,tol:.004}],
+        sol:'sin² α = 1 − cos² α = 1 − '+fmt(cv*cv,4)+' = '+fmt(1-cv*cv,4)+'<br>sin α = '+(ss<0?'−':'+')+'√'+fmt(1-cv*cv,4)+' = <b>'+fmt(sv,3)+'</b> (al '+q4[q-1]+' quadrant el sinus és '+(ss>0?'positiu':'negatiu')+')'};}},
+    {name:'Signes i quadrants',make(){
+      let d;do{d=rnd(95,355);}while(d%90===0);
+      const w=pick(['sin','cos','tan']),v=w==='sin'?sinD(d):w==='cos'?cosD(d):tanD(d);
+      const q=d<180?2:d<270?3:4;
+      return {text:'Quin és el signe de <b>'+w+' '+d+'°</b>? (L\'angle és al '+q4[q-1]+' quadrant.)',options:['Positiu','Negatiu'],correct:v>0?0:1,
+        sol:'Al '+q4[q-1]+' quadrant: sin '+(q<=2?'+':'−')+', cos '+((q===1||q===4)?'+':'−')+', tan '+((q===1||q===3)?'+':'−')+'.<br>Per tant '+w+' '+d+'° = '+fmt(v,3)+' és <b>'+(v>0?'positiu':'negatiu')+'</b>.'};}},
+    {name:'Graus i radians',make(){
+      const ds=[30,45,60,90,120,135,150,180,210,225,240,270,300,315,330],d=pick(ds);
+      const c=fracPi(d),opts=shuffle([c].concat(shuffle(ds.filter(x=>x!==d)).slice(0,3).map(fracPi)));
+      return {text:'Expressa <b>'+d+'°</b> en radians.',options:opts,correct:opts.indexOf(c),
+        sol:'180° = π rad → '+d+'° = '+d+' · π / 180 = <b>'+c+' rad</b>'};}},
+    {name:'Valors notables',make(){
+      const d=pick([30,45,60]),w=pick(['sin','cos','tan']),i=w==='sin'?0:w==='cos'?1:2,c=EX[d][i];
+      const opts=shuffle([c].concat(shuffle(exList.filter(x=>x!==c)).slice(0,3)));
+      return {text:'Quant val <b>'+w+' '+d+'°</b>?',options:opts,correct:opts.indexOf(c),sol:w+' '+d+'° = <b>'+c+'</b> (≈ '+fmt(w==='sin'?sinD(d):w==='cos'?cosD(d):tanD(d),3)+')'};}},
+    {name:'Angle d\'elevació',make(){
+      const d=rnd(10,60),al=rnd(20,60),h=d*tanD(al);
+      return {text:'Des d\'un punt situat a '+d+' m de la base d\'una torre, veiem el punt més alt amb un angle d\'elevació de '+al+'°. Quina alçada té la torre? (ignora l\'alçada dels ulls; 2 decimals)',
+        fig:figElev('d = '+d+' m','h = ?','α = '+al+'°'),fields:[{label:'h =',unit:'m',ans:h}],
+        sol:'tan α = h / d → h = d · tan α = '+d+' · tan '+al+'° = <b>'+fmt(h,2)+' m</b>'};}}
+  ],'<b>Practica.</b> Fes servir la calculadora en <b>graus</b> (DEG).');
+}
+addTab({id:'tri',title:'Trigonometria',subs:[
+  {id:'rao',title:'Raons',build:trigRaons},
+  {id:'cer',title:'Cercle goniomètric',build:trigCercle},
+  {id:'fon',title:'Regla fonamental',build:trigFonamental},
+  {id:'gra',title:'Gràfiques',build:trigGrafiques},
+  {id:'res',title:'Resoldre triangles',build:trigResol},
+  {id:'apl',title:'Aplicacions',build:trigAplic},
+  {id:'pra',title:'Practica',build:trigPractica}]});
+
+/* ====================================================================
+   TEOREMES DEL SINUS I DEL COSINUS (batxillerat)
+   ==================================================================== */
+function triData(V){
+  const d=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
+  const a=d(V.B,V.C),b=d(V.C,V.A),c=d(V.A,V.B);
+  const ang=(x,y,z)=>deg(Math.acos(clamp((y*y+z*z-x*x)/(2*y*z),-1,1)));
+  return {a,b,c,A:ang(a,b,c),B:ang(b,a,c),C:ang(c,a,b)};
+}
+function triBoard(host,V,redraw,big){
+  const B=new Board(host,big?{x0:-2,x1:18,y0:-3.5,y1:13.5}:{x0:0,x1:16,y0:0,y1:10});
+  const mk=(k,col)=>B.handle(V[k][0],V[k][1],col,p=>{V[k]=[clamp(p.x,.4,15.6),clamp(p.y,.4,9.6)];redraw();});
+  B.hs={A:mk('A','#1f2933'),B:mk('B','#1f2933'),C:mk('C','#1f2933')};
+  B.sync=()=>{['A','B','C'].forEach(k=>B.hs[k].set(V[k][0],V[k][1]));};
+  return B;
+}
+function drawAngles(B,V,T,hot){
+  const names=['A','B','C'],others={A:['B','C'],B:['C','A'],C:['A','B']};
+  names.forEach(n=>{
+    const p=V[n],q=V[others[n][0]],r=V[others[n][1]];
+    const t1=Math.atan2(q[1]-p[1],q[0]-p[0]),t2=Math.atan2(r[1]-p[1],r[0]-p[0]);
+    let dd=t2-t1;dd=Math.atan2(Math.sin(dd),Math.cos(dd));
+    const s=dd>0?t1:t2,e=s+Math.abs(dd),mid=s+Math.abs(dd)/2,isHot=hot===n;
+    B.arc(p[0],p[1],isHot?1.1:.8,s,e,{stroke:isHot?'#ee8a22':'#7b4bb7','stroke-width':isHot?4.5:3});
+    B.text(p[0]+1.75*Math.cos(mid),p[1]+1.75*Math.sin(mid)-.15,n+' = '+fmt(T[n],1)+'°',{class:'m','font-size':16,fill:isHot?'#b35f00':'#5a3590'});
+  });
+}
+function sideLabel(B,V,k,txt,col){
+  const [p,q]=k==='a'?[V.B,V.C]:k==='b'?[V.C,V.A]:[V.A,V.B];
+  const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],cen=[(V.A[0]+V.B[0]+V.C[0])/3,(V.A[1]+V.B[1]+V.C[1])/3];
+  let nx=m[0]-cen[0],ny=m[1]-cen[1];const L=Math.hypot(nx,ny)||1;nx/=L;ny/=L;
+  B.text(m[0]+nx*.75,m[1]+ny*.75-.12,txt,{class:'m','font-size':17,fill:col||'#1f2933'});
+}
+
+function sinTeo(host){
+  const V={A:[2,1.6],B:[13.5,2.4],C:[6.5,8.4]},st={circ:true};
+  const P=view(host,
+    '<b>Teorema del sinus.</b> En qualsevol triangle, cada costat dividit pel sinus de l\'angle oposat dóna el mateix valor: <span class="fml"><b>a / sin A = b / sin B = c / sin C = 2R</b></span>, on R és el radi de la circumferència circumscrita.',
+    `<div class="eq" data-r="eq"></div><hr>
+     <label class="chk"><input type="checkbox" data-c="circ" checked> Mostra la circumferència circumscrita</label>
+     <p class="note">Arrossega els vèrtexs A, B i C. Fixa't que les tres raons canvien alhora però sempre són iguals entre elles.</p>`);
+  const B=triBoard(P.stage,V,draw);
+  $('[data-c="circ"]',host).onchange=e=>{st.circ=e.target.checked;draw();};
+  function draw(){
+    const T=triData(V),{A,B:Bv,C}=V;
+    B.clear();B.grid(1,{stroke:'#efece3'});
+    if(st.circ){
+      const d=2*(A[0]*(Bv[1]-C[1])+Bv[0]*(C[1]-A[1])+C[0]*(A[1]-Bv[1]));
+      if(Math.abs(d)>1e-6){
+        const f=p=>p[0]*p[0]+p[1]*p[1];
+        const ux=(f(A)*(Bv[1]-C[1])+f(Bv)*(C[1]-A[1])+f(C)*(A[1]-Bv[1]))/d,uy=(f(A)*(C[0]-Bv[0])+f(Bv)*(A[0]-C[0])+f(C)*(Bv[0]-A[0]))/d;
+        B.circ(ux,uy,Math.hypot(ux-A[0],uy-A[1]),{stroke:'#ee8a22','stroke-dasharray':'8 6','stroke-width':2.5});
+        B.dot(ux,uy,4,{fill:'#ee8a22'});
+      }
+    }
+    B.poly([A,Bv,C],{fill:'rgba(123,75,183,.12)',stroke:'#1f2933','stroke-width':3});
+    drawAngles(B,V,T);
+    sideLabel(B,V,'a','a = '+fmt(T.a,1),'#a82339');sideLabel(B,V,'b','b = '+fmt(T.b,1),'#17612e');sideLabel(B,V,'c','c = '+fmt(T.c,1),'#1c5ea8');
+    B.sync();
+    const rr=(x,s,ang)=>fmt(x,1)+' / sin '+fmt(ang,1)+'° = <b>'+fmt(x/sinD(ang),3)+'</b>';
+    $('[data-r="eq"]',host).innerHTML='<span class="res"><span class="cc">a / sin A</span> = '+rr(T.a,0,T.A)+'<br><span class="cb">b / sin B</span> = '+rr(T.b,0,T.B)+'<br><span class="ca">c / sin C</span> = '+rr(T.c,0,T.C)+
+      (st.circ?'<br><span class="co">2R</span> = <b>'+fmt(T.a/sinD(T.A),3)+'</b>':'')+'</span>';
+  }
+  draw();
+}
+
+function cosTeo(host){
+  const V={A:[4.5,3.6],B:[11.5,3.9],C:[8,8.2]},st={x:'A',sq:true};
+  const P=view(host,
+    '<b>Teorema del cosinus.</b> Generalitza Pitàgores a qualsevol triangle: <span class="fml"><b>a² = b² + c² − 2·b·c·cos A</b></span> (i igual amb els altres costats). Si A = 90°, cos A = 0 i queda <b>a² = b² + c²</b>.',
+    `<div class="row"><span>Costat que busquem:</span><span class="seg" data-seg="x"></span></div>
+     <div class="eq" data-r="eq"></div><div data-r="cmp" style="margin:.3rem 0"></div><hr>
+     <label class="chk"><input type="checkbox" data-c="sq" checked> Mostra els quadrats dels costats</label>
+     <p class="note">Arrossega els vèrtexs. Posa A, B o C a 90° i el terme 2bc·cos A desapareix.</p>`);
+  const B=triBoard(P.stage,V,draw,true);
+  segment(host,'x',[['A','a (angle A)'],['B','b (angle B)'],['C','c (angle C)']],'A',v=>{st.x=v;draw();});
+  $('[data-c="sq"]',host).onchange=e=>{st.sq=e.target.checked;draw();};
+  const sqOn=(p,q)=>{
+    const cen=[(V.A[0]+V.B[0]+V.C[0])/3,(V.A[1]+V.B[1]+V.C[1])/3];
+    const dx=q[0]-p[0],dy=q[1]-p[1];let n=[-dy,dx];
+    const mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2;
+    if(n[0]*(cen[0]-mx)+n[1]*(cen[1]-my)>0)n=[-n[0],-n[1]];
+    return [p,q,[q[0]+n[0],q[1]+n[1]],[p[0]+n[0],p[1]+n[1]]];
+  };
+  function draw(){
+    const T=triData(V);
+    B.clear();B.grid(1,{stroke:'#efece3'});
+    const sides={a:[V.B,V.C],b:[V.C,V.A],c:[V.A,V.B]},col={a:'217,67,90',b:'47,168,79',c:'47,127,208'};
+    const want=st.x==='A'?'a':st.x==='B'?'b':'c';
+    if(st.sq)['a','b','c'].forEach(k=>{
+      const q=sqOn(sides[k][0],sides[k][1]);
+      B.poly(q,{fill:'rgba('+col[k]+','+(k===want?.35:.2)+')',stroke:'rgb('+col[k]+')','stroke-width':k===want?3:1.8});
+      const m=[q.reduce((s,p)=>s+p[0],0)/4,q.reduce((s,p)=>s+p[1],0)/4];
+      B.text(m[0],m[1]-.1,k+'² = '+fmt(T[k]*T[k],1),{class:'m res','font-size':15});
+    });
+    B.poly([V.A,V.B,V.C],{fill:'rgba(255,255,255,.8)',stroke:'#1f2933','stroke-width':3});
+    drawAngles(B,V,T,st.x);
+    sideLabel(B,V,'a','a = '+fmt(T.a,1),'#a82339');sideLabel(B,V,'b','b = '+fmt(T.b,1),'#17612e');sideLabel(B,V,'c','c = '+fmt(T.c,1),'#1c5ea8');
+    B.sync();
+    const o=want,[y,z]=['a','b','c'].filter(k=>k!==o),X=st.x;
+    const s2=T[y]*T[y]+T[z]*T[z],term=2*T[y]*T[z]*cosD(T[X]),res=s2-term;
+    $('[data-r="eq"]',host).innerHTML=
+      o+'² = '+y+'² + '+z+'² − 2·'+y+'·'+z+'·cos '+X+'<br><span class="res">'+
+      o+'² = '+fmt(T[y],1)+'² + '+fmt(T[z],1)+'² − 2·'+fmt(T[y],1)+'·'+fmt(T[z],1)+'·cos '+fmt(T[X],1)+'°<br>'+
+      o+'² = '+fmt(T[y]*T[y],1)+' + '+fmt(T[z]*T[z],1)+' − ('+fmt(term,1)+') = <b>'+fmt(res,1)+'</b><br>'+
+      o+' = √'+fmt(res,1)+' = <b>'+fmt(Math.sqrt(Math.max(res,0)),2)+'</b></span>';
+    const ang=T[X];
+    $('[data-r="cmp"]',host).innerHTML=Math.abs(ang-90)<1?'<span class="pill ok res">Angle recte: el terme −2yz·cos val ≈ 0 → Pitàgores</span>':
+      '<span class="pill in res">'+(ang<90?'Angle agut: '+o+'² < '+y+'² + '+z+'²':'Angle obtús: '+o+'² > '+y+'² + '+z+'²')+'</span>';
+  }
+  draw();
+}
+
+function sincosPractica(host){
+  const ang3=()=>{let A,B;do{A=rnd(35,85);B=rnd(30,80);}while(A+B>160);return [A,B,180-A-B];};
+  practice(host,[
+    {name:'Sinus: troba un costat',make(){
+      const [A,B,C]=ang3(),a=rnd(6,20),b=a*sinD(B)/sinD(A);
+      return {text:'Calcula el costat <b>b</b> (2 decimals). Figura no a escala.',fig:figGen('a = '+a,'b = ?','','A = '+A+'°','B = '+B+'°',''),fields:[{label:'b =',ans:b}],
+        sol:'a / sin A = b / sin B → b = a · sin B / sin A<br>b = '+a+' · sin '+B+'° / sin '+A+'° = <b>'+fmt(b,2)+'</b>'};}},
+    {name:'Sinus: troba un angle',make(){
+      const A=rnd(55,89),B0=rnd(25,A-8),a=rnd(8,20),b=Math.round(a*sinD(B0)/sinD(A)*10)/10,B=deg(Math.asin(b*sinD(A)/a));
+      return {text:'Calcula l\'angle <b>B</b> (agut, 1 decimal). Figura no a escala.',fig:figGen('a = '+a,'b = '+fmt(b,1),'','A = '+A+'°','B = ?',''),fields:[{label:'B =',unit:'°',ans:B,tol:.2}],
+        sol:'a / sin A = b / sin B → sin B = b · sin A / a = '+fmt(b,1)+' · sin '+A+'° / '+a+' = '+fmt(b*sinD(A)/a,4)+'<br>B = sin<sup>−1</sup>('+fmt(b*sinD(A)/a,4)+') = <b>'+fmt(B,1)+'°</b>'};}},
+    {name:'Cosinus: troba un costat',make(){
+      const b=rnd(4,15),c=rnd(4,15),A=rnd(30,130),a=Math.sqrt(b*b+c*c-2*b*c*cosD(A));
+      return {text:'Calcula el costat <b>a</b> (2 decimals). Figura no a escala.',fig:figGen('a = ?','b = '+b,'c = '+c,'A = '+A+'°','',''),fields:[{label:'a =',ans:a}],
+        sol:'a² = b² + c² − 2bc·cos A = '+b+'² + '+c+'² − 2·'+b+'·'+c+'·cos '+A+'°<br>a² = '+(b*b+c*c)+' − ('+fmt(2*b*c*cosD(A),2)+') = '+fmt(a*a,2)+'<br>a = <b>'+fmt(a,2)+'</b>'};}},
+    {name:'Cosinus: troba un angle',make(){
+      let a,b,c;do{b=rnd(5,14);c=rnd(5,14);a=rnd(Math.abs(b-c)+2,b+c-2);}while(a<2);
+      const cs=(b*b+c*c-a*a)/(2*b*c),A=deg(Math.acos(cs));
+      return {text:'Calcula l\'angle <b>A</b> (1 decimal). Figura no a escala.',fig:figGen('a = '+a,'b = '+b,'c = '+c,'A = ?','',''),fields:[{label:'A =',unit:'°',ans:A,tol:.2}],
+        sol:'a² = b² + c² − 2bc·cos A → cos A = (b² + c² − a²) / (2bc)<br>cos A = ('+b*b+' + '+c*c+' − '+a*a+') / (2·'+b+'·'+c+') = '+fmt(cs,4)+'<br>A = cos<sup>−1</sup>('+fmt(cs,4)+') = <b>'+fmt(A,1)+'°</b>'};}},
+    {name:'Quin teorema fem servir?',make(){
+      const cases=[
+        ['Coneixem dos angles i un costat.',0,'Amb dos angles i un costat tenim una parella costat–angle oposat: teorema del <b>sinus</b>.'],
+        ['Coneixem dos costats i l\'angle que formen.',1,'Falta la parella costat–angle oposat: cal el teorema del <b>cosinus</b>.'],
+        ['Coneixem els tres costats i volem un angle.',1,'Sense cap angle conegut, només serveix el teorema del <b>cosinus</b>.'],
+        ['Coneixem dos costats i l\'angle oposat a un d\'ells.',0,'Hi ha una parella costat–angle oposat: teorema del <b>sinus</b>.']];
+      const c=pick(cases);
+      return {text:'Per resoldre un triangle on '+c[0].charAt(0).toLowerCase()+c[0].slice(1)+' Quin teorema és més adequat?',options:['Teorema del sinus','Teorema del cosinus'],correct:c[1],sol:c[2]};}}
+  ],'<b>Practica.</b> Recorda: el sinus necessita una parella costat–angle oposat; el cosinus serveix amb SAS o amb els 3 costats.');
+}
+addTab({id:'sc',title:'Sinus i cosinus',subs:[
+  {id:'sin',title:'Teorema del sinus',build:sinTeo},
+  {id:'cos',title:'Teorema del cosinus',build:cosTeo},
+  {id:'pra',title:'Practica',build:sincosPractica}]});
+
+boot();
+})();
+</script>
+</body>
+</html>

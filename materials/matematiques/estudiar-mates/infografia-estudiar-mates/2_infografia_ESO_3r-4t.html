@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Com estudiar matem&#xE0;tiques? - 3r - 4t d&#39;ESO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --c1: #6d28d9; --c2: #2563eb; --c3: #c2410c;
+  --ink: #1d2142; --muted: #4b5173; --paper: #ffffff; --bg: #fff6e6;
+  --k1: #ff5d73; --k2: #ff9f1c; --k3: #22c08a; --k4: #3b82f6; --k5: #a855f7;
+  --d1: #c81e45; --d2: #b45309; --d3: #047857; --d4: #1d4ed8; --d5: #7e22ce;
+  --disp: "Baloo 2", "Segoe UI", system-ui, sans-serif;
+  --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --emoji: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: var(--body); color: var(--ink); font-size: 17px; line-height: 1.3;
+  background: #e9e4f5; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.ico, .xi, .ex-i, .ia-ico { font-family: var(--emoji); }
+
+.poster {
+  position: relative; overflow: hidden; width: 1123px; margin: 0 auto;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 12px 12px, rgba(29,33,66,.07) 2px, transparent 2.5px);
+  background-size: 28px 28px;
+}
+
+.fit { padding: 0 34px 22px; }
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative; overflow: hidden; margin: 0 -34px 16px; padding: 20px 44px 24px;
+  background: linear-gradient(120deg, var(--c1), var(--c2)); color: #fff;
+  border-radius: 0 0 46px 46px;
+}
+.hero .sym { position: absolute; font-family: var(--disp); font-weight: 800; color: rgba(255,255,255,.17); line-height: 1; user-select: none; }
+.hero .kicker { font-family: var(--disp); font-weight: 700; font-size: 22px; letter-spacing: .04em; text-transform: uppercase; opacity: .95; }
+.hero h1 { font-family: var(--disp); font-weight: 800; font-size: 60px; line-height: .98; margin: 0 0 6px; text-shadow: 0 4px 0 rgba(0,0,0,.14); position: relative; }
+.hero .tag { font-size: 24px; font-weight: 800; position: relative; max-width: 700px; }
+.hero .side { position: absolute; right: 40px; top: 22px; text-align: center; z-index: 1; }
+.level-badge {
+  display: inline-block; background: #fff; color: var(--c1); font-family: var(--disp); font-weight: 800;
+  font-size: 26px; padding: 8px 24px; border-radius: 999px; box-shadow: 0 5px 0 rgba(0,0,0,.18); transform: rotate(3deg);
+}
+.side.nobadge .time-chip { margin-top: 0; }
+.time-chip {
+  margin-top: 16px; background: rgba(255,255,255,.2); border: 3px dashed rgba(255,255,255,.75);
+  border-radius: 22px; padding: 10px 18px; font-weight: 800; font-size: 16px; line-height: 1.2;
+}
+.time-chip b { display: block; font-family: var(--disp); font-size: 22px; }
+
+/* ---------- section heads ---------- */
+.sec-title {
+  font-family: var(--disp); font-weight: 800; font-size: 32px; color: var(--ink); margin: 0 0 10px;
+  display: flex; align-items: center; gap: 12px; line-height: 1.1;
+}
+.sec-title .pill { background: var(--c3); color: #fff; border-radius: 12px; padding: 2px 14px 4px; font-size: 26px; transform: rotate(-2deg); }
+.sec-title small { font-family: var(--body); font-size: 17px; font-weight: 700; color: var(--muted); }
+
+/* ---------- METHODS ---------- */
+.methods { margin-bottom: 14px; }
+.mgrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.card {
+  position: relative; background: var(--paper); border-radius: 20px; padding: 11px 16px 12px 16px;
+  box-shadow: 0 5px 0 var(--col), 0 8px 18px rgba(29,33,66,.12); border: 3px solid var(--col);
+}
+.mgrid .card { grid-column: span 2; }
+.mgrid .card:nth-child(n+4) { grid-column: span 3; }
+.m1 { --col: var(--k1); --cold: var(--d1); } .m2 { --col: var(--k2); --cold: var(--d2); } .m3 { --col: var(--k3); --cold: var(--d3); } .m4 { --col: var(--k4); --cold: var(--d4); } .m5 { --col: var(--k5); --cold: var(--d5); }
+.card .head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.card .num {
+  flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--cold); color: #fff;
+  font-family: var(--disp); font-weight: 800; font-size: 24px; display: grid; place-items: center; padding-top: 2px;
+}
+.card h3 { font-family: var(--disp); font-weight: 800; font-size: 22px; line-height: 1.05; margin: 0; flex: 1; color: var(--ink); }
+.card .ico { font-size: 32px; line-height: 1; }
+.card p { margin: 3px 0 7px; font-weight: 600; font-size: 16px; line-height: 1.25; }
+.card .tip {
+  background: color-mix(in srgb, var(--col) 14%, white); border-left: 6px solid var(--col);
+  border-radius: 8px; padding: 4px 10px; font-weight: 800; font-size: 15px;
+}
+.card .tip b { color: var(--cold); text-transform: uppercase; letter-spacing: .03em; }
+
+/* ---------- CYCLE ---------- */
+.cycle {
+  margin-bottom: 16px; background: var(--ink); color: #fff; border-radius: 26px; padding: 10px 24px 8px;
+  display: grid; grid-template-columns: 210px 1fr; gap: 18px; align-items: center;
+}
+.cycle h2 { font-family: var(--disp); font-weight: 800; font-size: 25px; line-height: 1.05; margin: 0; }
+.cycle .steps { display: flex; align-items: stretch; gap: 8px; }
+.cstep { flex: 1; background: rgba(255,255,255,.1); border-radius: 16px; padding: 8px 10px; text-align: center; font-weight: 800; font-size: 16px; line-height: 1.15; }
+.cstep .n { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-family: var(--disp); font-size: 18px; color: var(--ink); margin-bottom: 3px; }
+.cstep:nth-child(1) .n { background: var(--k1); } .cstep:nth-child(3) .n { background: var(--k2); }
+.cstep:nth-child(5) .n { background: var(--k3); } .cstep:nth-child(7) .n { background: var(--k4); }
+.carrow { align-self: center; font-size: 26px; font-weight: 800; color: #ffd166; font-family: var(--disp); }
+.cycle .note { grid-column: 1 / -1; text-align: center; font-weight: 700; font-size: 15px; opacity: .9; margin-top: -2px; }
+
+/* ---------- HELP ---------- */
+.help { margin-bottom: 16px; background: #fff; border: 4px solid var(--c3); border-radius: 22px; padding: 8px 20px; display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 16.5px; line-height: 1.25; box-shadow: 0 6px 14px rgba(29,33,66,.1); }
+.help .hi { font-family: var(--emoji); font-size: 36px; line-height: 1; }
+.help b { display: block; font-family: var(--disp); font-size: 22px; color: var(--c3); line-height: 1.1; }
+
+/* ---------- PLAN + ERRORS ---------- */
+.duo { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; margin-bottom: 14px; }
+.panel { background: var(--paper); border-radius: 24px; padding: 16px 20px 16px; box-shadow: 0 8px 18px rgba(29,33,66,.12); }
+.panel.plan { border-top: 10px solid var(--k4); }
+.panel.err { border-top: 10px solid var(--k1); }
+.panel .sec-title { font-size: 28px; }
+.panel .sec-title small { display: block; margin-top: 2px; }
+.tl { list-style: none; margin: 8px 0 0; padding: 0; position: relative; }
+.tl::before { content: ""; position: absolute; left: 62px; top: 14px; bottom: 14px; width: 4px; background: repeating-linear-gradient(to bottom, var(--k4) 0 8px, transparent 8px 14px); }
+.tl li { display: grid; grid-template-columns: 124px 1fr; gap: 12px; align-items: center; margin-bottom: 7px; position: relative; }
+.tl li:last-child { margin-bottom: 0; }
+.tl .when { font-family: var(--disp); font-weight: 800; font-size: 16px; text-align: center; color: #fff; background: var(--d4); border-radius: 12px; padding: 4px 6px 5px; position: relative; z-index: 1; line-height: 1.1; }
+.tl li:last-child .when { background: var(--d5); }
+.tl li:nth-child(3) .when { background: var(--d3); }
+.tl li:nth-child(2) .when { background: var(--d2); }
+.tl li:nth-child(4) .when { background: var(--d1); }
+.tl .txt { font-weight: 700; font-size: 16.5px; line-height: 1.22; }
+.errlist { list-style: none; margin: 8px 0 0; padding: 0; }
+.errlist li { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 7px; font-weight: 700; font-size: 16.5px; line-height: 1.22; }
+.errlist li:last-child { margin-bottom: 0; }
+.errlist .x { flex: none; position: relative; width: 26px; height: 26px; border-radius: 50%; background: var(--d1); margin-top: 1px; }
+.errlist .x::before, .errlist .x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 3px; border-radius: 2px; background: #fff; transform: translate(-50%, -50%) rotate(45deg); }
+.errlist .x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* ---------- RESOURCES ---------- */
+.res { margin-bottom: 14px; }
+.rgrid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 14px; }
+.rgrid.two { grid-template-columns: 1fr 1fr; }
+.ia-intro { margin: 0 0 6px !important; font-weight: 700 !important; }
+.rcard { background: var(--paper); border-radius: 22px; padding: 14px 18px 14px; box-shadow: 0 8px 18px rgba(29,33,66,.12); border-top: 8px solid var(--col); }
+.r1 { --col: #ff0033; --cold: #c40024; } .r2 { --col: var(--k3); --cold: var(--d3); } .r3 { --col: var(--k5); --cold: var(--d5); }
+.rcard h3 { font-family: var(--disp); font-weight: 800; font-size: 22px; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; line-height: 1.05; }
+.rcard h3 .ico { font-size: 28px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chip { background: var(--cold); color: #fff; font-weight: 800; border-radius: 999px; padding: 3px 14px 4px; font-size: 16px; }
+.chip.alt { background: color-mix(in srgb, var(--col) 15%, white); color: var(--ink); border: 2px solid var(--col); padding: 1px 12px 2px; }
+.rcard p { margin: 0; font-weight: 600; font-size: 15.5px; line-height: 1.25; }
+.rcard ul { margin: 0; padding-left: 20px; font-weight: 700; font-size: 15.5px; line-height: 1.22; }
+.rcard ul li { margin-bottom: 5px; }
+.prompt {
+  background: #1d2142; color: #e9fff6; border-radius: 12px; padding: 8px 12px; font-family: Consolas, "Courier New", monospace;
+  font-size: 14px; line-height: 1.3; margin-bottom: 7px;
+}
+.prompt::before { content: "\1F4AC  "; font-family: var(--emoji); }
+.warn { background: #fff3cd; border-left: 6px solid #ffb703; border-radius: 8px; padding: 5px 10px; font-weight: 800; font-size: 14.5px; line-height: 1.22; }
+
+/* ---------- EXAM ---------- */
+.exam { background: linear-gradient(120deg, var(--c1), var(--c2)); border-radius: 26px; padding: 14px 22px 16px; color: #fff; margin-bottom: 14px; }
+.exam .sec-title { color: #fff; margin-bottom: 10px; }
+.exam .sec-title .pill { background: #fff; color: var(--c1); }
+.egrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.estep { background: rgba(255,255,255,.95); color: var(--ink); border-radius: 18px; padding: 10px 10px 10px; text-align: center; font-weight: 800; font-size: 15.5px; line-height: 1.2; }
+.estep .ex-i { display: block; font-size: 30px; line-height: 1.1; margin-bottom: 3px; }
+
+/* ---------- FOOTER ---------- */
+.foot { text-align: center; }
+.foot .big { font-family: var(--disp); font-weight: 800; font-size: 34px; color: var(--ink); line-height: 1.1; }
+.foot .big span { color: var(--c1); }
+.foot .small { font-weight: 800; color: var(--muted); font-size: 17px; margin-top: 4px; }
+
+/* ---------- screen: adapt to narrow windows ---------- */
+@media screen and (max-width: 1000px) {
+  body { font-size: 16px; }
+  .poster { width: 100%; }
+  .fit { padding: 0 16px 22px; }
+  .hero { margin: 0 -16px 18px; padding: 24px 22px 28px; border-radius: 0 0 32px 32px; }
+  .hero h1 { font-size: clamp(38px, 9vw, 70px); }
+  .hero .side { position: static; margin-top: 14px; text-align: left; }
+  .hero .side .level-badge { font-size: 22px; }
+  .hero .tag { font-size: 20px; }
+  .mgrid, .duo, .rgrid { grid-template-columns: 1fr; }
+  .mgrid .card, .mgrid .card:nth-child(n+4) { grid-column: auto; }
+  .cycle { grid-template-columns: 1fr; }
+  .cycle .steps { flex-direction: column; }
+  .carrow { transform: rotate(90deg); }
+  .egrid { grid-template-columns: 1fr 1fr; }
+  .tl::before { display: none; }
+  .tl li { grid-template-columns: 1fr; gap: 4px; }
+  .tl .when { text-align: left; display: inline-block; justify-self: start; padding: 3px 12px 4px; }
+  .foot .big { font-size: 26px; }
+}
+@media screen and (min-width: 1001px) { body { padding: 20px 0; } .poster { box-shadow: 0 10px 40px rgba(29,33,66,.3); } }
+
+/* ---------- print: A3 vertical, one page ---------- */
+@page { size: 297mm 420mm; margin: 0; }
+@media print {
+  body { background: none; }
+  .poster { width: 297mm; height: 420mm; }
+  .fit { transform: scale(0.855); transform-origin: 0 0; width: calc(297mm / 0.855); min-height: calc(420mm / 0.855);
+         display: flex; flex-direction: column; justify-content: space-between; }
+  .fit > section, .fit > header, .fit > footer { margin-bottom: 0; }
+}
+</style>
+</head>
+<body>
+<main class="poster"><div class="fit">
+
+  <header class="hero">
+    <span class="sym" style="font-size:150px; left:-20px; top:20px;">&#x3C0;</span>
+    <span class="sym" style="font-size:120px; left:300px; top:170px;">&#x3A3;</span>
+    <span class="sym" style="font-size:110px; right:300px; top:-20px;">&#x221A;</span>
+    <span class="sym" style="font-size:130px; right:20px; bottom:-30px;">&#x221E;</span>
+    <span class="sym" style="font-size:90px; left:560px; bottom:-14px;">&#xF7;</span>
+    <span class="sym" style="font-size:80px; left:30px; bottom:-10px;">x&#xB2;</span>
+    <div class="kicker">Guia d&#39;estudi per a 3r i 4t d&#39;ESO</div>
+    <h1>Com estudiar<br>matem&#xE0;tiques?</h1>
+    <div class="tag">Entendre + practicar + corregir = aprovar</div>
+    <div class="side">
+      <span class="level-badge">3r - 4t d&#39;ESO</span>
+      <div class="time-chip">Ritme recomanat<b>30-45 min cada dia</b></div>
+    </div>
+  </header>
+
+  <section class="methods">
+    <h2 class="sec-title"><span class="pill">5</span> m&#xE8;todes que funcionen de deb&#xF2;</h2>
+    <div class="mgrid">
+      <article class="card m1"><div class="head"><span class="num">1</span><h3>Practica sense mirar</h3><span class="ico">&#x270F;&#xFE0F;</span></div><p>Resol els exercicis sense apunts ni solucions, com si fos l&#39;examen. Si et bloqueges, insisteix 5 minuts abans de mirar res.</p><div class="tip"><b>Truc:</b> La soluci&#243;, nom&#233;s DESPR&#201;S d&#39;acabar.</div></article>
+      <article class="card m2"><div class="head"><span class="num">2</span><h3>Corregeix i analitza els errors</h3><span class="ico">&#x1F50D;</span></div><p>Classifica cada error: de c&#224;lcul (signes, distraccions), de concepte o de procediment. Anota&#39;l al quadern d&#39;errors.</p><div class="tip"><b>Truc:</b> Repeteix l&#39;exercici fallat al cap de 3-4 dies.</div></article>
+      <article class="card m3"><div class="head"><span class="num">3</span><h3>Fes els exercicis de la col&#183;lecci&#243;</h3><span class="ico">&#x1F4DA;</span></div><p>Fes la col&#183;lecci&#243; sencera del tema, no nom&#233;s els f&#224;cils. Els problemes s&#243;n els que m&#233;s t&#39;ajuden a pensar.</p><div class="tip"><b>Truc:</b> Marca amb &#x2B50; els fallats i torna-hi.</div></article>
+      <article class="card m4"><div class="head"><span class="num">4</span><h3>Repassa la teoria</h3><span class="ico">&#x1F4D6;</span></div><p>Ent&#233;n el perqu&#232; de cada f&#243;rmula. Contrasta els apunts amb el llibre i amb v&#237;deos d&#39;altres docents.</p><div class="tip"><b>Truc:</b> Fes un formulari d&#39;una p&#224;gina amb exemples.</div></article>
+      <article class="card m5"><div class="head"><span class="num">5</span><h3>Const&#224;ncia i planificaci&#243;</h3><span class="ico">&#x1F4C5;</span></div><p>30-45 minuts diaris i rep&#224;s freq&#252;ent: el cervell oblida el que no es repassa.</p><div class="tip"><b>Truc:</b> Planifica a l&#39;agenda quin tema toca cada dia.</div></article>
+    </div>
+  </section>
+
+  <section class="cycle">
+    <h2>&#x1F501; El cicle de l'exercici perfecte</h2>
+    <div class="steps">
+      <div class="cstep"><span class="n">1</span><br>Intenta'l <br>sense mirar</div>
+      <div class="carrow">&#x279C;</div>
+      <div class="cstep"><span class="n">2</span><br>Comprova la soluci&#xF3;</div>
+      <div class="carrow">&#x279C;</div>
+      <div class="cstep"><span class="n">3</span><br>Ent&#xE9;n i corregeix l'error</div>
+      <div class="carrow">&#x279C;</div>
+      <div class="cstep"><span class="n">4</span><br>Repeteix-lo uns dies despr&#xE9;s</div>
+    </div>
+    <div class="note">Fes-ho amb cada exercici fallat: els errors s&#243;n la teva llista de feina.</div>
+  </section>
+
+  <section class="help"><span class="hi">&#x1F64B;</span><div><b>Encallat m&#233;s de 10 minuts? Demana ajuda!</b>Apunta el dubte i pregunta&#39;l al professorat o a un grup d&#39;estudi. Explicar-ho a alg&#250; tamb&#233; t&#39;ajuda a entendre&#39;l millor.</div></section>
+
+  <section class="duo">
+    <div class="panel plan">
+      <h2 class="sec-title"><span>&#x1F5D3;&#xFE0F; Pla per preparar un examen</span></h2>
+      <ul class="tl">
+        <li><span class="when">7 dies abans</span><span class="txt">Llegeix teoria i apunts, contrasta amb el llibre i fes el formulari.</span></li>
+        <li><span class="when">5 dies abans</span><span class="txt">Fes la col&#183;lecci&#243; d&#39;exercicis de tots els apartats, sense mirar la soluci&#243;.</span></li>
+        <li><span class="when">3 dies abans</span><span class="txt">Revisa el quadern d&#39;errors i repeteix els exercicis fallats.</span></li>
+        <li><span class="when">2 dies abans</span><span class="txt">Fes un simulacre: examen d&#39;altres anys o fitxa mixta, amb temps.</span></li>
+        <li><span class="when">La nit abans</span><span class="txt">Repassa el formulari, prepara el material i dorm b&#233;.</span></li>
+      </ul>
+    </div>
+    <div class="panel err">
+      <h2 class="sec-title"><span>&#x1F6AB; Errors t&#xED;pics a evitar</span></h2>
+      <ul class="errlist">
+        <li><span class="x"></span><span>Estudiar nom&#233;s llegint apunts o veient v&#237;deos sense agafar el llapis.</span></li>
+        <li><span class="x"></span><span>Mirar la soluci&#243; o el v&#237;deo massa aviat.</span></li>
+        <li><span class="x"></span><span>Copiar passos d&#39;una IA, d&#39;una app o d&#39;alg&#250; altre sense entendre&#39;ls.</span></li>
+        <li><span class="x"></span><span>Estudiar un tema nom&#233;s la nit abans.</span></li>
+        <li><span class="x"></span><span>Memoritzar f&#243;rmules sense saber quan s&#39;apliquen.</span></li>
+        <li><span class="x"></span><span>No revisar els errors dels ex&#224;mens anteriors.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="res">
+    <h2 class="sec-title"><span class="pill">+</span> Recursos per practicar i aprendre</h2>
+    <div class="rgrid">
+      <div class="rcard r2">
+        <h3><span class="ico">&#x1F4C4;</span> Fitxes d'exercicis</h3>
+        <ul>
+          <li>Les fitxes del Google Classroom de la classe</li>
+          <li>La col&#183;lecci&#243; d&#39;exercicis i el llibre de text</li>
+          <li>Cerca a internet: &#171;ex&#224;mens de funcions 4t ESO amb solucions&#187;</li>
+        </ul>
+      </div>
+      <div class="rcard r1">
+        <h3><span class="ico">&#x25B6;&#xFE0F;</span> V&#xED;deos de YouTube</h3>
+        <div class="chips"><span class="chip">Susi Profe</span><span class="chip">Matem&#225;ticas profe Alex</span><span class="chip">Unicoos</span></div>
+        <p>Pausa el v&#237;deo i prova tu l&#39;exercici abans de veure com el fa el docent. Despr&#233;s compara els passos.</p>
+      </div>
+      <div class="rcard r3">
+        <h3><span class="ico">&#x1F916;</span> Crea m&#233;s exercicis amb IA</h3>
+        <div class="prompt">&#xAB;Crea&#39;m 8 problemes de sistemes d&#39;equacions de 3r d&#39;ESO, de dificultat creixent, amb la resoluci&#243; pas a pas al final.&#xBB;</div>
+        <div class="warn">&#x26A0;&#xFE0F; Verifica sempre les solucions: la IA pot cometre errors. Fes-la servir per crear exercicis, no perqu&#232; els faci per tu. Si t&#39;encalles, intenta-ho tu primer i pregunta al professorat.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="exam">
+    <h2 class="sec-title"><span class="pill">&#x2605;</span> El dia de l'examen</h2>
+    <div class="egrid">
+      <div class="estep"><span class="ex-i">&#x1F634;</span>Dorm b&#233; i esmorza abans de l&#39;examen.</div>
+      <div class="estep"><span class="ex-i">&#x1F440;</span>Llegeix l&#39;examen sencer i planifica el temps.</div>
+      <div class="estep"><span class="ex-i">&#x2705;</span>Comen&#231;a pel que domines i deixa els dif&#237;cils per al final.</div>
+      <div class="estep"><span class="ex-i">&#x270D;&#xFE0F;</span>Escriu el procediment i justifica cada pas.</div>
+      <div class="estep"><span class="ex-i">&#x1F504;</span>Revisa signes, c&#224;lculs i unitats els &#250;ltims 5-10 minuts.</div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="big">&#xAB;L'&#xFA;nica manera d'aprendre matem&#xE0;tiques &#xE9;s <span>fer matem&#xE0;tiques</span>.&#xBB;</div>
+    <div class="small">&#x2014; Paul Halmos</div>
+  </footer>
+
+</div></main>
+<script>window.addEventListener('load', function () { document.documentElement.setAttribute('data-h', document.querySelector('.fit').scrollHeight); });</script>
+</body>
+</html>

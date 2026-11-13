@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Com estudiar matemàtiques? Les quatre infografies</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d9480f'/%3E%3Cpath d='M8 11h16M13 11l-1 12M20 11v9q0 3 3 3' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+  :root { --ink:#1d2142; --muted:#4b5173; --bg:#fff6e6; --line:#ead9bd; --c1:#d9480f; --c3:#6d28d9; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.45 "Nunito","Segoe UI",system-ui,sans-serif;
+         background-image: radial-gradient(circle at 12px 12px, rgba(29,33,66,.07) 2px, transparent 2.5px); background-size: 28px 28px; }
+  header, main { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+  header { padding-top: 28px; }
+  h1 { margin:0; font-size: clamp(1.7rem, 4vw, 2.6rem); line-height:1.1; display:flex; align-items:center; gap:12px; }
+  h1 svg { width:44px; height:44px; flex:none; }
+  .sub { margin:8px 0 22px; color:var(--muted); font-size:1.05rem; max-width: 60ch; }
+  .graella { display:grid; gap:20px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); padding-bottom:40px; }
+  .targeta { background:#fff; border:3px solid var(--line); border-radius:18px; overflow:hidden; display:flex; flex-direction:column;
+             box-shadow: 0 6px 18px rgba(29,33,66,.08); transition: transform .15s, box-shadow .15s; }
+  .targeta:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(29,33,66,.16); }
+  .vista { position:relative; display:block; aspect-ratio: 1123 / 1587; background:#e9e4f5; overflow:hidden; }
+  .vista iframe { position:absolute; left:0; top:0; width:1123px; height:1627px; border:0; transform-origin: 0 0; pointer-events:none; }
+  .info { padding: 12px 14px 14px; display:flex; flex-direction:column; gap:8px; }
+  .info h2 { margin:0; font-size:1.1rem; }
+  .nivells { display:flex; flex-wrap:wrap; gap:5px; }
+  .nivells span { font-size:.78rem; font-weight:700; padding:2px 9px; border-radius:999px; background:#ffe7d6; color:#9a3412; }
+  .botons { display:flex; gap:8px; flex-wrap:wrap; }
+  .botons a { text-decoration:none; font-weight:800; font-size:.92rem; padding:7px 14px; border-radius:10px; border:2px solid var(--c1); color:var(--c1); }
+  .botons a.pri { background:var(--c1); color:#fff; }
+  .botons a:hover { filter:brightness(.92); }
+  footer { max-width:1240px; margin:0 auto; padding:0 20px 30px; color:var(--muted); font-size:.9rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#d9480f"/><path d="M8 11h16M13 11l-1 12M20 11v9q0 3 3 3" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Com estudiar matemàtiques?</h1>
+  <p class="sub">Quatre infografies amb consells d'estudi, una per etapa. Clica sobre qualsevol per veure-la a mida real o descarrega-la en PDF per imprimir-la (format A3).</p>
+</header>
+<main>
+  <div class="graella" id="g"></div>
+</main>
+<footer>Material propi · Nil Bellmunt Vilalta · Institut Ermengol IV</footer>
+<script>
+const INFO = [
+  { t: "1r–2n d'ESO", n: ["1ESO", "2ESO"], h: "1_infografia_ESO_1r-2n.html", p: "1_infografia_ESO_1r-2n.pdf" },
+  { t: "3r–4t d'ESO", n: ["3ESO", "4ESO"], h: "2_infografia_ESO_3r-4t.html", p: "2_infografia_ESO_3r-4t.pdf" },
+  { t: "Batxillerat", n: ["1BAT", "2BAT"], h: "3_infografia_Batxillerat.html", p: "3_infografia_Batxillerat.pdf" },
+  { t: "Tots els cursos", n: ["Tots"], h: "4_infografia_Tots-els-cursos.html", p: "4_infografia_Tots-els-cursos.pdf" }
+];
+document.getElementById("g").innerHTML = INFO.map(i => `
+  <article class="targeta">
+    <a class="vista" href="${i.h}" target="_blank" rel="noopener" aria-label="Obre la infografia ${i.t}">
+      <iframe src="${i.h}" loading="lazy" tabindex="-1" title="Infografia ${i.t}"></iframe>
+    </a>
+    <div class="info">
+      <h2>${i.t}</h2>
+      <div class="nivells">${i.n.map(x => `<span>${x}</span>`).join("")}</div>
+      <div class="botons"><a class="pri" href="${i.h}" target="_blank" rel="noopener">Veure-la gran</a><a href="${i.p}" target="_blank" rel="noopener">PDF</a></div>
+    </div>
+  </article>`).join("");
+function escala() {
+  document.querySelectorAll(".vista").forEach(v => {
+    const f = v.querySelector("iframe");
+    f.style.transform = `scale(${v.clientWidth / 1123})`;
+  });
+}
+addEventListener("resize", escala); addEventListener("load", escala); escala();
+</script>
+</body>
+</html>

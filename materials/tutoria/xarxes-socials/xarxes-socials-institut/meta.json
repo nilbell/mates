@@ -1,0 +1,25 @@
+{
+  "titol": "Instaxat: tutoria sobre xarxes socials",
+  "descripcio": "Sessió de tutoria de 45 min per projectar: calcula el temps que dediquem a les xarxes i «detectius de privacitat» amb perfils fictius. Català, castellà i anglès.",
+  "materia": "tutoria",
+  "temes": [
+    "xarxes-socials"
+  ],
+  "nivells": [
+    "2ESO"
+  ],
+  "tipus": "activitat",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": [
+    "tutoria",
+    "privacitat",
+    "pissarra digital"
+  ],
+  "data": "2026-10-22"
+}

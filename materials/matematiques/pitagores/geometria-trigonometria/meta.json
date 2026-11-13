@@ -1,0 +1,47 @@
+{
+  "titol": "Geometria i trigonometria",
+  "materia": "matematiques",
+  "tipus": "interactiu",
+  "origen": "propi",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "data": "2026-10-28",
+  "etiquetes": ["visual", "arrossegar", "practica", "projecció"],
+  "parts": [
+    {
+      "titol": "Teorema de Pitàgores: aplicatiu visual",
+      "descripcio": "Triangle rectangle arrossegable amb els tres quadrats (a² + b² = c²), triangles perfectes de costats enters, demostració per recol·locació, calculadora pas a pas, ternes d'Euclides, aplicacions i exercicis aleatoris amb autocorrecció. Mode Projecció i mode Amaga resultats. Funciona sense internet.",
+      "temes": ["pitagores"],
+      "nivells": ["2ESO", "3ESO"],
+      "obrir": "pitagores.html",
+      "etiquetes": ["pitàgores", "ternes pitagòriques"]
+    },
+    {
+      "titol": "Teorema de Tales i semblança: aplicatiu visual",
+      "descripcio": "Triangles semblants amb una paral·lela que es mou, paral·leles tallades per secants, mesurar alçades amb ombres, escales de figures i de mapes (longituds, perímetres i àrees) i exercicis aleatoris amb autocorrecció. Mode Projecció i mode Amaga resultats.",
+      "temes": ["tales-semblanca"],
+      "nivells": ["2ESO", "3ESO"],
+      "obrir": "tales.html",
+      "etiquetes": ["tales", "semblança", "escales"]
+    },
+    {
+      "titol": "Trigonometria: raons, cercle goniomètric i regla fonamental",
+      "descripcio": "Raons trigonomètriques en el triangle rectangle, cercle goniomètric interactiu (graus, radians, valors exactes), sin²α + cos²α = 1, gràfiques de sinus i cosinus, resolució de triangles rectangles, aplicacions i exercicis aleatoris amb autocorrecció.",
+      "temes": ["trigonometria"],
+      "nivells": ["3ESO", "4ESO"],
+      "obrir": "trigonometria.html",
+      "etiquetes": ["sinus", "cosinus", "tangent", "cercle goniomètric", "radians"]
+    },
+    {
+      "titol": "Teoremes del sinus i del cosinus: aplicatiu visual",
+      "descripcio": "Triangle qualsevol amb vèrtexs arrossegables: teorema del sinus (amb la circumferència circumscrita) i teorema del cosinus (amb els quadrats dels costats), amb exercicis aleatoris i autocorrecció.",
+      "temes": ["trigonometria"],
+      "nivells": ["1BAT"],
+      "obrir": "sinus-cosinus.html",
+      "etiquetes": ["teorema del sinus", "teorema del cosinus"]
+    }
+  ]
+}

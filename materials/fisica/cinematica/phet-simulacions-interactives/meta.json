@@ -1,0 +1,29 @@
+{
+  "titol": "PhET: simulacions interactives",
+  "descripcio": "Simulacions de física, química, biologia i matemàtiques de la Universitat de Colorado, disponibles en català.",
+  "materia": "fisica",
+  "temes": [
+    "cinematica",
+    "forces",
+    "energia",
+    "electricitat"
+  ],
+  "nivells": [
+    "3ESO",
+    "4ESO",
+    "1BAT"
+  ],
+  "tipus": "interactiu",
+  "origen": "extern",
+  "obrir": "https://phet.colorado.edu/ca/",
+  "font": {
+    "autor": "PhET Interactive Simulations",
+    "url": "https://phet.colorado.edu/ca/",
+    "llicencia": "CC-BY"
+  },
+  "etiquetes": [
+    "simulació",
+    "proposta"
+  ],
+  "data": "2026-10-22"
+}

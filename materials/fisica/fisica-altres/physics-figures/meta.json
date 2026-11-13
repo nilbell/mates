@@ -1,0 +1,32 @@
+{
+  "titol": "Physics Figures: generadors de figures de física",
+  "descripcio": "Generadors de diagrames de forces, vectors, pla inclinat, politges, moviment d'un projectil, gràfiques de moviment, circuits, ones i raigs òptics. Web en anglès.",
+  "materia": "fisica",
+  "temes": [
+    "fisica-altres",
+    "forces",
+    "cinematica",
+    "electricitat",
+    "ones-so-llum"
+  ],
+  "nivells": [
+    "3ESO",
+    "4ESO",
+    "1BAT",
+    "2BAT"
+  ],
+  "tipus": "eina",
+  "origen": "extern",
+  "obrir": "https://physicsfigures.com/",
+  "font": {
+    "autor": "teacher.dev",
+    "url": "https://physicsfigures.com/",
+    "llicencia": "Vegeu la pàgina «Reuse» del web"
+  },
+  "etiquetes": [
+    "generador",
+    "fitxes",
+    "exàmens"
+  ],
+  "data": "2026-10-22"
+}

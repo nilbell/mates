@@ -1,0 +1,26 @@
+{
+  "titol": "Transum: Venn Paint (nivell 1)",
+  "descripcio": "Activitat interactiva: omple amb pintura les regions de diagrames de Venn segons la condició indicada. Té tres nivells de dificultat; aquest enllaç porta al nivell 1.",
+  "materia": "matematiques",
+  "temes": [
+    "conjunts-venn"
+  ],
+  "nivells": [
+    "1ESO",
+    "2ESO",
+    "3ESO"
+  ],
+  "tipus": "interactiu",
+  "origen": "extern",
+  "obrir": "https://www.transum.org/maths/activity/venn/?Level=1",
+  "font": {
+    "autor": "Transum Mathematics",
+    "url": "https://www.transum.org/maths/activity/venn/?Level=1",
+    "llicencia": "© Transum; adaptat de wPaint (MIT)"
+  },
+  "etiquetes": [
+    "Venn",
+    "conjunts"
+  ],
+  "data": "2026-10-22"
+}

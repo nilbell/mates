@@ -1,0 +1,17 @@
+{
+  "titol": "Com estudiar matemàtiques? Les quatre infografies",
+  "descripcio": "Quatre infografies amb consells per estudiar matemàtiques, una per etapa (1r–2n d'ESO, 3r–4t d'ESO, Batxillerat i una per a tots els cursos). Es veuen totes en una sola pàgina; cada una s'obre a mida real i es pot descarregar en PDF (A3) per imprimir.",
+  "materia": "matematiques",
+  "temes": ["estudiar-mates"],
+  "nivells": ["1ESO", "2ESO", "3ESO", "4ESO", "1BAT", "2BAT"],
+  "tipus": "altres",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": ["infografia", "tècniques d'estudi"],
+  "data": "2026-10-22"
+}

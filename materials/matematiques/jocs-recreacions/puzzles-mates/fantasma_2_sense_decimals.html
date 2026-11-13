@@ -1,0 +1,321 @@
+﻿<!doctype html>
+<html lang="ca"><head><meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='%232f5bea'/%3E%3Crect x='12' y='12' width='24' height='24' rx='3' fill='%23fff'/%3E%3Cpath d='M30 54h24V30z' fill='%23ffd166'/%3E%3Ccircle cx='22' cy='46' r='8' fill='%23ff7a7a'/%3E%3C/svg%3E">
+<title>Fantasma equacions - sense decimals</title>
+<style>
+@page { size: A4 landscape; margin: 0; }
+html, body { margin: 0; background: #fff; }
+.page { width: 297mm; height: 209mm; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.wrap { position: relative; width: 867px; height: 755px; }
+#stage { position: absolute; left: 0; top: 0; width: 1080px; height: 938px; transform: scale(0.8027); transform-origin: 0 0; }
+#stage svg { position: absolute; left: 0; top: 0; }
+.lb { position: absolute; white-space: nowrap; font-family: Arial, Helvetica, sans-serif; color: #000; line-height: 1.15; transform-origin: 50% 50%; }
+.lb.b { font-weight: 700; }
+.fr { display: inline-block; vertical-align: middle; text-align: center; margin: 0 1.5px; font-size: .86em; line-height: 1.1; }
+.fr > span { display: block; padding: 0 1px; }
+.fr > span:first-child { border-bottom: 1.2px solid #000; }
+@media screen { body { background: #ddd; } .page { background: #fff; margin: 10px auto; box-shadow: 0 1px 6px rgba(0,0,0,.3); } }
+</style></head>
+<body>
+<div class="page"><div class="wrap"><div id="stage"></div></div></div>
+<script>window.VERSION = 2;</script>
+<script>
+// Fantasma d'equacions de primer grau — generador de peces (SVG + etiquetes HTML)
+(function () {
+  const VERSION = window.VERSION || 1;      // 1 = original, 2 = sense decimals, 3 = sense fraccions
+  const GAP = 6;                            // marge cap a dins de cada peça (px d'origen) -> separació de tall
+  const FONT = 16;                         // mida base del text (px d'origen)
+  const X0 = 22, Y0 = 16, W = 1080, H = 938;
+
+  // ---------- Equacions (id: [equació, solució]) ----------
+  const base = {
+    E1: ["6 − 3x = 21", "−5"],
+    E2: ["14 + {1/2}x = 54", "80"],
+    E3: ["−18 = −4 − 7x", "2"],
+    E4: ["{x/8} + 1 = −2", "−24"],
+    E5: ["7 − 0.25x = 8", "−4"],
+    E6: ["−30 = 5 − 7x", "5"],
+    E7: ["−5x + 6 = 36", "−6"],
+    E8: ["12 − 5x = 52", "−8"],
+    E9: ["{x/2} + 5 = 12", "14"],
+    E10: ["{3/4}x + 2 = 11", "12"],
+    E11: ["{x/4} − 9 = −17", "−32"],
+    E12: ["−5 + 6x = −23", "−3"],
+    E13: ["4 − 5x = 14", "−2"],
+    E14: ["{x/2} − 7 = −14", "−14"],
+    E15: ["1 + {2/3}x = 4", "4.5"],
+    E16: ["−3 + 9x = 87", "10"],
+    E17: ["11 − {1/2}x = 20", "−18"],
+    E18: ["0.6x + 4 = 4", "0"],
+    E19: ["0.4x − 5 = 11", "40"],
+    E20: ["−16 = 2 + 18x", "−1"],
+    E21: ["0.5x − 8 = 17", "50"],
+    E22: ["3x − 7 = 14", "7"],
+    E23: ["{3/4}x + 4 = −11", "−20"],
+    E24: ["{x/3} − 7 = −10", "−9"],
+    E25: ["10 − {x/3} = 3", "21"],
+    E26: ["0.2x + 0.4 = 0.6", "1"],
+    E27: ["3 + 4x = 27", "6"],
+    E28: ["2x − 12 = −17", "−2.5"],
+    E29: ["4 − {x/2} = 12", "−16"],
+    E30: ["8 + 4x = 40", "8"],
+    E31: ["4x + 5 = 21", "4"],
+    E32: ["8x − 2 = 22", "3"],
+    E33: ["2x + 16 = 25", "4.5"],
+  };
+  const v2 = {   // sense decimals (fraccions)
+    E5: ["7 − {1/4}x = 8", "−4"],
+    E15: ["1 + {2/3}x = 4", "{9/2}"],
+    E18: ["{3/5}x + 4 = 4", "0"],
+    E19: ["{2/5}x − 5 = 11", "40"],
+    E21: ["{1/2}x − 8 = 17", "50"],
+    E26: ["{1/5}x + {2/5} = {3/5}", "1"],
+    E28: ["2x − 12 = −17", "−{5/2}"],
+    E33: ["2x + 16 = 25", "{9/2}"],
+  };
+  const v3 = {   // sense fraccions ni decimals (resultats enters nous)
+    E2: ["14 + 2x = 54", "20"],
+    E4: ["4x + 1 = −35", "−9"],
+    E5: ["7 − 2x = 15", "−4"],
+    E9: ["3x + 5 = 47", "14"],
+    E10: ["3x + 2 = 38", "12"],
+    E11: ["5x − 9 = −69", "−12"],
+    E14: ["2x − 7 = −21", "−7"],
+    E15: ["1 + 3x = 46", "15"],
+    E17: ["11 − 2x = 37", "−13"],
+    E18: ["6x + 4 = 4", "0"],
+    E19: ["4x − 5 = 59", "16"],
+    E21: ["5x − 8 = 57", "13"],
+    E23: ["3x + 4 = −41", "−15"],
+    E24: ["3x − 7 = −37", "−10"],
+    E25: ["10 − 3x = −17", "9"],
+    E26: ["2x + 4 = 6", "1"],
+    E28: ["2x − 12 = 24", "18"],
+    E29: ["4 − 2x = 36", "−16"],
+    E33: ["6x + 16 = 82", "11"],
+  };
+  const EQ = Object.assign({}, base, VERSION === 2 ? v2 : VERSION === 3 ? v3 : {});
+
+  // ---------- Geometria ----------
+  const rad = d => d * Math.PI / 180;
+  const EL = { cx: 413, cy: 306, rx: 60, ry: 52 };
+  const ER = { cx: 662, cy: 310, rx: 56, ry: 55 };
+  const MO = { cx: 551, cy: 520, rx: 101, ry: 130 };
+  const ep = (E, t) => [E.cx + E.rx * Math.cos(rad(t)), E.cy + E.ry * Math.sin(rad(t))];
+  const arc = (E, t0, t1) => {           // punts interiors de l'arc (sense extrems)
+    const n = Math.max(2, Math.ceil(Math.abs(t1 - t0) / 6));
+    const pts = [];
+    for (let k = 1; k < n; k++) pts.push(ep(E, t0 + (t1 - t0) * k / n));
+    return pts;
+  };
+
+  const N = {
+    A0: [37, 255], N1: [174, 391], Tm2: [205, 336], P134: [134, 492], N2: [318, 514],
+    N6: [336, 682], N7: [354, 884], Q622: [231, 622], Q770: [162, 770], Q886: [328, 886],
+    N8: [530, 790], Q932: [580, 932], N9: [720, 709], Q857: [857, 903], R16: [917, 645],
+    N5: [777, 442], R11e: [1002, 503], L12e: [922, 604], NBR: [868, 372], T8: [842, 230],
+    T7: [755, 102], T6: [595, 32], T2: [407, 74], D0: [262, 226], N4: [580, 175],
+    L10a: [905, 343], L10b: [1071, 353],
+    L1e: ep(EL, 199), L2e: ep(EL, -53.5), N3: ep(EL, -30.5), N5a: ep(EL, -13.8),
+    Lc4t: ep(EL, 30.5), Lm5e: ep(EL, 116),
+    L7e: ep(ER, -86.8), L8e: ep(ER, 2), L14e: ep(ER, 36), L15t: ep(ER, 66),
+    L5e: ep(ER, 163.8), L4e: ep(ER, -124.5),
+    L13e: ep(MO, -14.7), L17t: ep(MO, 28.3), Lc2t: ep(MO, 108), Lc1e: ep(MO, 182.7),
+    Lc4b: ep(MO, -129.4), L15b: ep(MO, -24.7),
+  };
+
+  const resolve0 = p => (typeof p === 'string' ? N[p] : p);
+  // Spline Catmull-Rom centripeta per suavitzar el contorn del fantasma
+  function spline(ctrl, per) {
+    const pts = ctrl.map(resolve0), out = [], idx = [];
+    const ext = [pts[0], ...pts, pts[pts.length - 1]];
+    const tj = (ti, a, b) => ti + Math.pow(Math.hypot(b[0] - a[0], b[1] - a[1]), 0.5);
+    for (let i = 0; i < pts.length - 1; i++) {
+      idx.push(out.length);
+      const p0 = ext[i], p1 = ext[i + 1], p2 = ext[i + 2], p3 = ext[i + 3];
+      const nz = (a, b) => (b - a < 1e-6 ? a + 1e-6 : b);
+      const t0 = 0, t1 = nz(t0, tj(t0, p0, p1)), t2 = nz(t1, tj(t1, p1, p2)), t3 = nz(t2, tj(t2, p2, p3));
+      for (let k = 0; k < per; k++) {
+        const t = t1 + (t2 - t1) * k / per;
+        const L = (a, b, ta, tb) => [0, 1].map(c => (tb - t) / (tb - ta) * a[c] + (t - ta) / (tb - ta) * b[c]);
+        const A1 = L(p0, p1, t0, t1), A2 = L(p1, p2, t1, t2), A3 = L(p2, p3, t2, t3);
+        const B1 = L(A1, A2, t0, t2), B2 = L(A2, A3, t1, t3);
+        out.push(L(B1, B2, t1, t2));
+      }
+    }
+    idx.push(out.length); out.push(pts[pts.length - 1]);
+    return { out, idx };
+  }
+  function cv(c, i, j) {
+    if (i < j) return c.out.slice(c.idx[i] + 1, c.idx[j]);
+    return c.out.slice(c.idx[j] + 1, c.idx[i]).reverse();
+  }
+  const DOME = spline(['D0', [280, 186], [335, 121], 'T2', [500, 47], 'T6', [680, 50], 'T7', [815, 152], 'T8'], 8);
+  const LM1 = spline(['A0', [45, 235], [65, 210], [100, 202], [130, 210], [160, 240], [185, 280], 'Tm2'], 8);
+  const LM2 = spline(['Tm2', [220, 350], [240, 365], [260, 372]], 8);
+  const LS = spline(['A0', [42, 290], [55, 345], [75, 395], [100, 440], 'P134'], 8);
+  const RM2 = spline(['L10a', [950, 300], [990, 230], [1020, 215], [1060, 225], [1080, 265], [1077, 330], 'L10b'], 8);
+  const RM3 = spline(['L10b', [1050, 415], [1015, 485], 'R11e'], 8);
+  const RB = spline(['R16', [940, 715], [980, 790], [1025, 860], [1062, 905]], 8);
+  const BOT4 = spline([[1056, 920], [1025, 927], [950, 932], [865, 910], 'Q857'], 8);
+  const BOT3 = spline(['Q857', [775, 889], [725, 895], [650, 912], 'Q932'], 8);
+  const BOT2 = spline(['Q932', [525, 930], [450, 912], [400, 895], 'N7'], 8);
+  const BOT1 = spline([[82, 903], [100, 919], [140, 926], [190, 922], [225, 912], [275, 900], 'Q886'], 8);
+
+  const P = {
+    M1: ['A0', ...cv(LM1, 0, 7), 'Tm2', 'N1'],
+    M2: ['A0', 'N1', 'P134', ...cv(LS, 5, 0)],
+    W: ['Tm2', ...cv(LM2, 0, 3), [260, 372], 'D0', 'L1e', ...arc(EL, 199, 116), 'Lm5e', 'N2', 'N1'],
+    M4: ['N1', 'N2', 'N6', 'Q622', [235, 608], [200, 562], [160, 520], 'P134'],
+    M5: ['Q622', 'N6', 'N7', 'Q886', 'Q770'],
+    B1: ['Q770', 'Q886', ...cv(BOT1, 6, 0), [82, 903], [100, 872], [125, 837], [147, 792]],
+    B2: ['N6', 'N8', 'Q932', ...cv(BOT2, 0, 4), 'N7'],
+    C1: ['N2', 'Lc1e', ...arc(MO, 182.7, 108), 'Lc2t', 'N8', 'N6'],
+    C0: ['Lm5e', ...arc(EL, 116, 30.5), 'Lc4t', 'Lc4b', ...arc(MO, 230.6, 182.7), 'Lc1e', 'N2'],
+    D: ['N5a', 'L5e', ...arc(ER, 163.8, 66), 'L15t', 'L15b', ...arc(MO, -24.7, -129.4), 'Lc4b', 'Lc4t', ...arc(EL, 30.5, -13.8)],
+    Pc: ['N3', 'N4', 'L4e', ...arc(ER, 235.5, 163.8), 'L5e', 'N5a', ...arc(EL, -13.8, -30.5)],
+    Pb: ['T2', ...cv(DOME, 3, 5), 'T6', 'N4', 'N3', ...arc(EL, -30.5, -53.5), 'L2e'],
+    H1: ['D0', ...cv(DOME, 0, 3), 'T2', 'L2e', ...arc(EL, -53.5, -161), 'L1e'],
+    Pe: ['T6', ...cv(DOME, 5, 7), 'T7', 'L7e', ...arc(ER, -86.8, -124.5), 'L4e', 'N4'],
+    Pf: ['T7', ...cv(DOME, 7, 9), 'T8', 'L8e', ...arc(ER, 2, -86.8), 'L7e'],
+    Pg: ['T8', [860, 300], 'NBR', 'N5', 'L14e', ...arc(ER, 36, 2), 'L8e'],
+    T: ['L14e', 'N5', 'L13e', ...arc(MO, -14.7, -24.7), 'L15b', 'L15t', ...arc(ER, 66, 36)],
+    Mt1: ['L10a', ...cv(RM2, 0, 7), 'L10b'],
+    Mt2: ['NBR', [885, 357], 'L10a', 'L10b', ...cv(RM3, 0, 3), 'R11e', 'N5'],
+    Mt3: ['N5', 'R11e', 'L12e'],
+    G: ['N5', 'L12e', [912, 617], 'R16', 'N9', 'L17t', ...arc(MO, 28.3, -14.7), 'L13e'],
+    B4: ['N9', 'R16', ...cv(RB, 0, 4), [1062, 905], [1068, 913], [1056, 920], ...cv(BOT4, 0, 4), 'Q857'],
+    B3: ['N8', 'N9', 'Q857', ...cv(BOT3, 0, 4), 'Q932'],
+    C2: ['Lc2t', ...arc(MO, 108, 28.3), 'L17t', 'N9', 'N8'],
+  };
+  // N5a és un node amb nom: l'afegim ara (nom llarg per no confondre'l amb N5)
+  N.N5a = ep(EL, -13.8);
+
+  // aresta: [id, peça equació, peça solució, node A, node B]
+  const EDGES = [
+    ['E1', 'M1', 'M2', 'A0', 'N1'], ['E2', 'M1', 'W', 'Tm2', 'N1'], ['E3', 'M2', 'M4', 'N1', 'P134'],
+    ['E4', 'W', 'M4', 'N1', 'N2'], ['E5', 'W', 'H1', 'D0', 'L1e'], ['E6', 'Pb', 'H1', 'L2e', 'T2'],
+    ['E7', 'C0', 'W', 'Lm5e', 'N2'], ['E8', 'C1', 'C0', 'N2', 'Lc1e'], ['E9', 'M4', 'C1', 'N2', 'N6'],
+    ['E10', 'M5', 'M4', 'Q622', 'N6'], ['E11', 'M5', 'B2', 'N6', 'N7'], ['E12', 'B1', 'M5', 'Q770', 'Q886'],
+    ['E13', 'B2', 'C1', 'N6', 'N8'], ['E14', 'C2', 'C1', 'Lc2t', 'N8'], ['E15', 'B3', 'B2', 'N8', 'Q932'],
+    ['E16', 'B3', 'C2', 'N8', 'N9'], ['E17', 'G', 'C2', 'L17t', 'N9'], ['E18', 'B4', 'G', 'R16', 'N9'],
+    ['E19', 'B3', 'B4', 'N9', 'Q857'], ['E20', 'G', 'Mt3', 'N5', 'L12e'], ['E21', 'Mt2', 'Mt3', 'N5', 'R11e'],
+    ['E22', 'T', 'G', 'N5', 'L13e'], ['E23', 'T', 'D', 'L15t', 'L15b'], ['E24', 'Pg', 'T', 'L14e', 'N5'],
+    ['E25', 'Mt2', 'Pg', 'NBR', 'N5'], ['E26', 'Mt2', 'Mt1', 'L10a', 'L10b'], ['E27', 'Pg', 'Pf', 'T8', 'L8e'],
+    ['E28', 'Pf', 'Pe', 'T7', 'L7e'], ['E29', 'Pe', 'Pb', 'T6', 'N4'], ['E30', 'Pc', 'Pe', 'N4', 'L4e'],
+    ['E31', 'Pb', 'Pc', 'N3', 'N4'], ['E32', 'Pc', 'D', 'N5a', 'L5e'], ['E33', 'D', 'C0', 'Lc4t', 'Lc4b'],
+  ];
+
+  // Ajustos manuals opcionals per etiqueta: "E33:eq" -> {t, pad, fs}
+  const TUNE = {
+    'E23:eq': { shift: -8, fs: 12.5 }, 'E22:eq': { shift: 10, fs: 13 }, 'E24:ans': { fs: 12.5, shift: 4 },
+    'E3:eq': { shift: 6 }, 'E33:eq': { compact: true, shift: -6 }, 'E9:eq': { shift: 12 }, 'E25:eq': { shift: -12 }, 'E2:eq': { shift: -6 }, 'E10:ans': { shift: -10 }, 'E33:ans': { fs: 14 },
+  };
+
+  // ---------- Utilitats ----------
+  const resolve = p => (typeof p === 'string' ? N[p] : p);
+  const areaOf = pts => { let a = 0; for (let i = 0; i < pts.length; i++) { const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % pts.length]; a += x1 * y2 - x2 * y1; } return a / 2; };
+
+  function inset(pts, g) {
+    const n = pts.length, out = [];
+    for (let i = 0; i < n; i++) {
+      const p0 = pts[(i + n - 1) % n], p1 = pts[i], p2 = pts[(i + 1) % n];
+      let d1 = [p1[0] - p0[0], p1[1] - p0[1]], d2 = [p2[0] - p1[0], p2[1] - p1[1]];
+      const l1 = Math.hypot(...d1) || 1, l2 = Math.hypot(...d2) || 1;
+      d1 = [d1[0] / l1, d1[1] / l1]; d2 = [d2[0] / l2, d2[1] / l2];
+      const n1 = [d1[1], -d1[0]], n2 = [d2[1], -d2[0]];
+      let vx = n1[0] + n2[0], vy = n1[1] + n2[1];
+      const dot = 1 + n1[0] * n2[0] + n1[1] * n2[1];
+      let k = dot < 0.08 ? 12 : 1 / dot;
+      let mx = vx * k, my = vy * k;
+      const ml = Math.hypot(mx, my);
+      if (ml > 4) { mx = mx / ml * 4; my = my / ml * 4; }
+      out.push([p1[0] + mx * g, p1[1] + my * g]);
+    }
+    return out;
+  }
+
+  const fmt = s => s.replace(/\{([^/}]+)\/([^}]+)\}/g, '<span class="fr"><span>$1</span><span>$2</span></span>');
+
+  // ---------- Construcció ----------
+  const pieces = {};
+  for (const [name, seq] of Object.entries(P)) {
+    let names = seq.map(s => (typeof s === 'string' ? s : null));
+    let pts = seq.map(resolve);
+    if (areaOf(pts) > 0) { pts = pts.slice().reverse(); names = names.slice().reverse(); }  // sempre antihorari visual
+    pieces[name] = { names, pts, ins: inset(pts, GAP) };
+  }
+
+  const stage = document.getElementById('stage');
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${X0} ${Y0} ${W} ${H}" width="${W}" height="${H}">`;
+  for (const pc of Object.values(pieces)) {
+    svg += `<polygon points="${pc.ins.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ')}" fill="#fff" stroke="#000" stroke-width="1.7" stroke-linejoin="round"/>`;
+  }
+  svg += '</svg>';
+  stage.insertAdjacentHTML('beforeend', svg);
+
+  const errors = [];
+  function place(pieceName, a, b, html, bold, key) {
+    const pc = pieces[pieceName];
+    const n = pc.names.length;
+    const ia = pc.names.indexOf(a), ib = pc.names.indexOf(b);
+    let s, e;
+    if (ia < 0 || ib < 0) { errors.push('node no trobat ' + pieceName + ' ' + a + ' ' + b); return; }
+    if ((ia + 1) % n === ib) { s = pc.ins[ia]; e = pc.ins[ib]; }
+    else if ((ib + 1) % n === ia) { s = pc.ins[ib]; e = pc.ins[ia]; }
+    else { errors.push('aresta no consecutiva ' + pieceName + ' ' + a + ' ' + b); return; }
+    const tune = TUNE[key] || {};
+    if (tune.compact) html = html.replace(/ ([+−=]) /g, '$1');
+    const dx = e[0] - s[0], dy = e[1] - s[1], len = Math.hypot(dx, dy);
+    const ux = dx / len, uy = dy / len, nx = uy, ny = -ux;   // normal cap a l'interior
+    const el = document.createElement('div');
+    el.className = 'lb' + (bold ? ' b' : '');
+    el.innerHTML = html;
+    el.style.fontSize = (tune.fs || FONT) + 'px';
+    stage.appendChild(el);
+    let w = el.offsetWidth;
+    const avail = len * 0.88;
+    if (!tune.fs && w > avail) { el.style.fontSize = Math.max(11, FONT * avail / w) + 'px'; w = el.offsetWidth; }
+    const h = el.offsetHeight;
+    const t = tune.t != null ? tune.t : 0.5;
+    const pad = tune.pad != null ? tune.pad : 3;
+    const sh = tune.shift || 0;                       // desplaçament (px) en el sentit de lectura
+    const cx = s[0] + dx * t + ux * sh + nx * (h / 2 + pad), cy = s[1] + dy * t + uy * sh + ny * (h / 2 + pad);
+    el.style.left = (cx - X0 - w / 2) + 'px';
+    el.style.top = (cy - Y0 - h / 2) + 'px';
+    el.style.transform = `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`;
+  }
+
+  for (const [id, pe, pa, a, b] of EDGES) {
+    const [eq, ans] = EQ[id];
+    place(pe, a, b, fmt(eq), false, id + ':eq');
+    place(pa, a, b, fmt('x = ' + ans), true, id + ':ans');
+  }
+
+  // ---------- Verificació matemàtica ----------
+  function num(s) {
+    const j = s.replace(/−/g, '-').replace(/\{([^/}]+)\/([^}]+)\}/g, '($1/$2)');
+    return Function('return (' + j + ')')();
+  }
+  for (const [id, [eq, ans]] of Object.entries(EQ)) {
+    try {
+      const x = num(ans);
+      let j = eq.replace(/−/g, '-').replace(/\{([^/}]+)\/([^}]+)\}/g, '(($1)/($2))')
+        .replace(/(\d|\))x/g, '$1*x').replace(/(\d)\(/g, '$1*(');
+      const [l, r] = j.split('=');
+      const f = new Function('x', 'return [(' + l + '),(' + r + ')]');
+      const [lv, rv] = f(x);
+      if (Math.abs(lv - rv) > 1e-9) errors.push(id + ' NO compleix: ' + eq + ' amb x=' + ans + ' (' + lv + ' vs ' + rv + ')');
+    } catch (err) { errors.push(id + ' error ' + err); }
+  }
+  // respostes úniques?
+  const seen = {};
+  for (const [id, [, ans]] of Object.entries(EQ)) { const v = Math.round(num(ans) * 1000) / 1000; (seen[v] = seen[v] || []).push(id); }
+  const dups = Object.entries(seen).filter(([, v]) => v.length > 1).map(([k, v]) => k + ':' + v.join('/'));
+  document.body.setAttribute('data-errors', errors.join(' | ') || 'OK');
+  document.body.setAttribute('data-dups', dups.join(' | ') || 'none');
+})();
+
+</script>
+</body></html>
+

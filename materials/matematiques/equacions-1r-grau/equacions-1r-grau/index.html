@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equacions de primer grau</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:,">
+<style>
+:root{
+  --bg:#f6f4ee; --ink:#1f2933; --muted:#5b6770; --card:#fff; --line:#d9d4c8;
+  --blue:#2f7fd0; --blue-bg:#d3e6fa; --green:#2fa84f; --green-bg:#d4f1dc;
+  --red:#d9435a; --red-bg:#fbdadf; --orange:#ee8a22; --orange-bg:#fde3c4;
+  --purple:#7b4bb7; --purple-bg:#e8dcf6; --fs:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(16px * var(--fs))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,sans-serif;line-height:1.35}
+body.proj{--fs:1.3}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.fml,.eq,.eqline{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",serif}
+
+/* capçalera */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.1rem;padding:.55rem 1rem;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand h1{font-size:1.2rem;margin:0}
+.logo{width:2.3rem;height:2.3rem;flex:none;display:block}
+.logo svg{width:100%;height:100%;display:block}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.tabs button,.tools button{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tools{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+.tools button.on{background:var(--orange-bg);border-color:var(--orange)}
+
+/* barra d'equació */
+.eqbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.6rem 1rem;background:#fffbe6;border-bottom:2px solid #e9d97a}
+.eqbar label{font-weight:700;color:#6d5600}
+.eqin{flex:1 1 18rem;max-width:30rem;border:2px solid #d8c75a;border-radius:.7rem;padding:.4rem .7rem;font-size:1.2rem;font-family:"Cambria Math",Cambria,serif;background:#fff;color:var(--ink)}
+.eqbar select{border:2px solid var(--line);border-radius:.7rem;padding:.4rem .5rem;background:#fff}
+.eqmsg{font-size:.95rem;color:var(--red);font-weight:600}
+.eqmsg.ok{color:var(--muted);font-weight:500}
+
+main{max-width:1180px;margin:0 auto;padding:.8rem 1rem 3rem}
+body.proj main{max-width:1600px}
+section[hidden]{display:none}
+.teo{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.5rem .9rem;margin-bottom:.8rem}
+.view{display:grid;grid-template-columns:minmax(0,3fr) minmax(17rem,2fr);gap:1rem;align-items:start}
+@media(max-width:900px){.view{grid-template-columns:1fr}}
+.stage{background:linear-gradient(#fbfaf5,#f1eee3);border:3px solid var(--line);border-radius:1.2rem;padding:.3rem}
+.stage svg{display:block;width:100%;height:auto;max-height:82vh;touch-action:none;user-select:none;-webkit-user-select:none}
+.panel{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem .9rem}
+.panel h3{margin:.1rem 0 .4rem;font-size:1.05rem}
+.panel hr{border:0;border-top:1px solid var(--line);margin:.7rem 0}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.4rem 0}
+.note{color:var(--muted);font-size:.9rem}
+.sl{display:block;margin:.35rem 0;font-weight:600}
+.sl b.v{float:right;font-family:"Cambria Math",Cambria,serif}
+.sl input[type=range]{width:100%;margin:.15rem 0}
+.chk{display:flex;gap:.45rem;align-items:center;margin:.3rem 0;cursor:pointer}
+.chk input{width:1.15rem;height:1.15rem}
+.seg{display:inline-flex;border:2px solid var(--line);border-radius:.7rem;overflow:hidden}
+.seg button{border:0;background:#fff;padding:.3rem .7rem;font-weight:600;color:var(--ink)}
+.seg button+button{border-left:2px solid var(--line)}
+.seg button.on{background:var(--ink);color:#fff}
+.btn{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.hint{animation:hintpulse .6s ease-in-out 4;border-color:var(--orange);background:var(--orange-bg)}
+@keyframes hintpulse{50%{transform:scale(1.07)}}
+.primary{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:.7rem;padding:.4rem 1rem;font-weight:700}
+.pill{display:inline-block;border-radius:2rem;padding:.1rem .7rem;font-weight:700;font-size:.92rem}
+.pill.ok{background:var(--green-bg);color:#17612e}
+.pill.no{background:var(--red-bg);color:#8f1d30}
+.pill.in{background:var(--blue-bg);color:#174f8a}
+input.num{border:2px solid var(--line);border-radius:.6rem;padding:.3rem .5rem;background:#fff;color:var(--ink);width:6rem;text-align:center;font-size:1.1rem}
+.stepper{display:inline-flex;gap:.3rem;align-items:center}
+.stepper button{width:2rem;height:2rem;border:2px solid var(--line);background:#fff;border-radius:.6rem;font-weight:700;font-size:1.1rem}
+.opgrid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin:.5rem 0}
+.opgrid .btn{text-align:left;padding:.45rem .6rem}
+.opgrid .add{border-color:#9bd3ab;background:#f1fbf4}
+.opgrid .sub{border-color:#f0aab6;background:#fff4f6}
+.opgrid .mul{border-color:#b7cdea;background:#f2f7fd}
+.opgrid .div{border-color:#cdb9e8;background:#f8f3fd}
+.opgrid .bal{border-color:#e7a0ad;background:#fff;border-style:dashed}
+.opgrid .cancel{grid-column:1/-1;text-align:center;border-color:var(--purple);background:var(--purple-bg)}
+.log{margin:.3rem 0;padding-left:1.3rem;font-size:.95rem}
+.log li{margin:.35rem 0}
+.log .eqline{font-size:1.1rem;display:block}
+table.tb{border-collapse:collapse;width:100%;font-family:"Cambria Math",Cambria,serif}
+table.tb th,table.tb td{border-bottom:1px solid var(--line);padding:.25rem .4rem;text-align:left}
+table.tb tr.hot td{background:var(--green-bg);font-weight:700}
+table.tb tr.cur td{outline:2px solid var(--blue);outline-offset:-2px}
+
+/* equacions */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;margin:0 .15em;font-size:.9em}
+.fr i{font-style:normal;padding:0 .2em}
+.fr i:first-child{border-bottom:.08em solid currentColor}
+.eqline{display:inline-flex;align-items:center;flex-wrap:wrap;gap:.1em .5em;font-size:1.35rem;line-height:1.9}
+.eqline .rel{font-weight:700;color:var(--muted)}
+.eqline .rel.ne{color:var(--red)}
+.opc{color:var(--orange);font-weight:700}
+.eqshow{background:#fff;border:2px solid var(--line);border-radius:1rem;text-align:center;margin-top:.7rem;padding:.3rem .5rem}
+.eqshow .eqline{font-size:1.9rem}
+.concl{border-radius:1rem;padding:.55rem .9rem;margin-top:.7rem;font-size:1.1rem}
+.concl.ok{background:var(--green-bg);border:2px solid var(--green)}
+.concl.no{background:var(--red-bg);border:2px solid var(--red)}
+.concl.in{background:var(--blue-bg);border:2px solid var(--blue)}
+.concl.warn{background:var(--orange-bg);border:2px solid var(--orange)}
+.check{margin-top:.5rem;font-family:"Cambria Math",Cambria,serif;font-size:1.1rem;line-height:1.8}
+
+/* pas a pas */
+.step{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.5rem .9rem;margin-bottom:.6rem}
+.step.cur{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-bg)}
+.step .sh{font-weight:700;margin-bottom:.15rem}
+.step .sn{display:inline-block;min-width:1.6rem;height:1.6rem;line-height:1.6rem;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-size:.85rem;margin-right:.3rem}
+.step .why{color:var(--muted);font-size:.95rem;margin:.1rem 0 .2rem}
+.step .arr{color:var(--muted);line-height:1;margin:-.2rem 0}
+.step .oprow .eqline{font-size:1.3rem}
+.step .resrow .eqline{font-size:1.45rem;font-weight:700}
+.inp{border:2px solid var(--line);border-radius:.6rem;padding:.35rem .6rem;font-size:1.1rem;font-family:"Cambria Math",Cambria,serif;width:9rem;background:#fff}
+
+/* balança (SVG) */
+.beam{fill:#b79a5a;stroke:#7d6430;stroke-width:3}
+.stand{fill:#9b8450;stroke:#7d6430;stroke-width:3}
+.rod{stroke:#7d6430;stroke-width:7;stroke-linecap:round}
+.plate{fill:#d9c98f;stroke:#7d6430;stroke-width:3}
+.sh.bx{fill:var(--blue-bg);stroke:var(--blue);stroke-width:3}
+.sh.bx.rv{fill:var(--green-bg);stroke:var(--green)}
+.sh.bl{fill:var(--orange-bg);stroke:var(--orange);stroke-width:3}
+.sh.bn{fill:var(--red-bg);stroke:var(--red);stroke-width:3}
+.knot{fill:var(--red)}
+.shine{fill:#fff;opacity:.6}
+.str{stroke:#8a929a;stroke-width:1.6;fill:none}
+.lb{text-anchor:middle;font-weight:700;font-size:22px;fill:var(--ink);font-family:"Cambria Math",Cambria,serif;pointer-events:none}
+.lb.x{font-style:italic;font-size:26px}
+.lb.s{font-size:16px}
+.badge{fill:#fff;stroke:var(--line);stroke-width:3}
+.badge-t{text-anchor:middle;font-size:40px;font-weight:700;font-family:Cambria,serif}
+.badge-t.ok{fill:var(--green)}
+.badge-t.no{fill:var(--red)}
+.it.enter{animation:drop .45s cubic-bezier(.3,1.5,.5,1) both}
+.it.leave{animation:gone .38s ease-in both;transform-box:fill-box;transform-origin:center}
+@keyframes drop{from{transform:translateY(-80px);opacity:0}to{transform:none;opacity:1}}
+@keyframes gone{to{transform:scale(.2);opacity:0}}
+.str.sin{animation:fin .45s both}
+.str.sout{animation:fout .38s both}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+@keyframes fout{to{opacity:0}}
+.float{animation:bob 2.6s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(-2px)}to{transform:translateY(3px)}}
+
+/* gràfic */
+.gl{stroke-linecap:round}
+.grid{stroke:#e4dfd1;stroke-width:1}
+.axis{stroke:#6b747c;stroke-width:2}
+.tk{font-size:13px;fill:#6b747c;font-family:system-ui,sans-serif}
+.gtxt{font-size:15px;font-weight:700;font-family:"Cambria Math",Cambria,serif}
+
+/* amaga resultats */
+body.hide-res .res:not(.shown){filter:blur(7px);cursor:pointer;user-select:none}
+svg .res{transition:filter .2s}
+
+@media print{
+  .top,.panel,.eqbar select,.eqbar button,.teo{display:none!important}
+  .view{display:block}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" id="logo"></span><h1>Equacions de primer grau</h1></div>
+  <nav class="tabs" id="tabs">
+    <button data-t="bal" class="on">Balança</button>
+    <button data-t="steps">Pas a pas</button>
+    <button data-t="graf">Gràfic</button>
+  </nav>
+  <div class="tools">
+    <button id="bHide" title="Difumina les solucions perquè els alumnes les predeguin">Amaga resultats</button>
+    <button id="bProj" title="Lletra més gran per a la pissarra">Projecció</button>
+    <button id="bPrint">Imprimir</button>
+  </div>
+</header>
+
+<div class="eqbar">
+  <label for="eqIn">Equació:</label>
+  <input id="eqIn" class="eqin" autocomplete="off" spellcheck="false" placeholder="Ex.: 2x + 3 = x + 7">
+  <button id="eqRnd" class="btn" title="Genera una equació aleatòria amb solució entera">Aleatòria</button>
+  <button id="eqGo" class="primary">Carrega</button>
+  <select id="eqEx" title="Exemples"></select>
+  <span id="eqMsg" class="eqmsg ok"></span>
+</div>
+
+<main>
+
+<!-- ============ BALANÇA ============ -->
+<section id="s-bal">
+  <div class="teo"><b>Idea:</b> una equació és una balança en equilibri. El que fas a un plat, ho has de fer a l'altre.
+    <span class="note">Les caixes <b>x</b> pesen totes igual (encara no sabem quant). Els globus vermells tenen pes negatiu: aixequen el plat. Afegir un globus (−1) és el mateix que treure una bola, i una bola amb un globus al mateix plat s'eliminen (1 − 1 = 0).</span></div>
+  <div class="view">
+    <div>
+      <div class="stage"><svg id="balSvg" viewBox="0 0 1000 620" aria-label="Balança"></svg></div>
+      <div class="eqshow" id="balEq"></div>
+      <div id="balBanner"></div>
+    </div>
+    <div class="panel">
+      <h3>Operacions</h3>
+      <div class="row"><span>Quantitat <b>n</b></span>
+        <span class="stepper"><button id="nMinus" aria-label="menys">−</button><input id="nIn" class="num" value="1" inputmode="decimal" autocomplete="off"><button id="nPlus" aria-label="més">+</button></span></div>
+      <div class="row"><span class="note">Aplica-ho a:</span>
+        <span class="seg" id="balTarget"><button data-v="both" class="on">Dos plats</button><button data-v="L">Esquerre</button><button data-v="R">Dret</button></span></div>
+      <label class="chk"><input type="checkbox" id="balNeg"> Utilitza globus (nombres negatius)</label>
+      <div class="opgrid" id="balOps">
+        <button class="btn add" data-op="addU"></button>
+        <button class="btn sub" data-op="subU" data-slot="subU"></button>
+        <button class="btn add" data-op="addX"></button>
+        <button class="btn sub" data-op="subX" data-slot="subX"></button>
+        <button class="btn mul" data-op="mul"></button>
+        <button class="btn div" data-op="div"></button>
+        <button class="btn cancel" data-op="cancel" title="Una bola i un globus al mateix plat es compensen" hidden>Elimina parelles</button>
+      </div>
+      <div class="row">
+        <button id="balUndo" class="btn">↶ Desfés</button>
+        <button id="balReset" class="btn">⟲ Reinicia</button>
+        <button id="balHint" class="btn">Pista</button>
+      </div>
+      <div id="balMsg" class="note" style="min-height:1.4em"></div>
+      <hr>
+      <h3>Què hem fet</h3>
+      <ol id="balLog" class="log"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PAS A PAS ============ -->
+<section id="s-steps" hidden>
+  <div class="view">
+    <div>
+      <div class="row"><span class="seg" id="stMode"><button data-m="auto" class="on">El programa resol</button><button data-m="man">Trio jo les operacions</button></span></div>
+      <div id="stList"></div>
+      <div id="stFinal"></div>
+    </div>
+    <div class="panel" id="stPanel"></div>
+  </div>
+</section>
+
+<!-- ============ GRÀFIC ============ -->
+<section id="s-graf" hidden>
+  <div class="teo"><b>Idea:</b> cada membre de l'equació és una funció. La solució és l'<i>x</i> on les dues rectes es creuen (aquí els dos membres valen el mateix).</div>
+  <div class="view">
+    <div class="stage"><svg id="grSvg" viewBox="0 0 900 580" aria-label="Gràfic"></svg></div>
+    <div class="panel">
+      <h3>Les dues funcions</h3>
+      <div id="grFns" class="eq"></div>
+      <hr>
+      <h3>Prova un valor de x</h3>
+      <label class="sl">x = <b class="v" id="grTv"></b><input type="range" id="grT" min="-10" max="10" step="0.25" value="0"></label>
+      <div id="grProbe" class="eq"></div>
+      <div class="row"><button id="grSol" class="btn">Salta a la solució</button></div>
+      <table id="grTab" class="tb"></table>
+      <hr>
+      <label class="chk"><input type="checkbox" id="grDiff"> Mostra la recta «esquerre − dret» (talla l'eix X a la solució)</label>
+      <label class="chk"><input type="checkbox" id="grSq"> Mateixa escala als dos eixos</label>
+      <div class="row"><button id="grZi" class="btn" title="Apropa">＋</button><button id="grZo" class="btn" title="Allunya">－</button><button id="grFit" class="btn">Ajusta la vista</button></div>
+      <div class="note">Arrossega el fons per moure el gràfic, la roda del ratolí per fer zoom i el rombe de l'eix per moure la x.</div>
+      <div id="grConc"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+'use strict';
+/* =====================================================================
+   Equacions de primer grau — balança, pas a pas i gràfic
+   ===================================================================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const MINUS='−';
+
+/* ---------- logo i favicon ---------- */
+const LOGO=`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="14" fill="#2f7fd0"/><path d="M32 16v32M21 50h22" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M10 22h44" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M10 22 4 36h12zM54 22l-6 14h12z" fill="#fde3c4" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><circle cx="32" cy="22" r="4.5" fill="#ee8a22"/></svg>`;
+$('#logo').innerHTML=LOGO;
+$('#fav').href='data:image/svg+xml,'+encodeURIComponent(LOGO);
+
+/* ---------- racionals ---------- */
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t}return a};
+const F=(n,d=1)=>{if(d<0){n=-n;d=-d}const g=gcd(n,d)||1;return{n:n/g,d:d/g}};
+const fadd=(x,y)=>F(x.n*y.d+y.n*x.d,x.d*y.d);
+const fsub=(x,y)=>F(x.n*y.d-y.n*x.d,x.d*y.d);
+const fmul=(x,y)=>F(x.n*y.n,x.d*y.d);
+const fdiv=(x,y)=>F(x.n*y.d,x.d*y.n);
+const fneg=x=>F(-x.n,x.d);
+const fabs=x=>F(Math.abs(x.n),x.d);
+const feq=(x,y)=>x.n===y.n&&x.d===y.d;
+const fz=x=>x.n===0;
+const fnum=x=>x.n/x.d;
+const fint=x=>x.d===1;
+const fcmp=(x,y)=>Math.sign(x.n*y.d-y.n*x.d);
+const ZERO=F(0),ONE=F(1);
+const lcm=(a,b)=>a/gcd(a,b)*b;
+
+function nfmt(v){let s=String(Math.round(v*1e6)/1e6);if(s==='-0')s='0';return s.replace('.',',').replace('-',MINUS)}
+function fText(x){const s=x.n<0?MINUS:'';const n=Math.abs(x.n);return x.d===1?s+n:s+n+'/'+x.d}
+const frH=(n,d)=>`<span class="fr"><i>${n}</i><i>${d}</i></span>`;
+function fHtml(x){const s=x.n<0?MINUS:'';const n=Math.abs(x.n);return x.d===1?s+n:s+frH(n,x.d)}
+function isDecFr(x){let d=x.d;while(d%2===0)d/=2;while(d%5===0)d/=5;return d===1}
+function ansHtml(x){return fHtml(x)+((!fint(x)&&isDecFr(x))?' = '+nfmt(fnum(x)):'')}
+function parseDec(s){const [i,f='']=s.replace(',','.').split('.');return F(parseInt(i+f,10),Math.pow(10,f.length))}
+
+/* ---------- analitzador d'expressions ---------- */
+function tokenize(s){
+  const t=[];s=s.replace(/\s+/g,'');
+  const re=/(\d+(?:[.,]\d+)?)|([xX])|([+\-−–*·×\/:÷()])|(.)/g;let m;
+  while((m=re.exec(s))){
+    if(m[1]!==undefined)t.push({k:'num',txt:m[1].replace('.',','),v:parseDec(m[1])});
+    else if(m[2])t.push({k:'x'});
+    else if(m[3]){const c=m[3];t.push({k:c==='+'?'+':'-−–'.includes(c)?'-':'*·×'.includes(c)?'*':'/:÷'.includes(c)?'/':c})}
+    else throw new Error('No entenc el símbol «'+m[4]+'».');
+  }
+  return t;
+}
+function parseExprStr(str){
+  const toks=tokenize(str);let i=0;
+  const peek=()=>toks[i];
+  const err=m=>{throw new Error(m)};
+  function expr(){let l=term();while(peek()&&(peek().k==='+'||peek().k==='-')){const k=toks[i++].k;const r=term();l={t:k==='+'?'add':'sub',l,r}}return l}
+  function term(){let l=unary();for(;;){const p=peek();if(!p)break;
+    if(p.k==='*'){i++;l={t:'mul',l,r:unary()}}
+    else if(p.k==='/'){i++;l={t:'div',l,r:unary()}}
+    else if(p.k==='num'||p.k==='x'||p.k==='('){l={t:'mul',l,r:atom(),imp:true}}
+    else break}return l}
+  function unary(){const p=peek();if(p&&p.k==='-'){i++;return{t:'neg',e:unary()}}if(p&&p.k==='+'){i++;return unary()}return atom()}
+  function atom(){const p=toks[i++];if(!p)err("L'expressió s'acaba abans d'hora.");
+    if(p.k==='num')return{t:'n',v:p.v,txt:p.txt};
+    if(p.k==='x')return{t:'x'};
+    if(p.k==='('){const e=expr();if(!peek()||peek().k!==')')err('Falta tancar un parèntesi.');i++;return{t:'par',e}}
+    err('No entenc «'+(p.k==='num'?p.txt:p.k)+'» en aquesta posició.')}
+  const e=expr();if(i<toks.length)err('Sobra «'+toks[i].k+'» al final.');return e;
+}
+const strip=n=>n.t==='par'?n.e:n;
+function linAst(n){
+  switch(n.t){
+    case 'n':return{a:ZERO,b:n.v};
+    case 'x':return{a:ONE,b:ZERO};
+    case 'par':return linAst(n.e);
+    case 'neg':{const l=linAst(n.e);return{a:fneg(l.a),b:fneg(l.b)}}
+    case 'add':{const l=linAst(n.l),r=linAst(n.r);return{a:fadd(l.a,r.a),b:fadd(l.b,r.b)}}
+    case 'sub':{const l=linAst(n.l),r=linAst(n.r);return{a:fsub(l.a,r.a),b:fsub(l.b,r.b)}}
+    case 'mul':{const l=linAst(n.l),r=linAst(n.r);
+      if(!fz(l.a)&&!fz(r.a))throw new Error("Hi ha una x multiplicada per una altra x: aquesta equació no és de primer grau.");
+      if(fz(l.a))return{a:fmul(r.a,l.b),b:fmul(r.b,l.b)};
+      return{a:fmul(l.a,r.b),b:fmul(l.b,r.b)}}
+    case 'div':{const l=linAst(n.l),r=linAst(n.r);
+      if(!fz(r.a))throw new Error("No es pot dividir per x: aquesta equació no és de primer grau.");
+      if(fz(r.b))throw new Error('No es pot dividir per 0.');
+      return{a:fdiv(l.a,r.b),b:fdiv(l.b,r.b)}}
+  }
+}
+const negT=t=>({c:fneg(t.c),x:t.x});
+const scaleT=(t,f)=>({c:fmul(t.c,f),x:t.x});
+function termsAst(n){
+  switch(n.t){
+    case 'n':return[{c:n.v,x:false}];
+    case 'x':return[{c:ONE,x:true}];
+    case 'par':return termsAst(n.e);
+    case 'neg':return termsAst(n.e).map(negT);
+    case 'add':return termsAst(n.l).concat(termsAst(n.r));
+    case 'sub':return termsAst(n.l).concat(termsAst(n.r).map(negT));
+    case 'mul':{const l=linAst(n.l),r=linAst(n.r);
+      if(fz(l.a))return termsAst(n.r).map(t=>scaleT(t,l.b));
+      return termsAst(n.l).map(t=>scaleT(t,r.b))}
+    case 'div':{const r=linAst(n.r);return termsAst(n.l).map(t=>scaleT(t,fdiv(ONE,r.b)))}
+  }
+}
+function hasBigPar(n){
+  switch(n.t){
+    case 'par':return termsAst(n.e).length>1||hasBigPar(n.e);
+    case 'add':case 'sub':case 'mul':return hasBigPar(n.l)||hasBigPar(n.r);
+    case 'div':return hasBigPar(strip(n.l))||hasBigPar(strip(n.r));
+    case 'neg':return hasBigPar(n.e);
+    default:return false;
+  }
+}
+function parseEquation(str){
+  const parts=str.split('=');
+  if(parts.length!==2)throw new Error("L'equació ha de tenir exactament un signe «=».");
+  const sides=parts.map(s=>{
+    if(!s.trim())throw new Error("Cada membre de l'equació ha de tenir alguna cosa.");
+    const ast=parseExprStr(s);linAst(ast);return{ast,terms:termsAst(ast)};
+  });
+  return{L:sides[0],R:sides[1]};
+}
+
+/* ---------- representació en HTML ---------- */
+function astHtml(n,sub){
+  const subH=()=>{const v=sub;return (v.n<0||!fint(v))?'('+fHtml(v)+')':fHtml(v)};
+  switch(n.t){
+    case 'n':return n.txt;
+    case 'x':return sub?subH():'x';
+    case 'add':return astHtml(n.l,sub)+' + '+astHtml(n.r,sub);
+    case 'sub':return astHtml(n.l,sub)+' '+MINUS+' '+astHtml(n.r,sub);
+    case 'neg':return MINUS+astHtml(n.e,sub);
+    case 'par':return '('+astHtml(n.e,sub)+')';
+    case 'mul':{const l=astHtml(n.l,sub);let r=astHtml(n.r,sub);if(n.r.t==='neg')r='('+r+')';
+      const dot=n.imp?(sub?n.r.t!=='par':n.r.t==='n'):true;return l+(dot?'·':'')+r}
+    case 'div':return frH(astHtml(strip(n.l),sub),astHtml(strip(n.r),sub));
+  }
+}
+function tBody(c,isx){
+  if(isx){if(feq(c,ONE))return 'x';if(c.d===1)return c.n+'x';return frH(c.n+'x',c.d)}
+  return c.d===1?''+c.n:frH(c.n,c.d);
+}
+function termPiece(t,first){
+  const neg=t.c.n<0;let body=fz(t.c)?'0':tBody(fabs(t.c),t.x);
+  let p=first?(neg?MINUS:'')+body:' '+(neg?MINUS:'+')+' '+body;
+  if(t.mark)p=`<span class="opc">${p}</span>`;
+  return p;
+}
+function termsHtml(terms){return terms.map((t,i)=>termPiece(t,i===0)).join('')||'0'}
+const eqLine=(l,r,rel='=')=>`<span class="eqline"><span>${l}</span><span class="rel${rel!=='='?' ne':''}">${rel}</span><span>${r}</span></span>`;
+
+/* ---------- membres, operacions i motor de passos ---------- */
+const linSide=s=>s.terms.reduce((o,t)=>t.x?{a:fadd(o.a,t.c),b:o.b}:{a:o.a,b:fadd(o.b,t.c)},{a:ZERO,b:ZERO});
+function canonTerms(l){const o=[];if(!fz(l.a))o.push({c:l.a,x:true});if(!fz(l.b))o.push({c:l.b,x:false});if(!o.length)o.push({c:ZERO,x:false});return o}
+const canonSide=l=>({ast:null,terms:canonTerms(l)});
+const canonLen=l=>((fz(l.a)?0:1)+(fz(l.b)?0:1))||1;
+const needsSimplify=s=>s.terms.length!==canonLen(linSide(s));
+const needsExpand=s=>!!s.ast&&hasBigPar(s.ast);
+const needsParen=s=>s.ast?(s.ast.t==='add'||s.ast.t==='sub'):s.terms.length>1;
+const sideHtml=s=>s.ast?astHtml(s.ast):termsHtml(s.terms);
+const isPlain=s=>!needsExpand(s)&&!needsSimplify(s)&&(!s.ast||['n','x','neg','div','par'].includes(s.ast.t));
+
+function opApplyLin(l,op){
+  if(op.kind==='add')return op.x?{a:fadd(l.a,op.c),b:l.b}:{a:l.a,b:fadd(l.b,op.c)};
+  if(op.kind==='mul')return{a:fmul(l.a,op.n),b:fmul(l.b,op.n)};
+  return{a:fdiv(l.a,op.n),b:fdiv(l.b,op.n)};
+}
+function coefTxt(c,x){const s=fText(fabs(c));return x?(feq(fabs(c),ONE)?'x':s+'x'):s}
+function opText(op){
+  if(op.kind==='add')return (op.c.n<0?'Restem ':'Sumem ')+coefTxt(op.c,op.x);
+  if(op.kind==='mul')return 'Multipliquem per '+fText(op.n);
+  return 'Dividim entre '+fText(op.n);
+}
+function opSideHtml(side,op){
+  const base=sideHtml(side),par=needsParen(side);
+  if(op.kind==='add')return base+termPiece({c:op.c,x:op.x,mark:true},false);
+  const nH=(op.n.n<0||!fint(op.n))?'('+fHtml(op.n)+')':fHtml(op.n);
+  const b=par?'('+base+')':base;
+  if(op.kind==='mul')return `<span class="opc">${nH}</span>·${b}`;
+  return `${b} <span class="opc">: ${nH}</span>`;
+}
+function solvedInfo(st){
+  const l=linSide(st.L),r=linSide(st.R);
+  if(fz(l.a)&&fz(r.a))return feq(l.b,r.b)?{type:'all'}:{type:'none'};
+  if(!isPlain(st.L)||!isPlain(st.R))return null;
+  if(feq(l.a,ONE)&&fz(l.b)&&fz(r.a))return{type:'sol',r:r.b,side:'L'};
+  if(feq(r.a,ONE)&&fz(r.b)&&fz(l.a))return{type:'sol',r:l.b,side:'R'};
+  return null;
+}
+function nextStep(st){
+  const si=solvedInfo(st);
+  if(si){
+    if(si.type==='sol'&&si.side==='R')return{kind:'swap',title:'Ordenem la solució',why:"Escrivim la x a l'esquerra (una igualtat es pot llegir en els dos sentits)."};
+    return null;
+  }
+  if(needsExpand(st.L)||needsExpand(st.R))return{kind:'expand',title:'Treiem els parèntesis',why:"Apliquem la propietat distributiva: multipliquem el que hi ha fora del parèntesi per cada terme de dins (si davant hi ha un signe menys, canviem el signe de tot el que hi ha dins)."};
+  if(needsSimplify(st.L)||needsSimplify(st.R))return{kind:'simplify',title:'Simplifiquem cada membre',why:'Ajuntem els termes que tenen x i els termes que són només nombres.'};
+  const l=linSide(st.L),r=linSide(st.R),a=l.a,b=l.b,c=r.a,d=r.b;
+  let den=1;[a,b,c,d].forEach(f=>den=lcm(den,f.d));
+  if(den>1)return{kind:'op',op:{kind:'mul',n:F(den)},title:'Eliminem els denominadors',why:`Hi ha fraccions o decimals. Multipliquem els dos membres pel m.c.m. dels denominadors (${den}) i així desapareixen.`};
+  if(!fz(a)&&!fz(c)){
+    const m=fcmp(a,c)>=0?c:a,side=fcmp(a,c)>=0?'dret':'esquerre';
+    const op={kind:'add',c:fneg(m),x:true};
+    return{kind:'op',op,title:'Passem les x a un sol membre',why:`Volem les x en un sol membre. Per eliminar la x del membre ${side}, ${opText(op).toLowerCase()} als dos membres.`};
+  }
+  let k,v,side;
+  if(!fz(a)){k=a;v=b;side='esquerre'}else{k=c;v=d;side='dret'}
+  if(!fz(v)){
+    const op={kind:'add',c:fneg(v),x:false};
+    return{kind:'op',op,title:"Passem els nombres a l'altre membre",why:`Volem la x sola amb el seu coeficient. Per eliminar el ${fText(v)} del membre ${side}, ${opText(op).toLowerCase()} als dos membres.`};
+  }
+  if(!feq(k,ONE))return{kind:'op',op:{kind:'div',n:k},title:'Aïllem la x',why:`Per aïllar la x, dividim els dos membres entre ${fText(k)} (el coeficient de la x).`};
+  return null;
+}
+function applyStep(st,ns){
+  let L=st.L,R=st.R,op=null,opHtml=null;
+  if(ns.kind==='expand'){if(needsExpand(L))L={ast:null,terms:L.terms};if(needsExpand(R))R={ast:null,terms:R.terms}}
+  else if(ns.kind==='simplify'){if(needsSimplify(L))L=canonSide(linSide(L));if(needsSimplify(R))R=canonSide(linSide(R))}
+  else if(ns.kind==='swap'){const t=L;L=R;R=t}
+  else{
+    op=ns.op;opHtml=eqLine(opSideHtml(L,op),opSideHtml(R,op));
+    L=canonSide(opApplyLin(linSide(L),op));R=canonSide(opApplyLin(linSide(R),op));
+  }
+  return{st:{L,R},step:{title:ns.title,why:ns.why,opHtml,res:eqLine(sideHtml(L),sideHtml(R)),op}};
+}
+
+/* ---------- equació activa ---------- */
+let EQ=null;
+function loadEquation(str){
+  const p=parseEquation(str);
+  const lL=linAst(p.L.ast),lR=linAst(p.R.ast);
+  const al=fsub(lL.a,lR.a),be=fsub(lL.b,lR.b);
+  const eq={txt:str,L:p.L,R:p.R,lL,lR,kind:'unique',xs:null};
+  if(!fz(al))eq.xs=fdiv(fneg(be),al);else eq.kind=fz(be)?'all':'none';
+  return eq;
+}
+const stOf=eq=>({L:eq.L,R:eq.R});
+function conclusionHtml(si){
+  if(si.type==='sol')return `<div class="concl ok">Solució: <b class="res eqline" style="font-size:1.3rem">x = ${ansHtml(si.r)}</b></div>`;
+  if(si.type==='none')return `<div class="concl no"><b>Impossible.</b> Les x han desaparegut i ha quedat una igualtat falsa: l'equació <b>no té solució</b> (cap valor de x la compleix).</div>`;
+  return `<div class="concl in"><b>Identitat.</b> Els dos membres han quedat iguals: l'equació té <b>infinites solucions</b> (qualsevol valor de x la compleix).</div>`;
+}
+function checkHtml(r){
+  const vl=fadd(fmul(EQ.lL.a,r),EQ.lL.b),vr=fadd(fmul(EQ.lR.a,r),EQ.lR.b);
+  return `<div class="check res">Comprovació amb x = ${fHtml(r)}:<br>Membre esquerre: ${astHtml(EQ.L.ast,r)} = <b>${fHtml(vl)}</b><br>Membre dret: ${astHtml(EQ.R.ast,r)} = <b>${fHtml(vr)}</b><br><span class="pill ok">✔ Els dos membres valen el mateix</span></div>`;
+}
+
+/* =====================================================================
+   BALANÇA
+   ===================================================================== */
+const BAL={cur:null,init:null,hist:[],log:[],reveal:null,target:'both',timer:0,fin:null,neg:false};
+const PV={x:500,y:470,half:330,plate:44};
+const CAP={bx:9,u:16,gb:4,gu:9};
+const GCOL=['#2f7fd0','#2fa84f','#7b4bb7','#ee8a22','#d9435a','#0e9aa7'];
+const spring={ang:0,vel:0,target:0,raf:0,last:0};
+let beamG,rodL,rodR,panG={},itemsG={},badgeT;
+
+function balBuild(){
+  const s=$('#balSvg');
+  s.innerHTML=`
+  <path class="stand" d="M500 470 L452 592 H548 Z"/>
+  <rect class="stand" x="372" y="588" width="256" height="16" rx="8"/>
+  <g id="beamG"><rect class="beam" x="170" y="457" width="660" height="26" rx="13"/><circle cx="170" cy="470" r="9" fill="#7d6430"/><circle cx="830" cy="470" r="9" fill="#7d6430"/></g>
+  <line id="rodL" class="rod"/><line id="rodR" class="rod"/>
+  <circle cx="500" cy="470" r="17" fill="#7d6430"/><circle cx="500" cy="470" r="6" fill="#d9c98f"/>
+  <g id="panL"><rect class="plate" x="-170" y="0" width="340" height="14" rx="7"/><g id="itL"></g></g>
+  <g id="panR"><rect class="plate" x="-170" y="0" width="340" height="14" rx="7"/><g id="itR"></g></g>
+  <circle class="badge" cx="500" cy="352" r="34"/><text id="badgeT" class="badge-t ok" x="500" y="366">=</text>`;
+  beamG=$('#beamG');rodL=$('#rodL');rodR=$('#rodR');panG={L:$('#panL'),R:$('#panR')};itemsG={L:$('#itL'),R:$('#itR')};badgeT=$('#badgeT');
+  placeBeam(0);
+}
+function placeBeam(deg){
+  const r=deg*Math.PI/180,ex=PV.half*Math.cos(r),ey=PV.half*Math.sin(r);
+  beamG.setAttribute('transform',`rotate(${deg} ${PV.x} ${PV.y})`);
+  const lx=PV.x-ex,ly=PV.y-ey,rx=PV.x+ex,ry=PV.y+ey,py=PV.plate;
+  rodL.setAttribute('x1',lx);rodL.setAttribute('y1',ly);rodL.setAttribute('x2',lx);rodL.setAttribute('y2',ly-py);
+  rodR.setAttribute('x1',rx);rodR.setAttribute('y1',ry);rodR.setAttribute('x2',rx);rodR.setAttribute('y2',ry-py);
+  panG.L.setAttribute('transform',`translate(${lx} ${ly-py})`);
+  panG.R.setAttribute('transform',`translate(${rx} ${ry-py})`);
+}
+function balDiff(c){
+  const w=EQ.xs?fnum(EQ.xs):1,l=curLin(c);
+  return (fnum(l.a)-fnum(l.c))*w+(fnum(l.b)-fnum(l.d));
+}
+function setTarget(c,instant){
+  const diff=balDiff(c);
+  spring.target=-9*Math.tanh(diff/3);
+  const ok=Math.abs(diff)<1e-9;
+  badgeT.textContent=ok?'=':'≠';badgeT.setAttribute('class','badge-t '+(ok?'ok':'no'));
+  if(instant){spring.ang=spring.target;spring.vel=0;placeBeam(spring.ang);return}
+  if(!spring.raf){spring.last=performance.now();spring.raf=requestAnimationFrame(springTick)}
+}
+function springTick(now){
+  const dt=Math.min(.033,(now-spring.last)/1000||.016);spring.last=now;
+  const acc=-40*(spring.ang-spring.target)-5*spring.vel;
+  spring.vel+=acc*dt;spring.ang+=spring.vel*dt;placeBeam(spring.ang);
+  if(Math.abs(spring.vel)<.01&&Math.abs(spring.ang-spring.target)<.01){spring.ang=spring.target;placeBeam(spring.ang);spring.raf=0;return}
+  spring.raf=requestAnimationFrame(springTick);
+}
+
+/* disposició dels objectes sobre un plat */
+function cnt(v,cap){const A=fabs(v);return(fint(A)&&A.n<=cap)?A.n:0}
+/* un plat = quantitats positives i negatives (globus) de caixes x i de boles */
+const mkPan=l=>({xp:l.a.n>0?l.a:ZERO,xn:l.a.n<0?fneg(l.a):ZERO,up:l.b.n>0?l.b:ZERO,un:l.b.n<0?fneg(l.b):ZERO});
+const panLin=p=>({a:fsub(p.xp,p.xn),b:fsub(p.up,p.un)});
+const curLin=c=>{const l=panLin(c.L),r=panLin(c.R);return{a:l.a,b:l.b,c:r.a,d:r.b}};
+const copyC=c=>({L:{...c.L},R:{...c.R}});
+const panTerms=p=>{const t=[];
+  if(!fz(p.xp))t.push({c:p.xp,x:true});if(!fz(p.xn))t.push({c:fneg(p.xn),x:true});
+  if(!fz(p.up))t.push({c:p.up,x:false});if(!fz(p.un))t.push({c:fneg(p.un),x:false});
+  return t.length?t:[{c:ZERO,x:false}]};
+const panHtml=p=>termsHtml(panTerms(p));
+const hasPairs=p=>(!fz(p.xp)&&!fz(p.xn))||(!fz(p.up)&&!fz(p.un));
+const fmin=(x,y)=>fcmp(x,y)<=0?x:y;
+const CAPK={'x+':CAP.bx,'x-':CAP.gb,'u+':CAP.u,'u-':CAP.gu};
+
+function panLayout(p,pan){
+  const items=[];
+  const posX=!fz(pan.xp),negX=!fz(pan.xn),posU=!fz(pan.up),negU=!fz(pan.un);
+  const hasPos=posX||posU,hasNeg=negX||negU,split=hasPos&&hasNeg;
+  const w=split?150:300,cxP=split?-82:0,cxN=split?82:0;
+  let y0=3;
+  if(posX){const n=cnt(pan.xp,CAP.bx);
+    if(n){const cols=Math.max(1,Math.floor(w/48));
+      for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols,rc=Math.min(cols,n-r*cols);
+        items.push({key:`${p}|x+|${i}`,t:'box',x:cxP+(c-(rc-1)/2)*48,y:-(y0+r*48+24)})}
+      y0+=Math.ceil(n/cols)*48;
+    }else{items.push({key:`${p}|x+|G${fText(pan.xp)}`,t:'gbox',x:cxP,y:-(y0+37),label:fText(pan.xp)+'x'});y0+=76}}
+  if(posU){const n=cnt(pan.up,CAP.u);
+    if(n){const cols=Math.max(1,Math.floor(w/33));
+      for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols,rc=Math.min(cols,n-r*cols);
+        items.push({key:`${p}|u+|${i}`,t:'ball',x:cxP+(c-(rc-1)/2)*33,y:-(y0+r*33+17)})}
+    }else items.push({key:`${p}|u+|G${fText(pan.up)}`,t:'gball',x:cxP,y:-(y0+28),label:fText(pan.up)});}
+  let yb=100;const ay=-4;
+  if(negX){const n=cnt(pan.xn,CAP.gb);
+    if(n){const cols=Math.max(1,Math.floor(w/54));
+      for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols,rc=Math.min(cols,n-r*cols);
+        items.push({key:`${p}|x-|${i}`,t:'bbal',x:cxN+(c-(rc-1)/2)*54,y:-(yb+r*66),ax:cxN,ay,rx:24,ry:30,label:MINUS+'x'})}
+      yb+=Math.ceil(n/cols)*66;
+    }else{items.push({key:`${p}|x-|G${fText(pan.xn)}`,t:'gbal',x:cxN,y:-(yb+10),ax:cxN,ay,rx:34,ry:42,label:MINUS+fText(pan.xn)+'x'});yb+=92}}
+  if(negU){const n=cnt(pan.un,CAP.gu);
+    if(n){const cols=Math.max(1,Math.floor(w/38));
+      for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols,rc=Math.min(cols,n-r*cols);
+        items.push({key:`${p}|u-|${i}`,t:'bal',x:cxN+(c-(rc-1)/2)*38,y:-(yb+r*46),ax:cxN,ay,rx:17,ry:21,label:MINUS+'1'})}
+    }else items.push({key:`${p}|u-|G${fText(pan.un)}`,t:'gbal',x:cxN,y:-(yb+10),ax:cxN,ay,rx:34,ry:42,label:MINUS+fText(pan.un)});}
+  return items;
+}
+const allItems=c=>panLayout('L',c.L).concat(panLayout('R',c.R));
+
+function itemSvg(it,fl){
+  const k=it.key;let c='it';
+  if(fl.entering&&fl.entering.has(k))c+=' enter';
+  if(fl.leaving&&fl.leaving.has(k))c+=' leave';
+  const gi=fl.groupOf&&fl.groupOf.get(k);
+  const st=gi!==undefined?` style="stroke:${GCOL[gi%GCOL.length]};stroke-width:6"`:'';
+  const rv=fl.reveal?fText(fl.reveal):null;
+  let inner='';
+  switch(it.t){
+    case 'box':inner=`<rect class="sh bx${rv?' rv':''}" x="-22" y="-22" width="44" height="44" rx="7"${st}/><text class="lb x" y="9">${rv||'x'}</text>`;break;
+    case 'gbox':inner=`<rect class="sh bx" x="-37" y="-37" width="74" height="74" rx="9"${st}/><text class="lb" y="8">${it.label}</text>`;break;
+    case 'ball':inner=`<circle class="sh bl" r="15"${st}/><text class="lb s" y="5">1</text>`;break;
+    case 'gball':inner=`<circle class="sh bl" r="27"${st}/><text class="lb" y="8">${it.label}</text>`;break;
+    default:{
+      let h=0;for(const ch of k)h=(h*31+ch.charCodeAt(0))%97;
+      inner=`<g class="float" style="animation-delay:-${(h%26)/10}s"><path class="knot" d="M-5 ${it.ry+7} L0 ${it.ry-1} L5 ${it.ry+7}Z"/><ellipse class="sh bn" rx="${it.rx}" ry="${it.ry}"${st}/><ellipse class="shine" cx="${-it.rx*.38}" cy="${-it.ry*.42}" rx="${it.rx*.2}" ry="${it.ry*.28}"/><text class="lb${it.t==='bal'?' s':''}" y="6">${it.label}</text></g>`;
+    }
+  }
+  return `<g transform="translate(${it.x} ${it.y})"><g class="${c}">${inner}</g></g>`;
+}
+function drawItems(cur,fl={}){
+  ['L','R'].forEach(p=>{
+    const items=panLayout(p,cur[p]);
+    const strings=items.filter(i=>i.ax!==undefined).map(i=>{
+      let cl='str';if(fl.entering&&fl.entering.has(i.key))cl+=' sin';if(fl.leaving&&fl.leaving.has(i.key))cl+=' sout';
+      return `<line class="${cl}" x1="${i.x}" y1="${i.y+i.ry+6}" x2="${i.ax}" y2="${i.ay}"/>`}).join('');
+    itemsG[p].innerHTML=`<g>${strings}</g>`+items.map(i=>itemSvg(i,fl)).join('');
+  });
+}
+function finishAnim(){if(BAL.fin){const f=BAL.fin;f()}}
+function runPhases(phases,newC){
+  finishAnim();
+  let i=0;
+  BAL.fin=()=>{clearTimeout(BAL.timer);BAL.timer=0;BAL.fin=null;drawItems(newC,{reveal:BAL.reveal});setTarget(newC);updateBalUI()};
+  const next=()=>{
+    if(i>=phases.length){BAL.fin=null;updateBalUI();return}
+    const p=phases[i++];p.d();BAL.timer=setTimeout(next,p.w);
+  };
+  next();
+}
+function transition(oldC,newC,opt={}){
+  const oi=allItems(oldC),ni=allItems(newC);
+  const nk=new Set(ni.map(i=>i.key)),ok=new Set(oi.map(i=>i.key));
+  const leaving=new Set(oi.filter(i=>!nk.has(i.key)).map(i=>i.key));
+  const entering=new Set(ni.filter(i=>!ok.has(i.key)).map(i=>i.key));
+  const phases=[];
+  if(opt.groupOf){
+    phases.push({d:()=>drawItems(oldC,{groupOf:opt.groupOf}),w:1100});
+    phases.push({d:()=>drawItems(oldC,{groupOf:opt.groupOf,leaving}),w:420});
+  }else if(leaving.size){
+    phases.push({d:()=>drawItems(oldC,{leaving}),w:400});
+  }
+  phases.push({d:()=>{drawItems(newC,{entering});setTarget(newC)},w:0});
+  runPhases(phases,newC);
+}
+
+/* lògica d'estat */
+const balSt=c=>{const l=curLin(c);return{L:canonSide({a:l.a,b:l.b}),R:canonSide({a:l.c,b:l.d})}};
+function equivalent(c0,c1){
+  const l0=curLin(c0),l1=curLin(c1);
+  const A0=fsub(l0.a,l0.c),B0=fsub(l0.b,l0.d),A=fsub(l1.a,l1.c),B=fsub(l1.b,l1.d);
+  if(!fz(A0))return !fz(A)&&feq(fmul(B,A0),fmul(B0,A));
+  return fz(A)&&(fz(B0)===fz(B));
+}
+function balMsg(t){$('#balMsg').innerHTML=t||''}
+function readN(){
+  const raw=$('#nIn').value.trim();
+  if(!raw)throw new Error('Escriu una quantitat n.');
+  const ast=parseExprStr(raw),l=linAst(ast);
+  if(!fz(l.a))throw new Error('La quantitat ha de ser un número (sense x).');
+  return l.b;
+}
+function plur(n,s,p){return feq(n,ONE)?s:p}
+function btnText(op,n){
+  const nt=fText(n),pu=plur(n,'bola','boles'),px=plur(n,'caixa','caixes');
+  return{
+    addU:`＋ Afegeix ${nt} ${pu}`,subU:`－ Treu ${nt} ${pu}`,
+    addGU:`＋ Afegeix ${nt} globus (−1)`,subGU:`－ Treu ${nt} globus (−1)`,
+    addX:`＋ Afegeix ${nt} ${px} x`,subX:`－ Treu ${nt} ${px} x`,
+    addGX:`＋ Afegeix ${nt} globus (−x)`,subGX:`－ Treu ${nt} globus (−x)`,
+    mul:`× Multiplica per ${nt}`,div:`÷ Reparteix entre ${nt}`
+  }[op];
+}
+function balLabels(){
+  let n;try{n=readN()}catch(e){n=ONE}
+  $$('#balOps button').forEach(b=>{
+    if(b.dataset.slot){ /* «Treu» passa a «Afegeix globus» quan s'utilitzen globus */
+      b.dataset.op=BAL.neg?(b.dataset.slot==='subU'?'addGU':'addGX'):b.dataset.slot;
+      b.classList.toggle('bal',BAL.neg);b.classList.toggle('sub',!BAL.neg);
+    }
+    if(b.dataset.op!=='cancel')b.textContent=btnText(b.dataset.op,n);
+  });
+  const c=$('#balOps [data-op=cancel]');
+  if(c&&BAL.cur)c.hidden=!(BAL.neg||hasPairs(BAL.cur.L)||hasPairs(BAL.cur.R));
+}
+function balDo(kind){
+  finishAnim();
+  if(BAL.reveal){BAL.reveal=null;drawItems(BAL.cur,{});setTarget(BAL.cur,true)}
+  const T=BAL.target,both=T==='both',sd=p=>both||T===p;
+  const whereA=both?'als dos plats':(T==='L'?'al plat esquerre':'al plat dret');
+  const whereDe=both?'dels dos plats':(T==='L'?'del plat esquerre':'del plat dret');
+  const cur=BAL.cur,nc=copyC(cur);
+  let txt,msg='',groupOf=null;
+  if(kind==='cancel'){
+    let any=false;groupOf=new Map();
+    ['L','R'].filter(sd).forEach(p=>{
+      const pan=nc[p];
+      [['x','xp','xn'],['u','up','un']].forEach(([ty,kp,kn])=>{
+        const m=fmin(pan[kp],pan[kn]);if(fz(m))return;
+        any=true;
+        if(fint(m)&&cnt(pan[kp],CAPK[ty+'+'])&&cnt(pan[kn],CAPK[ty+'-'])){
+          for(let i=0;i<m.n;i++){groupOf.set(`${p}|${ty}+|${pan[kp].n-1-i}`,i);groupOf.set(`${p}|${ty}-|${pan[kn].n-1-i}`,i)}
+        }
+        pan[kp]=fsub(pan[kp],m);pan[kn]=fsub(pan[kn],m);
+      });
+    });
+    if(!any){balMsg(`No hi ha cap parella a eliminar ${whereA}: cal una bola i un globus (o una caixa x i un globus −x) al mateix plat.`);return}
+    if(!groupOf.size)groupOf=null;
+    txt=`Eliminem les parelles bola + globus (1 − 1 = 0) ${whereDe}`;
+  }else{
+    let n;try{n=readN()}catch(e){balMsg(e.message);return}
+    if(fz(n)){balMsg('La quantitat no pot ser 0.');return}
+    const nt=fText(n);
+    if(/^(add|sub)/.test(kind)){
+      if(n.n<0){balMsg('Per afegir o treure, la quantitat ha de ser positiva.');return}
+      const add=kind.startsWith('add'),isU=kind.endsWith('U'),neg=kind.includes('G');
+      const pos=isU?'up':'xp',ng=isU?'un':'xn',main=neg?ng:pos,opp=neg?pos:ng;
+      const low=[];
+      ['L','R'].filter(sd).forEach(p=>{
+        const pan=nc[p];
+        if(add)pan[main]=fadd(pan[main],n);
+        else{const take=fmin(pan[main],n),rest=fsub(n,take);pan[main]=fsub(pan[main],take);
+          if(!fz(rest)){pan[opp]=fadd(pan[opp],rest);low.push(p==='L'?'esquerre':'dret')}}
+      });
+      const noun=isU?(neg?'globus (−1)':plur(n,'bola','boles')):(neg?'globus (−x)':plur(n,'caixa','caixes')+' x');
+      txt=add?`Afegim ${nt} ${noun} ${whereA}`:`Traiem ${nt} ${noun} ${whereDe}`;
+      if(low.length)msg=`Al plat ${low.join(' i al ')} no n'hi havia prou per treure'n ${nt}: ${neg?'apareixen boles':'apareixen <b style="color:var(--red)">globus vermells</b> (pes negatiu)'}, que és el mateix que restar.`;
+    }else{
+      const f=fabs(n),flip=n.n<0,isMul=kind==='mul';
+      ['L','R'].filter(sd).forEach(p=>{
+        const pan=nc[p];
+        ['xp','xn','up','un'].forEach(k=>{pan[k]=isMul?fmul(pan[k],f):fdiv(pan[k],f)});
+        if(flip){const a=pan.xp;pan.xp=pan.xn;pan.xn=a;const b=pan.up;pan.up=pan.un;pan.un=b}
+      });
+      txt=isMul?`Multipliquem per ${nt} el contingut ${whereDe}`:`Repartim el contingut ${whereDe} en ${nt} grups iguals i ens quedem amb un grup`;
+      if(!isMul&&fint(n)&&n.n>1&&['L','R'].filter(sd).every(p=>['xp','xn','up','un'].every(k=>fint(fdiv(cur[p][k],n))))){
+        groupOf=new Map();
+        ['L','R'].filter(sd).forEach(p=>['x+','x-','u+','u-'].forEach(key=>{
+          const k={'x+':'xp','x-':'xn','u+':'up','u-':'un'}[key];
+          const m=cnt(cur[p][k],CAPK[key]);if(!m)return;
+          const per=m/n.n;for(let i=0;i<m;i++)groupOf.set(`${p}|${key}|${i}`,Math.floor(i/per));
+        }));
+        if(!groupOf.size)groupOf=null;
+      }
+    }
+  }
+  BAL.hist.push({cur,log:BAL.log.slice()});
+  BAL.cur=nc;
+  BAL.log.push({txt,eq:eqLine(panHtml(nc.L),panHtml(nc.R),Math.abs(balDiff(nc))<1e-9?'=':'≠')});
+  balMsg(msg);
+  transition(cur,nc,{groupOf});
+  renderBalLog();
+}
+function balUndo(){
+  finishAnim();
+  if(BAL.reveal){BAL.reveal=null}
+  const h=BAL.hist.pop();if(!h){balMsg('No hi ha res a desfer.');return}
+  const old=BAL.cur;BAL.cur=h.cur;BAL.log=h.log;balMsg('');
+  transition(old,BAL.cur);renderBalLog();
+}
+function balReset(){
+  finishAnim();BAL.reveal=null;
+  const old=BAL.cur;BAL.cur=copyC(BAL.init);BAL.hist=[];BAL.log=[];balMsg('');
+  transition(old,BAL.cur);renderBalLog();
+}
+function renderBalLog(){
+  $('#balLog').innerHTML=BAL.log.map(l=>`<li>${l.txt}<br>${l.eq}</li>`).join('')||'<li class="note" style="list-style:none;margin-left:-1.3rem">Encara no has fet cap operació.</li>';
+}
+function flashBtn(op){const b=$(`#balOps [data-op=${op}]`);b.classList.remove('hint');void b.offsetWidth;b.classList.add('hint')}
+function balHint(){
+  const c=BAL.cur;
+  if(!equivalent(BAL.init,c)){balMsg("Ara la balança ja no representa l'equació inicial perquè has fet una operació només en un plat. Prova de desfer-la o de fer el mateix a l'altre plat.");return}
+  if(hasPairs(c.L)||hasPairs(c.R)){
+    setTargetBoth();flashBtn('cancel');
+    balMsg('<b>Pista:</b> hi ha boles i globus al mateix plat. Prem «Elimina parelles» (1 − 1 = 0).');return;
+  }
+  const ns=nextStep(balSt(c));
+  if(!ns||ns.kind==='swap'){balMsg('Ja has aïllat la x. Bon treball!');return}
+  const op=ns.op;let btn,nval;
+  if(op.kind==='add'){
+    const rem=op.c.n<0,isU=!op.x;nval=fabs(op.c);
+    const pk=isU?'up':'xp',nk=isU?'un':'xn';
+    const enough=k=>fcmp(c.L[k],nval)>=0&&fcmp(c.R[k],nval)>=0;
+    if(rem)btn=enough(pk)?(isU?'subU':'subX'):(isU?'addGU':'addGX');
+    else btn=enough(nk)?(isU?'subGU':'subGX'):(isU?'addU':'addX');
+  }else{btn=op.kind;nval=op.n}
+  /* només hi ha els botons del mode actual */
+  const swap=BAL.neg?{subU:'addGU',subX:'addGX',subGU:'addU',subGX:'addX'}:{addGU:'subU',addGX:'subX',subGU:'addU',subGX:'addX'};
+  btn=swap[btn]||btn;
+  $('#nIn').value=fText(nval).replace('.',',');
+  setTargetBoth();balLabels();flashBtn(btn);
+  balMsg(`<b>Pista:</b> ${btnText(btn,nval).replace(/^[＋－×÷]\s*/,'')} als dos plats. ${ns.why}`);
+}
+function setTargetBoth(){BAL.target='both';$$('#balTarget button').forEach(x=>x.classList.toggle('on',x.dataset.v==='both'))}
+function updateBalUI(){
+  const c=BAL.reveal?BAL.init:BAL.cur;
+  const bal=Math.abs(balDiff(c))<1e-9;
+  $('#balEq').innerHTML=eqLine(panHtml(c.L),panHtml(c.R),bal?'=':'≠');
+  let h='';
+  const legit=equivalent(BAL.init,BAL.cur);
+  const pairs=hasPairs(BAL.cur.L)||hasPairs(BAL.cur.R);
+  if(BAL.reveal){
+    h=`<div class="concl ok">Obrim les caixes: cada <b>x</b> conté <b class="res">${ansHtml(BAL.reveal)}</b> ${plur(BAL.reveal,'bola','boles')}.${checkHtml(BAL.reveal)}<div class="row"><button class="btn" id="balBack">Torna a la balança</button></div></div>`;
+  }else if(!legit){
+    h=`<div class="concl warn"><b>Atenció:</b> has fet una operació només en un plat, i la balança s'ha desequilibrat. Ja no és l'equació inicial. Desfés-ho o fes el mateix a l'altre plat.</div>`;
+  }else if(pairs){
+    h=`<div class="concl in">Hi ha boles i globus (o caixes x i globus −x) al mateix plat: es compensen. Prem <b>Elimina parelles</b> per simplificar.</div>`;
+  }else{
+    const si=solvedInfo(balSt(BAL.cur));
+    if(si&&si.type==='sol')h=`<div class="concl ok">✔ Hem aïllat la caixa: <b class="res eqline" style="font-size:1.3rem">x = ${ansHtml(si.r)}</b><div class="row"><button class="btn" id="balCheck">Comprova-ho obrint les caixes</button></div></div>`;
+    else if(si)h=conclusionHtml(si);
+  }
+  $('#balBanner').innerHTML=h;
+  const ck=$('#balCheck');if(ck)ck.onclick=()=>{
+    const si=solvedInfo(balSt(BAL.cur));finishAnim();BAL.reveal=si.r;
+    drawItems(BAL.init,{reveal:si.r});setTarget(BAL.init);updateBalUI();
+  };
+  const bk=$('#balBack');if(bk)bk.onclick=()=>{BAL.reveal=null;drawItems(BAL.cur,{});setTarget(BAL.cur);updateBalUI()};
+  balLabels();
+}
+function balInit(){
+  finishAnim();
+  const l=EQ.lL,r=EQ.lR;
+  BAL.init={L:mkPan(l),R:mkPan(r)};BAL.cur=copyC(BAL.init);BAL.hist=[];BAL.log=[];BAL.reveal=null;
+  drawItems(BAL.cur,{});setTarget(BAL.cur,true);
+  renderBalLog();balMsg('');updateBalUI();balLabels();
+}
+
+/* =====================================================================
+   PAS A PAS
+   ===================================================================== */
+const ST={mode:'auto',auto:null,idx:0,man:null,showWhy:true};
+function firstStep(){return{title:'Equació inicial',res:eqLine(sideHtml(EQ.L),sideHtml(EQ.R)),first:true}}
+function buildAuto(){
+  const steps=[firstStep()];let st=stOf(EQ),g=0;
+  while(g++<40){const ns=nextStep(st);if(!ns)break;const r=applyStep(st,ns);steps.push(r.step);st=r.st}
+  return{steps,final:st};
+}
+function stInit(){
+  ST.auto=buildAuto();ST.idx=0;
+  ST.man={st:stOf(EQ),steps:[firstStep()],hist:[]};
+  stRender();
+}
+function stepCard(s,i,cur){
+  return `<div class="step${cur?' cur':''}"><div class="sh">${s.first?'':`<span class="sn">${i}</span>`}${s.title}</div>`
+    +(ST.showWhy&&s.why?`<div class="why">${s.why}</div>`:'')
+    +(s.opHtml?`<div class="oprow">${s.opHtml}</div><div class="arr">↓</div>`:'')
+    +`<div class="resrow">${s.res}</div></div>`;
+}
+function stFinalHtml(st){
+  const si=solvedInfo(st);if(!si)return '';
+  let h=conclusionHtml(si);
+  if(si.type==='sol')h=h.replace(/<\/div>$/,checkHtml(si.r)+'</div>');
+  return h;
+}
+function stRender(){
+  $$('#stMode button').forEach(b=>b.classList.toggle('on',b.dataset.m===ST.mode));
+  const P=$('#stPanel');
+  if(ST.mode==='auto'){
+    const A=ST.auto,last=A.steps.length-1;
+    $('#stList').innerHTML=A.steps.slice(0,ST.idx+1).map((s,i)=>stepCard(s,i,i===ST.idx)).join('');
+    $('#stFinal').innerHTML=ST.idx===last?stFinalHtml(A.final):'';
+    P.innerHTML=`<h3>El programa resol</h3>
+      <div class="row"><button class="primary" id="aNext" ${ST.idx>=last?'disabled':''}>Pas següent ▶</button><button class="btn" id="aPrev" ${ST.idx<=0?'disabled':''}>◀ Enrere</button></div>
+      <div class="row"><button class="btn" id="aAll" ${ST.idx>=last?'disabled':''}>Mostra-ho tot</button><button class="btn" id="aReset">⟲ Reinicia</button></div>
+      <label class="chk"><input type="checkbox" id="aWhy" ${ST.showWhy?'checked':''}> Mostra l'explicació de cada pas</label>
+      <div class="note">Consell: desmarca l'explicació i pregunta a la classe quin és el pas següent abans de prémer el botó.</div>
+      <div class="note" style="margin-top:.5rem">Pas ${ST.idx} de ${last}</div>`;
+    $('#aNext').onclick=()=>{ST.idx=Math.min(last,ST.idx+1);stRender()};
+    $('#aPrev').onclick=()=>{ST.idx=Math.max(0,ST.idx-1);stRender()};
+    $('#aAll').onclick=()=>{ST.idx=last;stRender()};
+    $('#aReset').onclick=()=>{ST.idx=0;stRender()};
+    $('#aWhy').onchange=e=>{ST.showWhy=e.target.checked;stRender()};
+  }else{
+    const M=ST.man;
+    $('#stList').innerHTML=M.steps.map((s,i)=>stepCard(s,i,i===M.steps.length-1)).join('');
+    $('#stFinal').innerHTML=stFinalHtml(M.st);
+    const ex=needsExpand(M.st.L)||needsExpand(M.st.R),sm=!ex&&(needsSimplify(M.st.L)||needsSimplify(M.st.R));
+    P.innerHTML=`<h3>Tria la propera operació</h3>
+      <div class="note">Fes la mateixa operació als dos membres.</div>
+      <div class="row"><input id="mOp" class="inp" placeholder="3, 2x, −x…" autocomplete="off" value="${ST.opVal||''}"></div>
+      <div class="opgrid">
+        <button class="btn add" data-k="add">＋ Suma</button><button class="btn sub" data-k="sub">－ Resta</button>
+        <button class="btn mul" data-k="mul">× Multiplica per</button><button class="btn div" data-k="div">÷ Divideix entre</button>
+      </div>
+      <div class="row">
+        ${ex?'<button class="btn" id="mExp">Treu parèntesis</button>':''}
+        ${sm?'<button class="btn" id="mSim">Simplifica</button>':''}
+        <button class="btn" id="mSwap">Gira els membres</button>
+      </div>
+      <div class="row"><button class="btn" id="mUndo" ${M.hist.length?'':'disabled'}>↶ Desfés</button><button class="btn" id="mReset">⟲ Reinicia</button><button class="btn" id="mHint">Pista</button></div>
+      <div id="mMsg" class="note" style="min-height:1.4em"></div>
+      <label class="chk"><input type="checkbox" id="aWhy" ${ST.showWhy?'checked':''}> Mostra l'explicació de cada pas</label>`;
+    $$('#stPanel [data-k]').forEach(b=>b.onclick=()=>manOp(b.dataset.k));
+    $('#mOp').onkeydown=e=>{if(e.key==='Enter')manOp('add')};
+    $('#mOp').oninput=e=>{ST.opVal=e.target.value};
+    const ex1=$('#mExp');if(ex1)ex1.onclick=()=>manKind('expand');
+    const sm1=$('#mSim');if(sm1)sm1.onclick=()=>manKind('simplify');
+    $('#mSwap').onclick=()=>manKind('swap');
+    $('#mUndo').onclick=()=>{const h=M.hist.pop();if(h){M.st=h.st;M.steps=h.steps;stRender()}};
+    $('#mReset').onclick=()=>{ST.opVal='';ST.man={st:stOf(EQ),steps:[firstStep()],hist:[]};stRender()};
+    $('#mHint').onclick=()=>{
+      const ns=nextStep(M.st);
+      const t=!ns?'Ja està resolta!':ns.kind==='op'?`${ns.why} Prova: <b>${opText(ns.op)}</b> als dos membres.`:`${ns.why}`;
+      $('#mMsg').innerHTML='<b>Pista:</b> '+t;
+    };
+    $('#aWhy').onchange=e=>{ST.showWhy=e.target.checked;stRender()};
+  }
+}
+function manPush(r){
+  const M=ST.man;M.hist.push({st:M.st,steps:M.steps});M.st=r.st;M.steps=M.steps.concat([r.step]);ST.opVal='';stRender();
+}
+function manKind(k){
+  const M=ST.man;
+  const titles={expand:'Treiem els parèntesis',simplify:'Simplifiquem cada membre',swap:'Girem els membres'};
+  const whys={expand:'Multipliquem el que hi ha fora de cada parèntesi per tot el que hi ha dins.',simplify:'Ajuntem els termes amb x i els termes que són només nombres.',swap:'Una igualtat es pot llegir en els dos sentits.'};
+  const ns={kind:k,title:titles[k],why:whys[k]};
+  manPush(applyStep(M.st,ns));
+}
+function manOp(k){
+  const M=ST.man,msg=$('#mMsg');
+  let l;
+  try{
+    const raw=$('#mOp').value.trim();
+    if(!raw)throw new Error('Escriu primer què vols sumar, restar, multiplicar o dividir (per exemple 3 o 2x).');
+    l=linAst(parseExprStr(raw));
+  }catch(e){msg.textContent=e.message;return}
+  let op;
+  if(k==='add'||k==='sub'){
+    if(fz(l.a)===fz(l.b)){msg.textContent='Escriu un sol terme: un nombre (3) o un terme amb x (2x).';return}
+    const x=!fz(l.a),c=x?l.a:l.b;
+    op={kind:'add',c:k==='add'?c:fneg(c),x};
+  }else{
+    if(!fz(l.a)||fz(l.b)){msg.textContent=k==='mul'?'Per multiplicar cal un nombre diferent de 0.':'Per dividir cal un nombre diferent de 0 (sense x).';return}
+    op={kind:k,n:l.b};
+  }
+  manPush(applyStep(M.st,{kind:'op',op,title:opText(op)+' als dos membres',why:''}));
+}
+
+/* =====================================================================
+   GRÀFIC
+   ===================================================================== */
+const GR={view:null,t:F(0),showDiff:false,sq:false,drag:null};
+const GW=900,GH=580;
+const ltxt=l=>{let s='';
+  if(!fz(l.a))s=feq(l.a,ONE)?'x':feq(l.a,F(-1))?MINUS+'x':fText(l.a)+'x';
+  if(!fz(l.b)){if(!s)s=fText(l.b);else s+=' '+(l.b.n<0?MINUS:'+')+' '+fText(fabs(l.b))}
+  return s||'0'};
+function niceStep(raw){const p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return(m<=1?1:m<=2?2:m<=5?5:10)*p}
+function grApplySq(){
+  const v=GR.view,cy=(v.y0+v.y1)/2,half=(v.x1-v.x0)*GH/GW/2;v.y0=cy-half;v.y1=cy+half;
+}
+function grFit(){
+  const a=fnum(EQ.lL.a),b=fnum(EQ.lL.b),c=fnum(EQ.lR.a),d=fnum(EQ.lR.b);
+  let xlo=-5,xhi=5;
+  if(EQ.xs){const r=fnum(EQ.xs);xlo=Math.min(0,r)-2;xhi=Math.max(0,r)+2}
+  if(xhi-xlo<8){const m=(xlo+xhi)/2;xlo=m-4;xhi=m+4}
+  const pad=(xhi-xlo)*.12;xlo-=pad;xhi+=pad;
+  const ys=[0,a*xlo+b,a*xhi+b,c*xlo+d,c*xhi+d];
+  let ylo=Math.min(...ys),yhi=Math.max(...ys);
+  if(yhi-ylo<6){const m=(ylo+yhi)/2;ylo=m-3;yhi=m+3}
+  const py=(yhi-ylo)*.15;ylo-=py;yhi+=py;
+  GR.view={x0:xlo,x1:xhi,y0:ylo,y1:yhi};
+  if(GR.sq)grApplySq();
+}
+function grSetT(t){
+  GR.t=t;
+  const s=$('#grT'),m=Math.max(10,EQ.xs?Math.ceil(Math.abs(fnum(EQ.xs)))+2:10);
+  s.min=-m;s.max=m;s.value=fnum(t);
+}
+function grInit(){
+  grFit();grSetT(F(0));
+  $('#grDiff').checked=GR.showDiff;$('#grSq').checked=GR.sq;
+  const l=EQ.lL,r=EQ.lR;
+  $('#grFns').innerHTML=`<div><span style="color:var(--blue);font-weight:700">Membre esquerre:</span> y = ${ltxt(l)}</div><div><span style="color:var(--red);font-weight:700">Membre dret:</span> y = ${ltxt(r)}</div>`;
+  let c='';
+  if(EQ.kind==='unique')c=`<div class="concl ok" style="font-size:1rem">Les rectes es creuen quan <b class="res">x = ${ansHtml(EQ.xs)}</b>.</div>`;
+  else if(EQ.kind==='none')c=`<div class="concl no" style="font-size:1rem">Les dues rectes són <b>paral·leles</b> (mateixa pendent, diferent ordenada): no es creuen mai, per això l'equació <b>no té solució</b>.</div>`;
+  else c=`<div class="concl in" style="font-size:1rem">Les dues rectes <b>coincideixen</b>: tots els punts són comuns, per això l'equació té <b>infinites solucions</b>.</div>`;
+  $('#grConc').innerHTML=c;
+  $('#grSol').disabled=EQ.kind!=='unique';
+  grRender();
+}
+function grRender(){
+  const v=GR.view,svg=$('#grSvg');
+  const X=x=>(x-v.x0)/(v.x1-v.x0)*GW,Y=y=>GH-(y-v.y0)/(v.y1-v.y0)*GH;
+  const a=fnum(EQ.lL.a),b=fnum(EQ.lL.b),c=fnum(EQ.lR.a),d=fnum(EQ.lR.b);
+  const sx=niceStep((v.x1-v.x0)/(GW/70)),sy=niceStep((v.y1-v.y0)/(GH/55));
+  let h=`<defs><clipPath id="gclip"><rect width="${GW}" height="${GH}"/></clipPath></defs><rect width="${GW}" height="${GH}" fill="#fff"/><g clip-path="url(#gclip)">`;
+  const ax0=Y(0),ay0=X(0);
+  for(let k=Math.ceil(v.x0/sx);k<=Math.floor(v.x1/sx);k++){if(k===0)continue;const x=X(k*sx);h+=`<line class="grid" x1="${x}" y1="0" x2="${x}" y2="${GH}"/>`}
+  for(let k=Math.ceil(v.y0/sy);k<=Math.floor(v.y1/sy);k++){if(k===0)continue;const y=Y(k*sy);h+=`<line class="grid" x1="0" y1="${y}" x2="${GW}" y2="${y}"/>`}
+  h+=`<line class="axis" x1="0" y1="${ax0}" x2="${GW}" y2="${ax0}"/><line class="axis" x1="${ay0}" y1="0" x2="${ay0}" y2="${GH}"/>`;
+  const ty=Math.min(GH-6,Math.max(16,ax0+16)),tx=Math.min(GW-6,Math.max(8,ay0-6));
+  for(let k=Math.ceil(v.x0/sx);k<=Math.floor(v.x1/sx);k++){if(k===0)continue;h+=`<text class="tk" x="${X(k*sx)}" y="${ty}" text-anchor="middle">${nfmt(k*sx)}</text>`}
+  for(let k=Math.ceil(v.y0/sy);k<=Math.floor(v.y1/sy);k++){if(k===0)continue;h+=`<text class="tk" x="${tx}" y="${Y(k*sy)+4}" text-anchor="${ay0<GW/2?'end':'start'}">${nfmt(k*sy)}</text>`}
+  h+=`<text class="tk" x="${tx}" y="${ty}" text-anchor="end">0</text>`;
+  const line=(m,n,col,extra='')=>`<line class="gl" x1="${X(v.x0)}" y1="${Y(m*v.x0+n)}" x2="${X(v.x1)}" y2="${Y(m*v.x1+n)}" stroke="${col}" stroke-width="4" ${extra}/>`;
+  if(GR.showDiff)h+=line(a-c,b-d,'#7b4bb7','stroke-dasharray="9 7" opacity=".85"');
+  h+=line(a,b,'#2f7fd0');
+  h+=line(c,d,'#d9435a',EQ.kind==='all'?'stroke-dasharray="3 10"':'');
+  const labL=(m,n,col,l,dy)=>{const xx=v.x0+(v.x1-v.x0)*.72;let y=Math.min(GH-10,Math.max(20,Y(m*xx+n)+dy));return `<text class="gtxt" x="${X(xx)}" y="${y}" fill="${col}" stroke="#fff" stroke-width="5" paint-order="stroke">y = ${ltxt(l)}</text>`};
+  h+=labL(a,b,'#2f7fd0',EQ.lL,-12);h+=labL(c,d,'#d9435a',EQ.lR,24);
+  if(GR.showDiff)h+=`<text class="gtxt" x="${X(v.x0+(v.x1-v.x0)*.05)}" y="${Math.min(GH-10,Math.max(20,Y((a-c)*(v.x0+(v.x1-v.x0)*.05)+(b-d))-12))}" fill="#7b4bb7" stroke="#fff" stroke-width="5" paint-order="stroke">esquerre − dret</text>`;
+  /* punt de tall */
+  if(EQ.kind==='unique'){
+    const xs=fnum(EQ.xs),ys=a*xs+b,px=X(xs),py=Y(ys);
+    h+=`<g class="res"><line x1="${px}" y1="${py}" x2="${px}" y2="${ax0}" stroke="#2fa84f" stroke-width="2.5" stroke-dasharray="6 5"/><line x1="${px}" y1="${py}" x2="${ay0}" y2="${py}" stroke="#2fa84f" stroke-width="2.5" stroke-dasharray="6 5"/><circle cx="${px}" cy="${py}" r="9" fill="#2fa84f" stroke="#fff" stroke-width="3"/><circle cx="${px}" cy="${ax0}" r="6" fill="#2fa84f"/>`
+      +`<text class="gtxt" x="${px}" y="${Math.min(GH-8,Math.max(16,ax0-12))}" text-anchor="middle" fill="#17612e" stroke="#fff" stroke-width="5" paint-order="stroke">x = ${nfmt(xs)}</text>`
+      +`<text class="gtxt" x="${px+14}" y="${py-14}" fill="#17612e" stroke="#fff" stroke-width="5" paint-order="stroke">(${nfmt(xs)}, ${nfmt(ys)})</text></g>`;
+  }
+  /* sonda */
+  const t=fnum(GR.t),vl=a*t+b,vr=c*t+d,eqq=Math.abs(vl-vr)<1e-9,pt=X(t);
+  h+=`<line x1="${pt}" y1="0" x2="${pt}" y2="${GH}" stroke="#7b4bb7" stroke-width="2" stroke-dasharray="4 5" opacity=".7"/>`;
+  h+=`<line x1="${pt}" y1="${Y(vl)}" x2="${pt}" y2="${Y(vr)}" stroke="${eqq?'#2fa84f':'#7b4bb7'}" stroke-width="6" stroke-linecap="round" opacity=".6"/>`;
+  h+=`<circle cx="${pt}" cy="${Y(vl)}" r="7.5" fill="#2f7fd0" stroke="#fff" stroke-width="3"/><circle cx="${pt}" cy="${Y(vr)}" r="7.5" fill="#d9435a" stroke="#fff" stroke-width="3"/>`;
+  if(eqq)h+=`<circle cx="${pt}" cy="${Y(vl)}" r="15" fill="none" stroke="#2fa84f" stroke-width="4"/>`;
+  h+=`</g>`;
+  const hy=Math.min(GH-22,Math.max(22,ax0));
+  h+=`<g data-probe="1" style="cursor:ew-resize"><circle cx="${pt}" cy="${hy}" r="22" fill="transparent"/><path d="M${pt} ${hy-12} L${pt+10} ${hy} L${pt} ${hy+12} L${pt-10} ${hy}Z" fill="#7b4bb7" stroke="#fff" stroke-width="3"/></g>`;
+  svg.innerHTML=h;
+  grPanel();
+}
+function grPanel(){
+  const t=GR.t,tn=fnum(t);
+  $('#grTv').textContent=fText(t)+(!fint(t)&&isDecFr(t)?' = '+nfmt(tn):'');
+  const vl=fadd(fmul(EQ.lL.a,t),EQ.lL.b),vr=fadd(fmul(EQ.lR.a,t),EQ.lR.b),eqq=feq(vl,vr);
+  const diff=fsub(vl,vr);
+  $('#grProbe').innerHTML=`<div style="color:var(--blue)">Esquerre: ${astHtml(EQ.L.ast,t)} = <b>${fHtml(vl)}</b></div>`
+    +`<div style="color:var(--red)">Dret: ${astHtml(EQ.R.ast,t)} = <b>${fHtml(vr)}</b></div>`
+    +(eqq?`<span class="pill ok">✔ Són iguals: x = ${fText(t)} és solució</span>`
+          :`<span class="pill no">${fText(vl)} ≠ ${fText(vr)} — l'esquerre és ${fText(fabs(diff))} ${diff.n>0?'més gran':'més petit'}</span>`);
+  const base=Math.round(tn);let rows='<tr><th>x</th><th style="color:var(--blue)">Esquerre</th><th style="color:var(--red)">Dret</th><th></th></tr>';
+  for(let k=base-2;k<=base+2;k++){
+    const x=F(k),l=fadd(fmul(EQ.lL.a,x),EQ.lL.b),r=fadd(fmul(EQ.lR.a,x),EQ.lR.b),e=feq(l,r);
+    rows+=`<tr class="${e?'hot':''}${feq(x,t)?' cur':''}"><td>${fText(x)}</td><td>${fText(l)}</td><td>${fText(r)}</td><td>${e?'✔':''}</td></tr>`;
+  }
+  $('#grTab').innerHTML=rows;
+}
+function grZoom(f,cx,cy){
+  const v=GR.view;
+  const mx=cx===undefined?(v.x0+v.x1)/2:cx,my=cy===undefined?(v.y0+v.y1)/2:cy;
+  v.x0=mx+(v.x0-mx)*f;v.x1=mx+(v.x1-mx)*f;v.y0=my+(v.y0-my)*f;v.y1=my+(v.y1-my)*f;
+  if(GR.sq)grApplySq();grRender();
+}
+function grSvgPt(e){
+  const s=$('#grSvg'),r=s.getBoundingClientRect();
+  return{x:(e.clientX-r.left)*GW/r.width,y:(e.clientY-r.top)*GH/r.height};
+}
+function grWorld(p){const v=GR.view;return{x:v.x0+p.x/GW*(v.x1-v.x0),y:v.y0+(GH-p.y)/GH*(v.y1-v.y0)}}
+function grWire(){
+  const s=$('#grSvg');
+  s.addEventListener('pointerdown',e=>{
+    const p=grSvgPt(e);
+    GR.drag=e.target.closest('[data-probe]')?{k:'probe'}:{k:'pan',p};
+    s.setPointerCapture(e.pointerId);
+  });
+  s.addEventListener('pointermove',e=>{
+    if(!GR.drag)return;
+    const p=grSvgPt(e);
+    if(GR.drag.k==='probe'){
+      const w=grWorld(p);let t=F(Math.round(w.x*4),4);
+      if(EQ.xs&&Math.abs(w.x-fnum(EQ.xs))*GW/(GR.view.x1-GR.view.x0)<12)t=EQ.xs;
+      grSetT(t);grRender();
+    }else{
+      const v=GR.view,dx=(p.x-GR.drag.p.x)*(v.x1-v.x0)/GW,dy=(p.y-GR.drag.p.y)*(v.y1-v.y0)/GH;
+      v.x0-=dx;v.x1-=dx;v.y0+=dy;v.y1+=dy;GR.drag.p=p;grRender();
+    }
+  });
+  const end=()=>{GR.drag=null};
+  s.addEventListener('pointerup',end);s.addEventListener('pointercancel',end);
+  s.addEventListener('wheel',e=>{e.preventDefault();const w=grWorld(grSvgPt(e));grZoom(e.deltaY>0?1.15:1/1.15,w.x,w.y)},{passive:false});
+  $('#grT').oninput=e=>{grSetT(F(Math.round(parseFloat(e.target.value)*4),4));grRender()};
+  $('#grSol').onclick=()=>{if(EQ.xs){grSetT(EQ.xs);grRender()}};
+  $('#grDiff').onchange=e=>{GR.showDiff=e.target.checked;grRender()};
+  $('#grSq').onchange=e=>{GR.sq=e.target.checked;if(GR.sq)grApplySq();grRender()};
+  $('#grZi').onclick=()=>grZoom(1/1.4);$('#grZo').onclick=()=>grZoom(1.4);
+  $('#grFit').onclick=()=>{grFit();grRender()};
+}
+
+/* =====================================================================
+   INTERFÍCIE GENERAL
+   ===================================================================== */
+const EXAMPLES=[
+  ['2n d\'ESO',['x + 5 = 9','3x = 12','2x + 3 = 11','5x − 4 = 3x + 6','4x + 1 = x + 10','7 − x = 3','3x − 2 = 5x + 4','2(x + 3) = 14','3(x − 1) + 2 = x + 9']],
+  ['Repàs 3r d\'ESO',['x/2 + 1 = 4','(x + 1)/3 = (x − 2)/2','0,5x + 1,2 = 2x − 0,3','(2x − 1)/3 + 1 = x/2','5(x − 2) − 3(x + 1) = 2x − 13','2x + 4 = 2(x + 2)','3x + 1 = 3x + 5','2(x − 3) − 3(x + 1) = 5 − x']]
+];
+$('#eqEx').innerHTML='<option value="">Exemples…</option>'+EXAMPLES.map(([g,l])=>`<optgroup label="${g}">${l.map(e=>`<option>${e}</option>`).join('')}</optgroup>`).join('');
+function setEq(str,fromLoad){
+  const msg=$('#eqMsg');
+  try{
+    const eq=loadEquation(str);
+    EQ=eq;$('#eqIn').value=str;
+    msg.className='eqmsg ok';
+    msg.textContent=eq.kind==='unique'?'':eq.kind==='none'?"Aquesta equació no té solució.":"Aquesta equació té infinites solucions.";
+    try{localStorage.setItem('eq1grau',str)}catch(e){}
+    balInit();stInit();grInit();
+    return true;
+  }catch(e){
+    msg.className='eqmsg';msg.textContent=e.message;
+    return false;
+  }
+}
+/* equació aleatòria (sempre amb solució entera) */
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[ri(0,a.length-1)];
+const nz=(a,b)=>{let v=0;while(v===0)v=ri(a,b);return v};
+const ns_=n=>String(n).replace('-',MINUS);
+function lstr(a,b){
+  let s=a===0?'':a===1?'x':a===-1?MINUS+'x':ns_(a)+'x';
+  if(b!==0)s=s?s+(b<0?' − ':' + ')+Math.abs(b):ns_(b);
+  return s||'0';
+}
+const par_=(a,b)=>`${a}(x ${b<0?'−':'+'} ${Math.abs(b)})`;
+function randomEquation(){
+  const s=ri(-8,10);
+  switch(pick(['a','b','c','c','d','d','d','e','e','f','g'])){
+    case 'a':{const b=nz(-9,9);return `${lstr(1,b)} = ${ns_(s+b)}`}
+    case 'b':{const a=ri(2,9);return `${a}x = ${ns_(a*s)}`}
+    case 'c':{const a=ri(2,9),b=nz(-9,9);return `${lstr(a,b)} = ${ns_(a*s+b)}`}
+    case 'd':{let a,c;do{a=ri(1,9);c=ri(1,9)}while(a===c);const b=nz(-9,9),d=(a-c)*s+b;return `${lstr(a,b)} = ${lstr(c,d)}`}
+    case 'e':{const a=ri(2,6),b=nz(-9,9);return `${par_(a,b)} = ${ns_(a*(s+b))}`}
+    case 'f':{const a=ri(2,5),b=nz(-9,9),e=nz(-9,9);let c;do{c=ri(1,6)}while(c===a);const d=a*(s+b)+e-c*s;return `${par_(a,b)} ${e<0?'−':'+'} ${Math.abs(e)} = ${lstr(c,d)}`}
+    default:{const m=ri(2,5),k=ri(-4,5),b=nz(-9,9);return `x/${m} ${b<0?'−':'+'} ${Math.abs(b)} = ${ns_(k+b)}`}
+  }
+}
+$('#eqRnd').onclick=()=>{let s,i=0;do{s=randomEquation()}while(s===EQ.txt&&i++<8);setEq(s)};
+$('#eqGo').onclick=()=>setEq($('#eqIn').value);
+$('#eqIn').onkeydown=e=>{if(e.key==='Enter')setEq($('#eqIn').value)};
+$('#eqEx').onchange=e=>{if(e.target.value){setEq(e.target.value);e.target.value=''}};
+
+/* pestanyes */
+$$('#tabs button').forEach(b=>b.onclick=()=>{
+  $$('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  ['bal','steps','graf'].forEach(t=>$('#s-'+t).hidden=(t!==b.dataset.t));
+  if(b.dataset.t==='graf')grRender();
+});
+/* eines */
+$('#bProj').onclick=e=>{document.body.classList.toggle('proj');e.currentTarget.classList.toggle('on')};
+$('#bHide').onclick=e=>{document.body.classList.toggle('hide-res');e.currentTarget.classList.toggle('on');$$('.res.shown').forEach(x=>x.classList.remove('shown'))};
+$('#bPrint').onclick=()=>window.print();
+document.addEventListener('click',e=>{
+  if(!document.body.classList.contains('hide-res'))return;
+  const r=e.target.closest('.res');if(r)r.classList.toggle('shown');
+});
+/* balança: controls */
+$('#nMinus').onclick=()=>{try{const n=readN();$('#nIn').value=fText(fint(n)&&n.n>1?F(n.n-1):ONE);balLabels()}catch(e){$('#nIn').value='1';balLabels()}};
+$('#nPlus').onclick=()=>{try{const n=readN();$('#nIn').value=fText(fint(n)&&n.n>=1?F(n.n+1):F(2));balLabels()}catch(e){$('#nIn').value='1';balLabels()}};
+$('#nIn').oninput=balLabels;
+$('#nIn').onkeydown=e=>{if(e.key==='Enter')e.preventDefault()};
+$$('#balOps button').forEach(b=>b.onclick=()=>balDo(b.dataset.op));
+$$('#balTarget button').forEach(b=>b.onclick=()=>{BAL.target=b.dataset.v;$$('#balTarget button').forEach(x=>x.classList.toggle('on',x===b))});
+$('#balNeg').onchange=e=>{BAL.neg=e.target.checked;balLabels()};
+$('#balUndo').onclick=balUndo;$('#balReset').onclick=balReset;$('#balHint').onclick=balHint;
+$$('#stMode button').forEach(b=>b.onclick=()=>{ST.mode=b.dataset.m;stRender()});
+
+balBuild();grWire();
+{
+  let s='2x + 3 = x + 7';
+  try{const v=localStorage.getItem('eq1grau');if(v)s=v}catch(e){}
+  if(!setEq(s))setEq('2x + 3 = x + 7');
+}
+</script>
+</body>
+</html>

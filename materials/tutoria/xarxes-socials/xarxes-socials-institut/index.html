@@ -1,0 +1,2172 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='1' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23fbbf24'/%3E%3Cstop offset='.45' stop-color='%23ec4899'/%3E%3Cstop offset='1' stop-color='%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='13' fill='url(%23g)'/%3E%3Cpath d='M24 11c-7.2 0-13 5-13 11.3 0 3.5 1.8 6.6 4.6 8.7-.1 1.8-.8 3.5-2 4.9 2.5-.2 4.7-1.1 6.4-2.4 1.3.3 2.6.5 4 .5 7.2 0 13-5 13-11.3S31.2 11 24 11z' fill='none' stroke='%23fff' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='24' cy='22.5' r='4.2' fill='%23fff'/%3E%3Ccircle cx='33' cy='15' r='1.9' fill='%23fff'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instaxat · Tutoria sobre xarxes socials</title>
+<meta name="author" content="Nil Bellmunt, professor de l'Institut Ermengol IV de Bellcaire">
+<meta name="description" id="metaDesc" content="Activitat de tutoria per a 2n d'ESO: el teu temps a les xarxes i detectius de privacitat. Tot passa al navegador, no es guarda res.">
+<style>
+:root{
+  --bg:#fbf8ff; --surface:#ffffff; --ink:#1d1633; --muted:#574f70; --line:#e4dcf5;
+  --brand:#5b21b6; --brand-2:#7c3aed; --social:#e0156f; --social-soft:#ffe3f0;
+  --lived:#6d6890; --left:#ebe6f7; --good:#047857; --warn:#b45309; --bad:#be123c;
+  --blue:#2563eb; --green:#059669; --amber:#d97706;
+  --grad:linear-gradient(135deg,#f59e0b 0%,#ec4899 50%,#7c3aed 100%);
+  --radius:20px;
+  --shadow:0 8px 28px rgba(60,30,120,.10);
+}
+*{box-sizing:border-box}
+html{font-size:clamp(16px,.55vw + 11px,24px)}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.35;-webkit-text-size-adjust:100%}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--blue);outline-offset:3px;border-radius:6px}
+h1,h2,h3,p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+#app{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+#stage{overflow:hidden}
+#printSheet,.svg-sprite{display:none}
+.svg-sprite{display:block;position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- Capçalera ---------- */
+.top{display:flex;align-items:center;gap:clamp(8px,1.6vw,22px);padding:.55rem clamp(12px,2vw,28px);background:var(--surface);border-bottom:1px solid var(--line);flex:0 0 auto}
+.logo{display:flex;align-items:center;gap:.5rem;font-weight:900;font-size:1.2rem;letter-spacing:-.01em;white-space:nowrap}
+.logo svg{width:2.1rem;height:2.1rem;display:block}
+.chip{display:inline-block;padding:.25em .8em;border-radius:99px;background:#efe7ff;color:var(--brand);font-weight:800;font-size:.85rem;white-space:nowrap}
+.prog{flex:1;display:flex;gap:4px;min-width:60px}
+.prog button{flex:1;height:22px;border:0;padding:0;background:transparent;cursor:pointer;position:relative}
+.prog button::after{content:"";position:absolute;left:0;right:0;top:50%;height:8px;transform:translateY(-50%);border-radius:99px;background:var(--line);transition:background .3s,height .2s}
+.prog button.done::after{background:var(--brand-2)}
+.prog button.cur::after{background:var(--grad);height:12px}
+.prog button.p2.done::after{background:var(--social)}
+.prog button.p3.done::after{background:var(--green)}
+.clock{font-weight:800;font-size:.95rem;white-space:nowrap;color:var(--muted)}
+.clock b{color:var(--ink);font-size:1.15em}
+.lang{display:inline-flex;flex:0 0 auto;border:2px solid var(--ink);border-radius:99px;overflow:hidden;background:#fff}
+.lang button{border:0;background:transparent;padding:.2em .7em;min-height:1.9rem;font-weight:800;font-size:.85rem;cursor:pointer}
+.lang button:hover:not([aria-pressed="true"]){background:#efe7ff}
+.lang button[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+/* ---------- Escena i navegació ---------- */
+#stage{flex:1 1 auto;min-height:0;position:relative}
+.slide{height:100%;overflow:auto;padding:clamp(14px,2vw,30px) clamp(16px,3.4vw,56px) clamp(18px,2.4vw,34px)}
+.slide[hidden]{display:none!important}
+.slide.enter{animation:slideIn .38s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+.slide > h1:focus,.slide h1[tabindex="-1"]:focus{outline:none}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:.6rem clamp(12px,2vw,28px);background:var(--surface);border-top:1px solid var(--line);flex:0 0 auto}
+.nav .mid{flex:1;text-align:center;color:var(--muted);font-size:.85rem}
+.nav .mid .keys{display:block}
+.btn{font-weight:800;font-size:1.1rem;padding:.65em 1.5em;border-radius:99px;border:2.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;transition:transform .15s,background .15s;min-height:3rem}
+.btn:hover:not(:disabled){transform:translateY(-2px);background:#f4efff}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.primary:hover:not(:disabled){background:#4c1d95}
+.btn.small{font-size:.9rem;padding:.4em 1em;min-height:2.4rem;border-width:2px}
+.btn.pink{background:var(--social);border-color:var(--social);color:#fff}
+
+/* ---------- Tipografia comuna ---------- */
+.kicker{display:inline-block;font-weight:800;color:var(--brand);background:#efe7ff;border-radius:99px;padding:.2em .85em;font-size:.9rem;margin-bottom:.6rem}
+.slide h1{font-size:clamp(1.7rem,3.6vw,3.2rem);line-height:1.08;font-weight:900;letter-spacing:-.02em;margin-bottom:.4rem}
+.lead{font-size:clamp(1.05rem,1.7vw,1.5rem);color:var(--muted);max-width:60ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+strong{font-weight:800}
+
+/* ---------- Títol ---------- */
+.title-wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.1rem;position:relative}
+.title-wrap .biglogo{width:clamp(80px,12vw,140px);height:clamp(80px,12vw,140px)}
+.title-wrap h1{font-size:clamp(2rem,5.4vw,4.6rem);max-width:18ch}
+.title-wrap .small{font-size:.9rem;color:var(--muted)}
+.title-wrap .author{color:var(--ink);margin-top:-.4rem}
+.floaty{position:absolute;font-size:clamp(1.6rem,4vw,3.4rem);opacity:.9;animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-14px) rotate(6deg)}}
+
+/* ---------- Control d'hores ---------- */
+.hctl{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:clamp(8px,1.4vw,20px);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem clamp(12px,1.6vw,24px);box-shadow:var(--shadow)}
+.stepbtn{width:3.4rem;height:3.4rem;border-radius:50%;border:2.5px solid var(--ink);background:#fff;font-size:2rem;font-weight:900;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.stepbtn:hover{background:var(--social-soft)}
+.agectl{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:.25rem .5rem .25rem 1rem;box-shadow:var(--shadow)}
+.agectl .al{font-weight:800;color:var(--muted);font-size:.95rem}
+.agectl .av2{min-width:4.6rem;text-align:center;font-weight:700;font-size:1rem}
+.agectl .av2 b{font-size:1.6rem;font-weight:900;color:var(--brand)}
+.agebtn{width:2.5rem;height:2.5rem;border-radius:50%;border:2.5px solid var(--ink);background:#fff;font-size:1.5rem;font-weight:900;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0}
+.agebtn:hover{background:#efe7ff}
+.rangewrap{position:relative;padding-bottom:1.3rem}
+.rangewrap input{-webkit-appearance:none;appearance:none;width:100%;height:2.4rem;background:transparent;margin:0;cursor:pointer;--p:37.5%}
+.rangewrap input::-webkit-slider-runnable-track{height:.9rem;border-radius:99px;background:linear-gradient(90deg,var(--social) var(--p),#ddd4f1 var(--p))}
+.rangewrap input::-moz-range-track{height:.9rem;border-radius:99px;background:linear-gradient(90deg,var(--social) var(--p),#ddd4f1 var(--p))}
+.rangewrap input::-webkit-slider-thumb{-webkit-appearance:none;width:2.4rem;height:2.4rem;border-radius:50%;background:#fff;border:.35rem solid var(--social);margin-top:-.75rem;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.rangewrap input::-moz-range-thumb{width:1.7rem;height:1.7rem;border-radius:50%;background:#fff;border:.35rem solid var(--social);box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.ticks{position:absolute;left:1.2rem;right:1.2rem;bottom:0;display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);font-weight:700;pointer-events:none}
+.hval{min-width:5.6rem;text-align:center;line-height:1}
+.hval .hv{font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--social);font-variant-numeric:tabular-nums}
+.hval small{display:block;font-size:.85rem;color:var(--muted);font-weight:700;margin-top:.15rem}
+
+/* ---------- Calculadora ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:clamp(10px,1.4vw,18px);margin-top:1.1rem}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1rem 1.1rem;box-shadow:var(--shadow)}
+.stat .num{font-size:clamp(2.2rem,4.6vw,4.2rem);font-weight:900;line-height:1;color:var(--social);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .unit{margin-top:.35rem;font-weight:700;color:var(--muted);font-size:1rem}
+.stat.hero{background:linear-gradient(135deg,#6d28d9,#c026d3);border:0}
+.stat.hero .num,.stat.hero .unit{color:#fff}
+.stat.hero .unit{opacity:.95}
+.callout{margin-top:1.1rem;padding:.9rem 1.2rem;border-radius:var(--radius);background:#fff7e6;border:1px solid #f3d9a0;font-size:1.05rem}
+.fine{font-size:.82rem;color:var(--muted);margin-top:.8rem}
+
+/* ---------- Vida ---------- */
+.lifewrap{display:grid;grid-template-columns:auto 1fr;gap:.6rem;margin-top:1rem;align-items:stretch}
+.rowlab{display:grid;grid-template-rows:repeat(4,1fr);gap:4px;font-size:.8rem;font-weight:800;color:var(--muted);text-align:right}
+.rowlab span{display:flex;align-items:center;justify-content:flex-end}
+.lifegrid{display:grid;grid-template-columns:repeat(20,1fr);gap:4px}
+.cell{aspect-ratio:1;border-radius:4px;background:linear-gradient(to top,var(--social) calc(var(--f,0) * 100%),var(--left) 0);box-shadow:inset 0 0 0 1px rgba(60,30,120,.14);transition:background .25s;display:grid;place-items:center;font-size:clamp(.55rem,1.05vw,.95rem);font-weight:800;line-height:1;color:var(--ink);text-shadow:0 0 2px rgba(255,255,255,.85);font-variant-numeric:tabular-nums}
+.cell.lived{background:var(--lived);box-shadow:none;color:#fff;text-shadow:none}
+.cell.pk{color:#fff;text-shadow:0 0 2px rgba(0,0,0,.4)}
+.cell.now{outline:3px solid var(--ink);outline-offset:1px;position:relative;z-index:1}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;margin-top:.9rem;font-weight:700;font-size:.95rem}
+.legend span{display:inline-flex;align-items:center;gap:.45rem}
+.legend i{width:1.1rem;height:1.1rem;border-radius:4px;display:inline-block;box-shadow:inset 0 0 0 1px rgba(60,30,120,.2)}
+.seg{display:inline-flex;border:2.5px solid var(--ink);border-radius:99px;overflow:hidden;background:#fff}
+.seg button{border:0;background:transparent;padding:.35em 1em;font-weight:800;cursor:pointer;font-size:.95rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.sentence{font-size:clamp(1.1rem,1.9vw,1.7rem);font-weight:600;margin-top:.9rem;line-height:1.3}
+.sentence strong{color:var(--social)}
+.row-between{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;justify-content:space-between}
+
+/* ---------- Comparacions ---------- */
+.bars{display:grid;gap:.75rem;margin-top:1rem}
+.barrow{display:grid;grid-template-columns:minmax(120px,22%) 1fr;gap:.8rem;align-items:center}
+.barrow .lab{font-weight:800;line-height:1.15}
+.barrow .lab small{display:block;font-weight:600;color:var(--muted);font-size:.78rem}
+.track{background:#eee9f8;border-radius:12px;height:2.6rem;position:relative;overflow:hidden}
+.fill{height:100%;border-radius:12px;display:flex;align-items:center;justify-content:flex-end;padding-right:.7rem;color:#fff;font-weight:900;white-space:nowrap;transition:width .5s cubic-bezier(.2,.8,.2,1);min-width:0}
+.fill.social{background:var(--social)} .fill.cls{background:var(--blue)} .fill.sleep{background:#4338ca} .fill.extra{background:var(--green)}
+.barrow .track .outval{position:absolute;top:50%;transform:translateY(-50%);font-weight:900;color:var(--ink);padding-left:.5rem;left:var(--w);white-space:nowrap}
+.equivs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;margin-top:.7rem}
+.cmpgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 clamp(14px,2vw,30px)}
+@media (min-width:1000px){ .cmpgrid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)} .equivs{grid-template-columns:repeat(2,minmax(0,1fr))} .equiv .em{font-size:1.8rem} }
+.equiv{padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem}
+.equiv .em{font-size:2.2rem}
+.equiv .n{font-size:clamp(1.6rem,3vw,2.6rem);font-weight:900;color:var(--social);line-height:1;font-variant-numeric:tabular-nums}
+.equiv small{display:block;color:var(--muted);font-weight:600;font-size:.82rem;line-height:1.2;margin-top:.15rem}
+.keyline{margin-top:.9rem;font-size:clamp(1.05rem,1.8vw,1.5rem);font-weight:700}
+.keyline strong{color:var(--social)}
+
+/* ---------- Mode classe ---------- */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(12px,2vw,28px);margin-top:1rem;align-items:start}
+textarea.cls{width:100%;min-height:9rem;border:2.5px solid var(--ink);border-radius:16px;padding:.8rem 1rem;font-size:1.2rem;resize:vertical;background:#fff}
+.btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.mini{padding:.7rem .5rem;text-align:center}
+.mini b{display:block;font-size:clamp(1.6rem,3vw,2.6rem);font-weight:900;color:var(--brand);line-height:1.05}
+.mini span{font-size:.85rem;font-weight:700;color:var(--muted)}
+.hist{display:grid;grid-template-columns:repeat(8,1fr);gap:clamp(4px,.8vw,10px);align-items:end;height:clamp(150px,26vh,260px);margin-top:1rem;padding:.4rem .2rem 0;border-bottom:3px solid var(--ink)}
+.hbar{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.hbar .b{width:100%;background:var(--social);border-radius:8px 8px 0 0;min-height:0;transition:height .4s;position:relative}
+.hbar .c{font-weight:900;font-size:1.1rem;margin-bottom:.15rem}
+.histlab{display:grid;grid-template-columns:repeat(8,1fr);gap:clamp(4px,.8vw,10px);text-align:center;font-weight:700;font-size:.85rem;color:var(--muted);margin-top:.3rem}
+.empty{color:var(--muted);text-align:center;padding:1.2rem}
+
+/* ---------- Reflexió ---------- */
+.reflect{font-size:clamp(1.6rem,4vw,3.4rem);font-weight:900;line-height:1.12;letter-spacing:-.02em;padding:clamp(1rem,3vw,2.4rem);border-radius:28px;background:var(--grad);color:#fff;margin:1rem 0;text-shadow:0 2px 8px rgba(60,10,90,.45)}
+.reflect:focus{outline:4px solid var(--ink);outline-offset:4px}
+.qlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:.8rem}
+.q{padding:1rem 1.2rem;font-size:1.1rem;font-weight:600;display:flex;gap:.7rem;align-items:flex-start}
+.q i{font-style:normal;font-size:1.6rem}
+
+/* ---------- Detectius ---------- */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px;margin:1.1rem 0;counter-reset:s}
+.step{padding:1rem 1.1rem 1rem 3.4rem;position:relative;font-weight:600;font-size:1.05rem}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:.9rem;top:.9rem;width:1.9rem;height:1.9rem;border-radius:50%;background:var(--brand);color:#fff;font-weight:900;display:grid;place-items:center}
+.notice{padding:.8rem 1.1rem;border-radius:16px;background:#e8f7ef;border:1px solid #a7e1c3;font-weight:600}
+.tip{padding:.8rem 1.1rem;border-radius:16px;background:#fff7e6;border:1px solid #f3d9a0;margin-top:.7rem;font-weight:600}
+
+.phead{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin-bottom:.7rem}
+.av{width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;font-size:1.4rem;flex:0 0 auto;border:3px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.phead .who{line-height:1.1}
+.phead .who b{font-size:1.35rem;font-weight:900}
+.phead .who span{color:var(--muted);font-weight:700}
+.phead .bio{font-size:1rem;font-weight:600}
+.phead .actions{margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.pbody{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.feed{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;align-content:start}
+.post{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.ptop{display:flex;align-items:center;gap:.5rem;padding:.45rem .7rem;font-size:.9rem}
+.ptop .av{width:1.9rem;height:1.9rem;font-size:1rem;border-width:2px}
+.ptop b{font-weight:800}
+.ptop .when{margin-left:auto;color:var(--muted);font-size:.8rem}
+.scene{height:clamp(120px,18vh,300px);display:flex;align-items:center;justify-content:center}
+.scene svg{width:100%;height:100%;display:block}
+.pcap{padding:.5rem .8rem .7rem;font-size:.95rem;line-height:1.35}
+.pcap .place{font-weight:700;color:var(--muted);margin-bottom:.2rem;font-size:.88rem}
+.pcap .likes{font-weight:800;font-size:.85rem;color:var(--muted);margin-bottom:.15rem}
+.pcap .coms{list-style:none;margin:.4rem 0 0;padding:.4rem 0 0;border-top:1px dashed var(--line);display:grid;gap:.2rem;font-size:.9rem}
+.pcap .coms b{font-weight:800}
+.clue{background:none;border:0;border-bottom:2px dotted #db2777;padding:0 1px;margin:0;font:inherit;color:inherit;cursor:pointer;text-align:inherit;display:inline;border-radius:2px}
+.clue:hover{background:var(--social-soft)}
+.clue.on{background:#ffd0e6;border-bottom:2px solid var(--social);font-weight:800}
+.nohints .clue:not(.on){border-bottom-color:transparent}
+.sclue{cursor:pointer}
+.sclue .hit{fill:transparent;stroke:transparent;stroke-width:.8}
+.hints .sclue .hit{stroke:rgba(219,39,119,.85);stroke-dasharray:1.6 1.6}
+.sclue:hover .hit{fill:rgba(236,72,153,.25)}
+.sclue.on .hit{fill:rgba(236,72,153,.35);stroke:#db2777;stroke-width:1.2;stroke-dasharray:none}
+.sclue:focus-visible{outline:none}
+.sclue:focus-visible .hit{stroke:#2563eb;stroke-width:1.4;stroke-dasharray:none}
+.stag rect{fill:#fff;stroke:#1d1633;stroke-width:.5}
+.stag text{fill:#1d1633;font-weight:800;font-family:"Segoe UI",system-ui,Arial,sans-serif}
+.stag.jersey rect{fill:#ea580c;stroke:#fff;stroke-width:.8}
+.stag.jersey text{fill:#fff}
+.stag.blue rect{fill:#0369a1;stroke:#fff;stroke-width:.8}
+.stag.blue text{fill:#fff}
+.stag.dark rect{fill:rgba(20,16,40,.88);stroke:#fff;stroke-width:.4}
+.stag.dark text{fill:#fff}
+.stag.live rect{fill:#dc2626;stroke:#fff;stroke-width:.6}
+.stag.live text{fill:#fff}
+.stag.paper rect{fill:#fffbe6;stroke:#a16207;stroke-width:.5}
+.hints .sclue.tg rect{stroke-dasharray:1.8 1.2}
+.sclue.tg.on rect{stroke:#db2777;stroke-width:1.4;stroke-dasharray:none}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:.9rem 1rem;align-self:start}
+.panel h2{font-size:1.25rem;font-weight:900;display:flex;justify-content:space-between;align-items:center;gap:.5rem}
+.panel h2 .tot{font-size:.85rem;background:var(--social-soft);color:var(--social);border-radius:99px;padding:.1em .7em;font-weight:800;white-space:nowrap}
+.cats{list-style:none;padding:0;margin:.6rem 0 0;display:grid;gap:.35rem}
+.cats li{display:grid;grid-template-columns:1.8rem 1fr auto;gap:.4rem;align-items:start;padding:.3rem .45rem;border-radius:12px;background:#f6f2fd;color:var(--muted)}
+.cats li.has{background:var(--social-soft);color:var(--ink)}
+.cats .ic{font-size:1.3rem;line-height:1.3}
+.cats b{font-size:.98rem;display:block;line-height:1.2}
+.cats small{display:block;font-size:.78rem;line-height:1.25;margin-top:.1rem;color:var(--ink);font-weight:600}
+.cats .cnt{font-weight:900;font-size:1rem;min-width:1.5rem;text-align:center;background:#fff;border-radius:99px;padding:.05em .45em}
+.cats li.has .cnt{background:var(--social);color:#fff}
+.opt{display:flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:700;color:var(--muted);margin-top:.7rem}
+.opt input{width:1.2rem;height:1.2rem;accent-color:var(--social)}
+
+.hidden{display:none!important}
+
+/* Tauler de revelació */
+.exp{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin-bottom:.8rem;padding:.7rem 1rem;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.meter{display:flex;gap:4px}
+.meter span{padding:.25em .9em;border-radius:99px;background:#eee9f8;font-weight:800;font-size:.9rem;color:var(--muted)}
+.meter span.on.baixa{background:#d1fae5;color:#065f46}
+.meter span.on.mitjana{background:#fde68a;color:#78350f}
+.meter span.on.alta{background:#fecdd3;color:#9f1239}
+.exp .txt{font-weight:700}
+.board{position:relative}
+.bgrid{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(70px,15%) minmax(0,1.35fr);align-items:start}
+.lines{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.lines path{fill:none;stroke-linecap:round;transition:opacity .2s}
+.lines path.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:dash .7s ease forwards}
+@keyframes dash{to{stroke-dashoffset:0}}
+.lines path.dim{opacity:.1}
+.bclues,.bconc{display:grid;gap:.4rem;align-content:start;position:relative;z-index:1}
+.bclues{grid-column:1}
+.bconc{grid-column:3;gap:.5rem}
+.bc{padding:.3rem .6rem;border-radius:12px;background:#fff;border:2px solid var(--line);font-size:.88rem;font-weight:700;line-height:1.2;display:flex;gap:.45rem;align-items:center;min-height:2.1rem}
+.bc.f{border-color:var(--social);background:var(--social-soft)}
+.bc.m{border-style:dashed;color:var(--muted)}
+.bc .e{font-size:1.1rem}
+.bc small{margin-left:auto;font-weight:700;color:var(--muted);font-size:.7rem;white-space:nowrap}
+.cc{padding:.55rem .8rem;border-radius:14px;background:#fff;border:2px solid var(--line);position:relative}
+.cc .hd{font-size:.78rem;font-weight:800;color:var(--muted);display:flex;gap:.4rem;align-items:center;margin-bottom:.1rem}
+.cc .hd em{font-style:normal;margin-left:auto;padding:.05em .6em;border-radius:99px;font-size:.72rem}
+.cc p{font-weight:700;font-size:.98rem;line-height:1.25}
+.cc.got{border-color:var(--cc);box-shadow:0 0 0 3px color-mix(in srgb,var(--cc) 22%,transparent)}
+.cc.got .hd em{background:#d1fae5;color:#065f46}
+.cc.miss{border-style:dashed;background:#faf8fe}
+.cc.miss .hd em{background:#fde68a;color:#78350f}
+.cc .chips{display:none;flex-wrap:wrap;gap:.25rem;margin-top:.35rem}
+.cc .chips span{font-size:.72rem;background:#f1ecfb;border-radius:99px;padding:.1em .6em;font-weight:700}
+.cc .chips span.f{background:var(--social-soft);color:var(--social)}
+.cc:focus-visible{outline:4px solid var(--blue)}
+.safe{margin-top:.8rem;font-weight:600;color:var(--muted)}
+
+/* Reflexió 2 */
+.risk{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px;margin-top:1rem}
+.rk{padding:1rem 1.1rem}
+.rk .em{font-size:2rem}
+.rk h3{font-size:1.15rem;font-weight:900;margin:.2rem 0}
+.rk p{color:var(--muted);font-weight:600;font-size:.98rem}
+.good{margin-top:1rem;padding:1rem 1.2rem;border-radius:var(--radius);background:#e8f7ef;border:1px solid #a7e1c3;font-weight:700;font-size:1.1rem}
+.help{margin-top:.7rem;padding:.8rem 1.1rem;border-radius:16px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:600}
+
+/* Hàbits */
+.habits{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(8px,1.2vw,16px);margin-top:1.2rem}
+.habit{padding:1.1rem 1rem 1.2rem;position:relative;display:flex;flex-direction:column;gap:.4rem;border-top:8px solid var(--hc)}
+.habit .num{position:absolute;right:.8rem;top:.6rem;font-weight:900;font-size:1.6rem;color:var(--line)}
+.habit .em{font-size:clamp(2.2rem,3.4vw,3.2rem)}
+.habit h3{font-size:clamp(1.1rem,1.6vw,1.45rem);font-weight:900;line-height:1.1}
+.habit p{font-weight:600;font-size:clamp(.95rem,1.25vw,1.15rem);color:var(--ink)}
+.commit-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(12px,2vw,28px);margin-top:1rem;align-items:start}
+.cstep{padding:.9rem 1.1rem;font-size:1.15rem;font-weight:600;margin-bottom:.6rem}
+.starter{font-size:clamp(1.4rem,2.8vw,2.4rem);font-weight:900;line-height:1.15;padding:1.2rem 1.4rem;border-radius:24px;background:var(--grad);color:#fff;text-shadow:0 2px 8px rgba(60,10,90,.4)}
+.timer{padding:1rem;text-align:center}
+.timer .t{font-size:clamp(2.6rem,6vw,4.8rem);font-weight:900;font-variant-numeric:tabular-nums;color:var(--brand);line-height:1}
+.thanks{margin-top:1rem;font-size:1.2rem;font-weight:700}
+
+/* ---------- Responsiu ---------- */
+@media (min-width:560px){ .feed{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (min-width:900px){ .pbody{grid-template-columns:minmax(0,1fr) 19rem} .panel{position:sticky;top:0;max-height:calc(100vh - 11rem);overflow:auto} }
+@media (min-width:1100px){ .feed{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:1000px){
+  .habits{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .habits .habit:last-child{grid-column:1/-1}
+  .commit-grid,.two{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:899px){
+  .bgrid{grid-template-columns:minmax(0,1fr)}
+  .bclues{display:none}
+  .bconc{grid-column:1}
+  .lines{display:none}
+  .cc .chips{display:flex}
+}
+@media (max-width:640px){
+  .logo .name,.top .partchip{display:none}
+  .top{gap:8px}
+  .clock{font-size:.8rem}
+  .lang button{padding:.2em .5em}
+  .hctl{grid-template-columns:auto 1fr auto;gap:8px}
+  .hctl .hval{grid-column:1/-1;order:-1;display:flex;align-items:baseline;justify-content:center;gap:.5rem;min-width:0}
+  .hctl .hval small{display:inline;margin:0}
+  .stepbtn{width:3rem;height:3rem}
+  .mini-stats{grid-template-columns:repeat(2,1fr)}
+  .barrow{grid-template-columns:1fr}
+  .nav .mid .keys{display:none}
+  .btn{padding:.6em 1.1em}
+  .lifewrap{grid-template-columns:1fr}
+  .rowlab{display:none}
+  .lifegrid{gap:3px;grid-template-columns:repeat(10,1fr)}
+  .cell{font-size:.8rem}
+}
+@media (max-height:800px) and (min-width:700px){
+  .top{padding-top:.3rem;padding-bottom:.3rem}
+  .nav{padding-top:.3rem;padding-bottom:.3rem}
+  .btn{min-height:2.6rem;padding:.4em 1.3em;font-size:1rem}
+  .tall-only{display:none}
+  textarea.cls{min-height:4.5rem}
+  .two{margin-top:.5rem}
+  .slide{padding-top:12px;padding-bottom:14px}
+  .slide h1{font-size:clamp(1.6rem,3vw,2.5rem)}
+  .kicker{margin-bottom:.3rem}
+  .hctl{padding:.4rem 1rem}
+  .stepbtn{width:3rem;height:3rem}
+  .rangewrap input{height:2rem}
+  .stat{padding:.7rem .9rem}
+  .sentence{margin-top:.5rem}
+  .lifewrap{margin-top:.6rem}
+  .legend{margin-top:.5rem}
+  .track{height:2.2rem}
+  .bars{gap:.5rem;margin-top:.7rem}
+  .equiv{padding:.5rem .8rem}
+  .callout{margin-top:.7rem}
+  .stats{margin-top:.7rem}
+}
+
+/* ---------- Moviment reduït ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .lines path.draw{stroke-dasharray:none;stroke-dashoffset:0}
+}
+
+/* ---------- Impressió ---------- */
+@page{size:A4;margin:16mm}
+@media print{
+  html,body{height:auto;background:#fff}
+  #app{display:none!important}
+  #printSheet{display:block;color:#000;font-family:"Segoe UI",Arial,sans-serif}
+  #printSheet h1{font-size:24pt;margin:0 0 4mm;display:flex;align-items:center;gap:4mm}
+  #printSheet h1 svg{width:14mm;height:14mm}
+  #printSheet .sub{font-size:11pt;color:#444;margin-bottom:8mm}
+  #printSheet ol{list-style:none;padding:0;margin:0;display:grid;gap:4mm}
+  #printSheet li{display:flex;gap:4mm;align-items:flex-start;border:1.2pt solid #000;border-radius:3mm;padding:3.5mm 4mm;break-inside:avoid}
+  #printSheet li .box{flex:0 0 6mm;height:6mm;border:1.5pt solid #000;border-radius:1.2mm;margin-top:1mm}
+  #printSheet li b{font-size:13pt;display:block}
+  #printSheet li span{font-size:11.5pt}
+  #printSheet .commit{margin-top:9mm;font-size:13pt;font-weight:700}
+  #printSheet .line{border-bottom:1pt solid #000;height:9mm}
+  #printSheet .foot{margin-top:8mm;font-size:10pt;color:#444}
+}
+</style>
+</head>
+<body>
+<noscript><p style="padding:2rem;font:20px system-ui">Aquesta activitat necessita JavaScript activat al navegador.<br>Esta actividad necesita JavaScript activado en el navegador.<br>This activity needs JavaScript enabled in the browser.</p></noscript>
+
+<svg class="svg-sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="lgBrand" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#fbbf24"/><stop offset=".45" stop-color="#ec4899"/><stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <symbol id="logo" viewBox="0 0 48 48">
+    <rect width="48" height="48" rx="13" fill="url(#lgBrand)"/>
+    <path d="M24 11c-7.2 0-13 5-13 11.3 0 3.5 1.8 6.6 4.600 8.700-.1 1.800-.8 3.500-2 4.900 2.500-.2 4.700-1.100 6.400-2.400 1.300.3 2.600.5 4 .5 7.200 0 13-5 13-11.300S31.200 11 24 11z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="24" cy="22.500" r="4.200" fill="#fff"/>
+    <circle cx="33" cy="15" r="1.900" fill="#fff"/>
+  </symbol>
+</svg>
+
+<div id="app">
+  <header class="top">
+    <div class="logo"><svg aria-hidden="true"><use href="#logo"/></svg><span class="name" id="brandName"></span></div>
+    <span class="chip partchip" id="partChip"></span>
+    <nav class="prog" id="prog" aria-label="Progrés de la sessió"></nav>
+    <div class="clock" id="clock" aria-live="off"></div>
+    <div class="lang" id="langSel" role="group" aria-label="Idioma"></div>
+  </header>
+  <main id="stage"></main>
+  <footer class="nav">
+    <button type="button" class="btn" id="btnPrev"></button>
+    <div class="mid"><span id="screenNo"></span><span class="keys" id="keysHint"></span></div>
+    <button type="button" class="btn primary" id="btnNext"></button>
+  </footer>
+</div>
+<div id="printSheet"></div>
+
+<script>
+/* =====================================================================
+   CONTINGUT — tot el que es veu a la pàgina és aquí. Es pot editar sense
+   tocar la resta del codi.
+   Marcatge dins dels textos:  **negreta**   i   {{id_pista|text clicable}}
+   ===================================================================== */
+const CONTENT = {
+  brand: { name: "Instaxat" },
+  meta: {
+    title: "Instaxat · Tutoria sobre xarxes socials",
+    description: "Activitat de tutoria per a 2n d'ESO: el teu temps a les xarxes i detectius de privacitat. Tot passa al navegador, no es guarda res.",
+    progLabel: "Progrés de la sessió",
+    langLabel: "Idioma"
+  },
+  author: { name: "Nil Bellmunt", role: "professor de l'Institut Ermengol IV de Bellcaire" },
+  parts: { 1: "Part 1 · El teu temps", 2: "Part 2 · Detectius de privacitat", 3: "Tancament" },
+
+  /* Minut aproximat d'inici de cada pantalla (sessió de 45 min) */
+  totalMinutes: 45,
+  minutes: { title: 0, calc: 2, life: 6, compare: 9, class: 12, reflect1: 14,
+             detect: 15, "p-arnau": 18, "p-laia": 22, "p-pol": 26, reflect2: 30,
+             habits: 35, commit: 40 },
+
+  /* Hipòtesis dels càlculs (canvia-les si cal) */
+  time: {
+    min: 0, max: 8, step: 0.5, defaultHours: 3,
+    startAge: 14, endAge: 80,     // startAge = edat per defecte del selector
+    ageMin: 10, ageMax: 30,       // rang del selector d'edat
+    classHoursPerYear: 1050,      // hores de classe a l'any
+    sleepHoursPerYear: 3000,      // dormir (~8 h per nit)
+    extraHoursPerWeek: 3, extraWeeks: 40,   // entrenament / extraescolar
+    filmHours: 1.5, episodeMinutes: 30, bookHours: 8, flightHours: 9
+  },
+
+  ui: {
+    prev: "← Anterior", next: "Següent →", end: "Fi",
+    minute: "Minut", of: "de", screen: "Pantalla",
+    keys: "← → per navegar · ↑ ↓ per ajustar les hores",
+    progLabel: "Ves a la pantalla"
+  },
+
+  title: {
+    kicker: "Tutoria · Xarxes socials",
+    question: "Quanta part de la teva vida passes mirant el mòbil?",
+    sub: "Ho calcularem junts, sense jutjar: només números… i alguna sorpresa.",
+    start: "Comencem →",
+    privacy: "Res no s'envia ni es desa enlloc: tot passa en aquest navegador i s'esborra en tancar-lo.",
+    authorLabel: "Activitat creada per",
+    float: ["📱", "💬", "❤️", "📸", "🎧"]
+  },
+
+  calc: {
+    kicker: "Part 1 · El teu temps",
+    title: "Quantes hores al dia a les xarxes?",
+    lead: "Mou el control fins a una xifra aproximada: vídeos, missatges, xarxes, jocs amb xat…",
+    sliderLabel: "Hores diàries a les xarxes", less: "Menys mitja hora", more: "Més mitja hora",
+    perDay: "h/dia",
+    week: "hores a la setmana", month: "hores al mes", year: "hores a l'any",
+    days: "dies sencers (24 h) a l'any",
+    life: "anys sencers de 24 h entre els {start} i els {end} anys",
+    awake: "Això és aproximadament el **{pct} %** del temps que passes despert.",
+    note: "Càlcul: hores/dia × 365 dies a l'any. Mes = any ÷ 12. Temps despert = 24 h menys unes 8 h de son."
+  },
+
+  life: {
+    kicker: "Part 1 · El teu temps",
+    title: "La teva vida, en quadradets",
+    lead: "Cada quadradet és un any de vida (el número és l'any: 1, 2, 3…), fins als {end} anys.",
+    lived: "Anys ja viscuts", left: "Anys que queden", social: "Temps a les xarxes (en anys de 24 h)",
+    viewLabel: "Com es mostra:", together: "Tot junt", spread: "Repartit",
+    ageRows: ["1–20", "21–40", "41–60", "61–80"],
+    sentence: "Amb **{h} h al dia**, entre els {start} i els {end} anys sumaràs **{years} anys** de 24 h a les xarxes: el **{pct} %** del temps que et queda.",
+    foot: "«Tot junt» acumula aquest temps com si fos seguit; «Repartit» el mostra com una franja rosa dins de cada any. El quadre amb vora negra és l'any en què ets ara.",
+    cellTitle: "Any de vida {n}",
+    ageLabel: "La teva edat", ageUnit: "anys", ageLess: "Un any menys", ageMore: "Un any més"
+  },
+
+  compare: {
+    kicker: "Part 1 · El teu temps",
+    title: "Quant és això, comparat amb altres coses?",
+    lead: "Hores a l'any. Mou el control i mira com canvia la barra rosa.",
+    items: {
+      social: { label: "Xarxes socials", note: "Segons el control" },
+      cls:    { label: "Hores de classe", note: "Hipòtesi: ~{v} h lectives a l'any" },
+      sleep:  { label: "Dormir", note: "Hipòtesi: ~8 h per nit ≈ {v} h/any" },
+      extra:  { label: "Una activitat extraescolar", note: "Hipòtesi: {h} h/setmana × {w} setmanes" }
+    },
+    equivTitle: "El mateix temps, convertit en…",
+    films: { em: "🎬", label: "pel·lícules", note: "de {v} h cadascuna" },
+    episodes: { em: "📺", label: "episodis de sèrie", note: "de {v} min cadascun" },
+    books: { em: "📚", label: "llibres llegits", note: "d'unes 250 pàgines (≈ {v} h cadascun)" },
+    flights: { em: "✈️", label: "vols Barcelona–Nova York", note: "(≈ {v} h cada vol)" },
+    key: "Les xarxes equivalen al **{pct} %** de les hores de classe d'un any.",
+    hyp: "Totes les xifres de comparació són estimacions aproximades i es poden canviar a l'objecte CONTENT.time."
+  },
+
+  classMode: {
+    kicker: "Part 1 · Mode classe (anònim)",
+    title: "I la nostra classe?",
+    lead: "Escriu o enganxa les hores diàries de diversos alumnes, separades per comes. Sense noms ni cap dada personal.",
+    label: "Hores diàries (una per alumne)",
+    placeholder: "Per exemple: 1.5, 3, 4, 2.5, 6",
+    hint: "Escriu els decimals amb punt (2.5). Si separes amb punt i coma o amb salts de línia, també pots usar coma decimal (2,5).",
+    example: "Posa un exemple inventat", clear: "Esborra", useAvg: "Fes servir la mitjana al control",
+    exampleData: "1.5, 2, 2, 2.5, 3, 3, 3, 3.5, 4, 4, 4.5, 5, 5.5, 6, 1, 7, 3.5, 4, 2.5, 6",
+    n: "respostes", avg: "mitjana (h/dia)", max: "màxim", min: "mínim",
+    histTitle: "Quants alumnes hi ha a cada franja d'hores?",
+    empty: "Encara no hi ha dades. Escriu algunes hores a l'esquerra.",
+    ignored: "S'han ignorat {n} valors (han de ser números entre 0 i 24).",
+    avgYear: "Com a classe, de mitjana: **{y} h a l'any** per persona.",
+    bins: ["0–1", "1–2", "2–3", "3–4", "4–5", "5–6", "6–7", "7+"]
+  },
+
+  reflect1: {
+    kicker: "Part 1 · Per pensar-hi",
+    title: "Per acabar la primera part",
+    phrase: "No és bo ni dolent: és temps. Què vols fer-ne?",
+    editHint: "Fes clic a la frase per editar-la (no es desa enlloc).",
+    reset: "Restableix la frase",
+    summary: "Amb **{h} h al dia** són **{days} dies** de 24 h a l'any.",
+    questions: [
+      "Què t'ha sorprès més d'aquestes xifres?",
+      "Quin d'aquests temps t'agrada més? I quin t'agrada menys?",
+      "Si volguessis trobar 30 minuts per a una altra cosa, d'on els treuries?"
+    ]
+  },
+
+  detect: {
+    kicker: "Part 2 · Detectius de privacitat",
+    title: "Detectius de privacitat",
+    lead: "Només tens aquests posts públics. Què pots saber d'aquesta persona?",
+    steps: [
+      "Mireu els posts d'un perfil. Tots són fictius.",
+      "Cliqueu les pistes que veieu: textos, objectes, comentaris…",
+      "Al quadre «Què hem deduït?» veureu què se'n pot saber.",
+      "Premeu «Revela-ho» per veure tot el que es podia deduir."
+    ],
+    notice: "Els perfils, els noms, el poble de Vilaverda i l'Institut Pic Roig són inventats. Cap coincidència amb persones reals.",
+    tip: "Truc: una pista sola diu poc. Les pistes **combinades** diuen molt.",
+    categories: [
+      { key: "viu",     icon: "🏠", label: "On viu" },
+      { key: "estudia", icon: "🏫", label: "On estudia" },
+      { key: "rutina",  icon: "🕒", label: "Rutina" },
+      { key: "sol",     icon: "🚪", label: "Quan és sol" },
+      { key: "amics",   icon: "👥", label: "Amics i família" },
+      { key: "pass",    icon: "🔑", label: "Contrasenya possible" },
+      { key: "afic",    icon: "🎯", label: "Aficions" }
+    ],
+    ui: {
+      panel: "Què hem deduït?", total: "{n} pistes", reveal: "Revela-ho 🔍", back: "← Torna als posts",
+      reset: "Reinicia", hints: "Ressalta les zones clicables", scrollHint: "Desplaça't per veure tots els posts ↓",
+      cluesTitle: "Pistes als posts", conclTitle: "Què se'n pot deduir",
+      got: "Ho heu detectat", miss: "Us ha passat per alt", harmless: "risc baix",
+      exposure: "Exposició d'aquest perfil",
+      levels: { baixa: "Baixa", mitjana: "Mitjana", alta: "Alta" },
+      summary: "Heu trobat {f} de {t} pistes i heu pogut deduir {c} de {k} coses.",
+      allOpen: "Si algú mirés tots els posts atentament, l'exposició seria **alta**.",
+      safe: "Línia contínua = pista que heu trobat · línia discontínua = pista que us ha passat per alt. Passa el cursor per sobre d'una deducció per veure'n les pistes.",
+      alt: "Pista", post: "Post"
+    },
+    profiles: [
+      /* ------------------------------ ARNAU ------------------------------ */
+      {
+        id: "arnau", name: "Arnau", handle: "arnau.cb7", avatar: "🏀", color: "#fdba74",
+        bio: "Bàsquet 🏀 · 2n ESO · {{a_vila|Vilaverda}} 📍",
+        clues: {
+          a_vila:   { cat: "viu",     emoji: "📍", label: "Bio: viu a Vilaverda" },
+          a_equip:  { cat: "afic",    emoji: "👕", label: "Samarreta: CB Vilaverda, dorsal 7" },
+          a_parada: { cat: "rutina",  emoji: "🚌", label: "Parada Pl. del Molí, bus L2 a les 7:45" },
+          a_insti:  { cat: "estudia", emoji: "🏫", label: "«De camí a l'Institut Pic Roig»" },
+          a_portal: { cat: "viu",     emoji: "🚪", label: "Placa del portal: C/ dels Til·lers 14" },
+          a_pavello:{ cat: "rutina",  emoji: "🏟️", label: "Check-in al Pavelló Municipal" },
+          a_horari: { cat: "rutina",  emoji: "🕒", label: "Comentari: dimarts i dijous, 18:30" },
+          a_marc:   { cat: "amics",   emoji: "🧑", label: "Amic i company d'equip: @marc.j" },
+          a_sol:    { cat: "sol",     emoji: "🏠", label: "«Sol a casa tot el cap de setmana»" },
+          a_mare:   { cat: "amics",   emoji: "👩", label: "La seva mare: @montse.f" },
+          a_gos:    { cat: "pass",    emoji: "🐶", label: "Nom del gos: Lluna" },
+          a_gosdata:{ cat: "pass",    emoji: "🎂", label: "Data d'aniversari del gos: 14 de març" },
+          a_jocs:   { cat: "afic",    emoji: "🎮", label: "Li agraden els videojocs" }
+        },
+        posts: [
+          { when: "fa 3 d", likes: 41,
+            scene: { bg: ["#ffe2c2", "#ffa45c"],
+              items: [ { e: "🏀", x: 20, y: 24, s: 17 }, { e: "🏆", x: 82, y: 24, s: 15 }, { e: "⭐", x: 50, y: 12, s: 8 } ],
+              tags: [ { t: ["CB VILAVERDA", "· 7 ·"], x: 50, y: 40, fs: 6.4, cls: "jersey", clue: "a_equip", label: "Samarreta del club" } ] },
+            caption: "Primer partit de la temporada! 🏀🔥 Dorsal 7, com sempre.",
+            comments: [ { u: "{{a_marc|marc.j}}", t: "Quina samarreta més xula! A guanyar-ne molts 💪" } ] },
+          { when: "story · 7:41", likes: 18,
+            scene: { bg: ["#d7ecff", "#86bfff"],
+              items: [ { e: "🚌", x: 24, y: 40, s: 20 }, { e: "🎒", x: 80, y: 44, s: 13 }, { e: "☁️", x: 80, y: 12, s: 11 } ],
+              tags: [ { t: ["PARADA PL. DEL MOLÍ", "L2 · 7:45"], x: 50, y: 14, fs: 5.4, cls: "", clue: "a_parada", label: "Cartell de la parada" } ] },
+            caption: "Cada matí igual… De camí a {{a_insti|l'Institut Pic Roig}} 😴🚌",
+            comments: [] },
+          { when: "fa 5 d", likes: 33,
+            scene: { bg: ["#eadcff", "#b9a2ff"],
+              items: [ { e: "😎", x: 30, y: 28, s: 22 }, { e: "👟", x: 14, y: 52, s: 10 }, { e: "🚪", x: 76, y: 26, s: 24 } ],
+              tags: [ { t: ["C/ DELS TIL·LERS", "Nº 14"], x: 74, y: 52, fs: 5.2, cls: "", clue: "a_portal", label: "Placa del portal" } ] },
+            caption: "Sabates noves, dia nou 👟 #ootd",
+            comments: [] },
+          { when: "fa 1 sem", likes: 27,
+            scene: { bg: ["#cdf5d4", "#6fdc8b"],
+              items: [ { e: "🏀", x: 30, y: 32, s: 20 }, { e: "🥤", x: 72, y: 36, s: 14 }, { e: "💦", x: 52, y: 14, s: 10 } ],
+              tags: [] },
+            place: "{{a_pavello|📍 Pavelló Municipal de Vilaverda}}",
+            caption: "Entrenament dur avui 💦 Les cames no responen!",
+            comments: [ { u: "{{a_marc|marc.j}}", t: "Recordeu: {{a_horari|dimarts i dijous a les 18:30}}, no arribis tard 😅" } ] },
+          { when: "ahir", likes: 52,
+            scene: { bg: ["#27304f", "#4a5a96"],
+              items: [ { e: "🎮", x: 26, y: 30, s: 20 }, { e: "🍕", x: 74, y: 34, s: 16 }, { e: "🛋️", x: 50, y: 50, s: 11 } ],
+              tags: [ { t: ["AQUEST CAP DE SETMANA"], x: 50, y: 11, fs: 4.8, cls: "dark", label: "Text de la story" } ] },
+            caption: "Els meus pares marxen de viatge i jo em quedo {{a_sol|sol a casa tot el cap de setmana}} 😎 Qui s'apunta a una nit de {{a_jocs|videojocs}}?",
+            comments: [] },
+          { when: "fa 2 sem", likes: 88,
+            scene: { bg: ["#ffe6ee", "#ffb1c9"],
+              items: [ { e: "🐶", x: 50, y: 32, s: 30 }, { e: "🎂", x: 16, y: 14, s: 10 }, { e: "🎈", x: 86, y: 16, s: 11 } ],
+              tags: [] },
+            caption: "La {{a_gos|Lluna}} fa 3 anys avui, va néixer el {{a_gosdata|14 de març}} 🐶🎂 La meva vida!",
+            comments: [ { u: "{{a_mare|montse.f}}", t: "Que bonic, Arnau! Fem pastís quan arribem a casa 💕" } ] }
+        ],
+        conclusions: [
+          { cat: "viu",     text: "Viu a Vilaverda, pel barri de la Plaça del Molí.", clues: ["a_vila", "a_parada"], needs: 1 },
+          { cat: "viu",     text: "L'adreça gairebé exacta: carrer dels Til·lers, número 14.", clues: ["a_portal"], needs: 1 },
+          { cat: "estudia", text: "Va a l'Institut Pic Roig i agafa el bus L2 cap a les 7:45.", clues: ["a_insti", "a_parada"], needs: 1 },
+          { cat: "rutina",  text: "Entrena dimarts i dijous a les 18:30 al Pavelló Municipal.", clues: ["a_horari", "a_pavello", "a_equip"], needs: 2 },
+          { cat: "sol",     text: "Aquest cap de setmana és sol a casa, i es pot saber quina casa és.", clues: ["a_sol", "a_portal", "a_vila"], needs: 2, must: ["a_sol"] },
+          { cat: "amics",   text: "Coneixem un company d'equip (Marc) i el nom de la seva mare (Montse).", clues: ["a_marc", "a_mare"], needs: 1 },
+          { cat: "pass",    text: "Contrasenya o pregunta de seguretat fàcil d'endevinar: Lluna + 14/03.", clues: ["a_gos", "a_gosdata"], needs: 1 }
+        ]
+      },
+      /* ------------------------------ LAIA ------------------------------ */
+      {
+        id: "laia", name: "Laia", handle: "laia.aigua", avatar: "🏊‍♀️", color: "#7dd3fc",
+        bio: "Natació 🏊‍♀️ · gatera 🐱 · amiga de les amigues 💛",
+        clues: {
+          l_club:   { cat: "afic",    emoji: "🏊", label: "Bossa: Club Natació Aiguamoll" },
+          l_pis:    { cat: "rutina",  emoji: "📍", label: "Check-in: Piscina Municipal d'Aiguamoll" },
+          l_horari: { cat: "rutina",  emoji: "🕖", label: "«Dilluns i dimecres a les 19:00»" },
+          l_carla:  { cat: "amics",   emoji: "👭", label: "Amiga: @carla.vv" },
+          l_vac:    { cat: "sol",     emoji: "🏝️", label: "Vacances: 21 de juny al 5 de juliol" },
+          l_billet: { cat: "sol",     emoji: "🎫", label: "Foto del bitllet: vol 21 juny, 07:10" },
+          l_vista:  { cat: "viu",     emoji: "🪟", label: "Des del balcó: Farmàcia Ribes" },
+          l_gat:    { cat: "pass",    emoji: "🐱", label: "Nom del gat: Cacau" },
+          l_gatany: { cat: "pass",    emoji: "📅", label: "Any en què el van adoptar: 2019" },
+          l_pizza:  { cat: "viu",     emoji: "🍕", label: "Caixa: Pizzeria Il Forn, Vilaverda" },
+          l_mare:   { cat: "amics",   emoji: "👩", label: "La mare treballa a la Farmàcia Ribes" },
+          l_sola:   { cat: "sol",     emoji: "🌙", label: "«Sopem soles fins a les 22:00»" },
+          l_insti:  { cat: "estudia", emoji: "🏫", label: "Cartell: Ins. Pic Roig, 2n B" },
+          l_te:     { cat: "afic",    emoji: "🍑", label: "Li agrada el te de préssec" }
+        },
+        posts: [
+          { when: "fa 4 d", likes: 64,
+            scene: { bg: ["#c9f2ff", "#5bc8f5"],
+              items: [ { e: "🏊‍♀️", x: 24, y: 22, s: 20 }, { e: "🌊", x: 80, y: 40, s: 16 }, { e: "🥽", x: 84, y: 14, s: 10 } ],
+              tags: [ { t: ["CN AIGUAMOLL"], x: 46, y: 48, fs: 6.4, cls: "blue", clue: "l_club", label: "Bossa del club" } ] },
+            place: "{{l_pis|📍 Piscina Municipal d'Aiguamoll}}",
+            caption: "{{l_horari|Dilluns i dimecres a les 19:00}}, ja no sé viure sense 💪🏊‍♀️ #natació",
+            comments: [ { u: "{{l_carla|carla.vv}}", t: "Guarda'm lloc al vestidor 😂" } ] },
+          { when: "ahir", likes: 112,
+            scene: { bg: ["#fff1a8", "#ffbf5f"],
+              items: [ { e: "🏝️", x: 24, y: 24, s: 22 }, { e: "✈️", x: 78, y: 16, s: 15 }, { e: "☀️", x: 90, y: 6, s: 9 } ],
+              tags: [ { t: ["VOL · 21 JUN", "07:10 · BCN → MAH"], x: 52, y: 47, fs: 5.2, cls: "paper", clue: "l_billet", label: "Bitllet d'avió" } ] },
+            caption: "JA SÓN VACANCES!!! ☀️ {{l_vac|Dissabte 21 de juny ens n'anem a Menorca fins al 5 de juliol}} 🏝️✈️",
+            comments: [] },
+          { when: "fa 6 d", likes: 37,
+            scene: { bg: ["#ffd8e4", "#ff9fbd"],
+              items: [ { e: "🐱", x: 26, y: 34, s: 24 }, { e: "🪴", x: 8, y: 52, s: 10 }, { e: "🏪", x: 76, y: 38, s: 20 } ],
+              tags: [ { t: ["FARMÀCIA RIBES"], x: 72, y: 14, fs: 5.2, cls: "", clue: "l_vista", label: "Cartell de la farmàcia davant del balcó" } ] },
+            caption: "Fent guàrdia al balcó amb un {{l_te|te de préssec}} 🍑 (és el lloc preferit del gat).",
+            comments: [] },
+          { when: "fa 2 sem", likes: 95,
+            scene: { bg: ["#e6dcff", "#b69dff"],
+              items: [ { e: "🐱", x: 50, y: 30, s: 30 }, { e: "🎉", x: 16, y: 14, s: 11 }, { e: "🐟", x: 84, y: 46, s: 11 } ],
+              tags: [] },
+            caption: "El meu gat {{l_gat|Cacau}} és de la família des que el vam adoptar, l'any {{l_gatany|2019}} 🐱💜",
+            comments: [] },
+          { when: "fa 1 sem", likes: 58,
+            scene: { bg: ["#ffe8c8", "#ffb35c"],
+              items: [ { e: "🍕", x: 28, y: 28, s: 24 }, { e: "🥤", x: 80, y: 30, s: 13 } ],
+              tags: [ { t: ["PIZZERIA IL FORN", "VILAVERDA"], x: 54, y: 49, fs: 5.4, cls: "", clue: "l_pizza", label: "Caixa de la pizzeria" } ] },
+            caption: "Sopar després de nadar 🍕 La {{l_mare|mama fa torn de tarda a la Farmàcia Ribes}} i {{l_sola|sopem soles fins a les 22:00}}.",
+            comments: [] },
+          { when: "fa 3 sem", likes: 140,
+            scene: { bg: ["#e2d0ff", "#8fc5ff"],
+              items: [ { e: "🎒", x: 20, y: 26, s: 15 }, { e: "📚", x: 80, y: 26, s: 14 }, { e: "👭", x: 50, y: 28, s: 20 } ],
+              tags: [ { t: ["INS. PIC ROIG", "2n B"], x: 50, y: 50, fs: 5.6, cls: "", clue: "l_insti", label: "Cartell de l'institut" } ] },
+            caption: "Últim dia de curs amb les meves! 💛 Gràcies per tot.",
+            comments: [ { u: "{{l_carla|carla.vv}}", t: "Ja vull que sigui setembre 😭" } ] }
+        ],
+        conclusions: [
+          { cat: "viu",     text: "Viu a Vilaverda, en un pis amb balcó davant de la Farmàcia Ribes.", clues: ["l_vista", "l_pizza"], needs: 1 },
+          { cat: "estudia", text: "Estudia 2n B a l'Institut Pic Roig.", clues: ["l_insti"], needs: 1 },
+          { cat: "rutina",  text: "Nada dilluns i dimecres a les 19:00 a la Piscina d'Aiguamoll (CN Aiguamoll).", clues: ["l_club", "l_pis", "l_horari"], needs: 2 },
+          { cat: "sol",     text: "Del 21 de juny al 5 de juliol la casa estarà buida.", clues: ["l_vac", "l_billet"], needs: 1 },
+          { cat: "sol",     text: "Alguns vespres es queda a casa fins a les 22:00 sense la mare.", clues: ["l_sola", "l_mare"], needs: 1, must: ["l_sola"] },
+          { cat: "amics",   text: "Amiga: la Carla. La mare treballa a la Farmàcia Ribes.", clues: ["l_carla", "l_mare"], needs: 1 },
+          { cat: "pass",    text: "Nom del gat + any d'adopció: una contrasenya o resposta de seguretat fàcil.", clues: ["l_gat", "l_gatany"], needs: 1 }
+        ]
+      },
+      /* ------------------------------- POL ------------------------------- */
+      {
+        id: "pol", name: "Pol", handle: "pol.skate", avatar: "🛹", color: "#86efac",
+        bio: "Skate 🛹 · 2n ESO · barri {{p_pins|Els Pins}}",
+        clues: {
+          p_pins:   { cat: "viu",     emoji: "🌲", label: "Bio: barri dels Pins" },
+          p_live:   { cat: "rutina",  emoji: "🔴", label: "Directe: Skatepark Els Pins, ara" },
+          p_escola: { cat: "estudia", emoji: "🏫", label: "Primera escola: CEIP La Font" },
+          p_pipa:   { cat: "pass",    emoji: "🐹", label: "Mascota: hàmster Pipa" },
+          p_musica: { cat: "afic",    emoji: "🎵", label: "Li agrada el rap i l'electrònica" },
+          p_avia:   { cat: "amics",   emoji: "👵", label: "Dimecres sopa a casa de l'àvia Roser" },
+          p_colla:  { cat: "amics",   emoji: "🧑‍🤝‍🧑", label: "La colla: @eric.sk8 i @nuria.r" },
+          p_sortida:{ cat: "rutina",  emoji: "🕒", label: "Surt de l'institut a les 15:10" },
+          p_insti:  { cat: "estudia", emoji: "🏫", label: "Cartell de l'Institut Pic Roig" },
+          p_sol:    { cat: "sol",     emoji: "🚪", label: "«Sol a casa de dilluns a divendres»" }
+        },
+        posts: [
+          { when: "ara mateix", likes: 12,
+            scene: { bg: ["#b8f1ff", "#69b9ff"],
+              items: [ { e: "🛹", x: 24, y: 30, s: 22 }, { e: "🌳", x: 82, y: 30, s: 18 }, { e: "☀️", x: 50, y: 10, s: 9 } ],
+              tags: [ { t: ["● EN DIRECTE", "SKATEPARK ELS PINS"], x: 50, y: 50, fs: 5.4, cls: "live", clue: "p_live", label: "Directe amb ubicació" } ] },
+            caption: "Ara mateix {{p_live|al skatepark dels Pins}}, en directe 🛹 Qui ve?",
+            comments: [] },
+          { when: "story · ahir", likes: 29,
+            scene: { bg: ["#f6dcff", "#cdb2ff"],
+              items: [],
+              tags: [ { t: ["1a ESCOLA:", "CEIP LA FONT"], x: 50, y: 12, fs: 5.6, cls: "", clue: "p_escola", label: "Resposta: primera escola" },
+                      { t: ["MASCOTA:", "HÀMSTER PIPA"], x: 50, y: 31, fs: 5.6, cls: "blue", clue: "p_pipa", label: "Resposta: mascota" },
+                      { t: ["MÚSICA:", "RAP I ELECTRÒNICA"], x: 50, y: 50, fs: 5.6, cls: "dark", clue: "p_musica", label: "Resposta: música" } ] },
+            caption: "Pregunteu-me el que vulgueu! 🙋 (respostes aquí)",
+            comments: [] },
+          { when: "fa 3 d", likes: 46,
+            scene: { bg: ["#ffeeb0", "#ffb59b"],
+              items: [ { e: "🍝", x: 30, y: 26, s: 24 }, { e: "🧀", x: 80, y: 24, s: 13 } ],
+              tags: [ { t: ["DIMECRES A CASA", "DE L'ÀVIA ROSER"], x: 50, y: 49, fs: 5.4, cls: "paper", clue: "p_avia", label: "Nota: casa de l'àvia" } ] },
+            caption: "Macarrons de l'àvia! 🍝 Ningú cuina com ella.",
+            comments: [] },
+          { when: "fa 1 sem", likes: 71,
+            scene: { bg: ["#d7f9dc", "#66d986"],
+              items: [ { e: "🛹", x: 26, y: 34, s: 18 }, { e: "🛹", x: 68, y: 38, s: 18 }, { e: "🔥", x: 48, y: 12, s: 10 } ],
+              tags: [] },
+            caption: "Entrenant amb la colla 🛹 {{p_colla|@eric.sk8 @nuria.r}} Quin nivell!",
+            comments: [ { u: "{{p_colla|eric.sk8}}", t: "Demà a la sortida de l'insti, {{p_sortida|a les 15:10}}, tots al parc!" } ] },
+          { when: "fa 2 sem", likes: 35,
+            scene: { bg: ["#e4dcff", "#b2a0ff"],
+              items: [ { e: "🚲", x: 26, y: 38, s: 20 }, { e: "⛑️", x: 78, y: 44, s: 12 }, { e: "☁️", x: 80, y: 18, s: 9 } ],
+              tags: [ { t: ["INSTITUT PIC ROIG"], x: 54, y: 12, fs: 5.4, cls: "", clue: "p_insti", label: "Cartell de l'institut" } ] },
+            caption: "Bici aparcada, comença una altra setmana 😮‍💨",
+            comments: [] },
+          { when: "fa 3 sem", likes: 24,
+            scene: { bg: ["#2a3b52", "#4a8aa0"],
+              items: [ { e: "🎮", x: 30, y: 28, s: 20 }, { e: "🛋️", x: 70, y: 36, s: 18 }, { e: "🌙", x: 88, y: 10, s: 9 } ],
+              tags: [] },
+            caption: "Els pares a la feina fins a les 20:00 i el germà gran a la uni… així que {{p_sol|tarda sol a casa de dilluns a divendres}} 🎮",
+            comments: [] }
+        ],
+        conclusions: [
+          { cat: "viu",     text: "Viu al barri dels Pins, a Vilaverda.", clues: ["p_pins", "p_live"], needs: 1 },
+          { cat: "estudia", text: "Va a l'Institut Pic Roig; abans va anar al CEIP La Font.", clues: ["p_insti", "p_escola"], needs: 1 },
+          { cat: "rutina",  text: "Surt de l'institut a les 15:10 i sovint va al skatepark; els dimecres sopa a casa de l'àvia.", clues: ["p_sortida", "p_live", "p_avia"], needs: 2 },
+          { cat: "rutina",  text: "Ara mateix se sap exactament on és (directe amb ubicació).", clues: ["p_live"], needs: 1 },
+          { cat: "sol",     text: "De dilluns a divendres és sol a casa fins a les 20:00.", clues: ["p_sol"], needs: 1 },
+          { cat: "amics",   text: "La seva colla (Eric i Núria) i l'àvia Roser.", clues: ["p_colla", "p_avia"], needs: 1 },
+          { cat: "pass",    text: "Respostes de seguretat típiques: primera escola i nom de la mascota.", clues: ["p_escola", "p_pipa"], needs: 1 }
+        ]
+      }
+    ]
+  },
+
+  reflect2: {
+    kicker: "Part 2 · Per pensar-hi",
+    title: "Això ho podria fer qualsevol desconegut en 5 minuts.",
+    question: "Algú amb males intencions, què en podria fer?",
+    risks: [
+      { em: "🎭", h: "Fer-se passar per algú", p: "Escriure com si fos un amic o una amiga, amb dades que només coneixes tu, perquè ens ho cregui." },
+      { em: "🔑", h: "Provar d'entrar als teus comptes", p: "Noms de mascotes, dates i escoles són contrasenyes i respostes de seguretat molt típiques." },
+      { em: "🏠", h: "Saber on ets i on no ets", p: "Els horaris, els viatges i els directes expliquen quan algú és a casa… i quan no." },
+      { em: "🎯", h: "Fer-te sentir vigilat", p: "Saber massa de tu pot servir per burlar-se, pressionar o fer-te sentir incòmode." }
+    ],
+    good: "La bona notícia: no és culpa de qui publica. Però tu pots decidir què comparteixes, amb qui i quan.",
+    help: "Si algú et fa sentir incòmode o t'amenaça: no responguis, fes una captura, bloqueja'l i explica-ho a una persona adulta de confiança (família, tutor/a, orientació).",
+    discuss: "Per al debat: quines pistes us han sorprès més? Quines no hauríeu pensat mai que eren perilloses?"
+  },
+
+  closing: {
+    kicker: "Tancament",
+    title: "5 hàbits per quedar-te'n",
+    lead: "No són prohibicions: són decisions petites que posen el control a les teves mans.",
+    habits: [
+      { em: "🔒", h: "Privacitat", a: "Abans de penjar, revisa la foto: portal, uniforme, bitllets, pantalles… Retalla o tapa el que t'identifica.", color: "#7c3aed" },
+      { em: "📍", h: "Ubicació", a: "No publiquis on ets en directe: penja-ho quan ja hagis marxat.", color: "#0ea5e9" },
+      { em: "🧑‍🤝‍🧑", h: "Perfil privat", a: "Posa el perfil en privat i accepta només gent que coneixes en persona.", color: "#10b981" },
+      { em: "🤔", h: "Pensa abans de penjar", a: "Pregunta't: ho ensenyaria a un desconegut pel carrer? Si dubtes, no ho pengis.", color: "#f59e0b" },
+      { em: "⏱️", h: "Controla el temps", a: "Posa't un límit diari (per exemple 2 h) i deixa el mòbil fora de l'habitació quan dorms.", color: "#e0156f" }
+    ]
+  },
+
+  commit: {
+    kicker: "Tancament",
+    title: "El meu compromís",
+    steps: [
+      "Tria'n UN dels cinc hàbits. Només un.",
+      "Pensa com el faràs: quan, on i amb qui.",
+      "Completa mentalment la frase i no la diguis en veu alta (és teva).",
+      "Si vols, imprimeix la fitxa i guarda-la on la vegis."
+    ],
+    starter: "Aquesta setmana jo… ",
+    timerTitle: "Un minut de silenci per triar",
+    timerStart: "Comença", timerStop: "Atura", timerReset: "Torna a 1:00", timerDone: "Temps! 🎉",
+    print: "🖨️ Imprimeix o desa en PDF",
+    thanks: "Gràcies per participar! 💜",
+    note: "No es recull ni es desa cap dada: el compromís és només teu.",
+    sheet: {
+      title: "Els meus 5 hàbits digitals",
+      sub: "Marca el que faràs aquesta setmana. Només tu ho veus.",
+      commit: "El meu compromís:",
+      start: "Aquesta setmana jo…",
+      date: "Data:",
+      foot: "Tutoria sobre xarxes socials · Instaxat és una xarxa fictícia creada per a l'activitat."
+    }
+  }
+};
+
+/* =====================================================================
+   TRADUCCIONS — castellà (es) i anglès (en)
+   Només hi ha els textos. Tot el que no es tradueix (números, emojis,
+   identificadors de pistes, coordenades, minuts…) es hereta del català
+   (CONTENT) per posició: cada llista ha de tenir els mateixos elements,
+   en el mateix ordre. Els marcadors {{id|text}}, {valor} i **negreta**
+   han de ser els mateixos que en català.
+   ===================================================================== */
+const TRANSLATIONS = {
+/* ============================== CASTELLÀ ============================== */
+es: {
+  meta: {
+    title: "Instaxat · Tutoría sobre redes sociales",
+    description: "Actividad de tutoría para 2.º de ESO: tu tiempo en las redes y detectives de privacidad. Todo ocurre en el navegador, no se guarda nada.",
+    progLabel: "Progreso de la sesión",
+    langLabel: "Idioma"
+  },
+  author: { role: "profesor del Institut Ermengol IV de Bellcaire" },
+  parts: { 1: "Parte 1 · Tu tiempo", 2: "Parte 2 · Detectives de privacidad", 3: "Cierre" },
+  ui: {
+    prev: "← Anterior", next: "Siguiente →", end: "Fin",
+    minute: "Minuto", of: "de", screen: "Pantalla",
+    keys: "← → para navegar · ↑ ↓ para ajustar las horas",
+    progLabel: "Ir a la pantalla"
+  },
+  title: {
+    kicker: "Tutoría · Redes sociales",
+    question: "¿Qué parte de tu vida pasas mirando el móvil?",
+    sub: "Lo calcularemos juntos, sin juzgar: solo números… y alguna sorpresa.",
+    start: "Empezamos →",
+    privacy: "Nada se envía ni se guarda en ningún sitio: todo ocurre en este navegador y se borra al cerrarlo.",
+    authorLabel: "Actividad creada por"
+  },
+  calc: {
+    kicker: "Parte 1 · Tu tiempo",
+    title: "¿Cuántas horas al día en las redes?",
+    lead: "Mueve el control hasta una cifra aproximada: vídeos, mensajes, redes, juegos con chat…",
+    sliderLabel: "Horas diarias en las redes", less: "Media hora menos", more: "Media hora más",
+    perDay: "h/día",
+    week: "horas a la semana", month: "horas al mes", year: "horas al año",
+    days: "días enteros (24 h) al año",
+    life: "años enteros de 24 h entre los {start} y los {end} años",
+    awake: "Esto es aproximadamente el **{pct} %** del tiempo que pasas despierto.",
+    note: "Cálculo: horas/día × 365 días al año. Mes = año ÷ 12. Tiempo despierto = 24 h menos unas 8 h de sueño."
+  },
+  life: {
+    kicker: "Parte 1 · Tu tiempo",
+    title: "Tu vida, en cuadraditos",
+    lead: "Cada cuadradito es un año de vida (el número es el año: 1, 2, 3…), hasta los {end} años.",
+    lived: "Años ya vividos", left: "Años que quedan", social: "Tiempo en las redes (en años de 24 h)",
+    viewLabel: "Cómo se muestra:", together: "Todo junto", spread: "Repartido",
+    sentence: "Con **{h} h al día**, entre los {start} y los {end} años sumarás **{years} años** de 24 h en las redes: el **{pct} %** del tiempo que te queda.",
+    foot: "«Todo junto» acumula este tiempo como si fuera seguido; «Repartido» lo muestra como una franja rosa dentro de cada año. El cuadrado con borde negro es el año en que estás ahora.",
+    cellTitle: "Año de vida {n}",
+    ageLabel: "Tu edad", ageUnit: "años", ageLess: "Un año menos", ageMore: "Un año más"
+  },
+  compare: {
+    kicker: "Parte 1 · Tu tiempo",
+    title: "¿Cuánto es esto, comparado con otras cosas?",
+    lead: "Horas al año. Mueve el control y mira cómo cambia la barra rosa.",
+    items: {
+      social: { label: "Redes sociales", note: "Según el control" },
+      cls:    { label: "Horas de clase", note: "Hipótesis: ~{v} h lectivas al año" },
+      sleep:  { label: "Dormir", note: "Hipótesis: ~8 h por noche ≈ {v} h/año" },
+      extra:  { label: "Una actividad extraescolar", note: "Hipótesis: {h} h/semana × {w} semanas" }
+    },
+    equivTitle: "El mismo tiempo, convertido en…",
+    films: { label: "películas", note: "de {v} h cada una" },
+    episodes: { label: "episodios de serie", note: "de {v} min cada uno" },
+    books: { label: "libros leídos", note: "de unas 250 páginas (≈ {v} h cada uno)" },
+    flights: { label: "vuelos Barcelona–Nueva York", note: "(≈ {v} h cada vuelo)" },
+    key: "Las redes equivalen al **{pct} %** de las horas de clase de un año.",
+    hyp: "Todas las cifras de comparación son estimaciones aproximadas y se pueden cambiar en el objeto CONTENT.time."
+  },
+  classMode: {
+    kicker: "Parte 1 · Modo clase (anónimo)",
+    title: "¿Y nuestra clase?",
+    lead: "Escribe o pega las horas diarias de varios alumnos, separadas por comas. Sin nombres ni ningún dato personal.",
+    label: "Horas diarias (una por alumno)",
+    placeholder: "Por ejemplo: 1.5, 3, 4, 2.5, 6",
+    hint: "Escribe los decimales con punto (2.5). Si separas con punto y coma o con saltos de línea, también puedes usar coma decimal (2,5).",
+    example: "Pon un ejemplo inventado", clear: "Borra", useAvg: "Usar la media en el control",
+    n: "respuestas", avg: "media (h/día)", max: "máximo", min: "mínimo",
+    histTitle: "¿Cuántos alumnos hay en cada franja de horas?",
+    empty: "Todavía no hay datos. Escribe algunas horas a la izquierda.",
+    ignored: "Se han ignorado {n} valores (deben ser números entre 0 y 24).",
+    avgYear: "Como clase, de media: **{y} h al año** por persona."
+  },
+  reflect1: {
+    kicker: "Parte 1 · Para pensar",
+    title: "Para acabar la primera parte",
+    phrase: "No es bueno ni malo: es tiempo. ¿Qué quieres hacer con él?",
+    editHint: "Haz clic en la frase para editarla (no se guarda en ningún sitio).",
+    reset: "Restablece la frase",
+    summary: "Con **{h} h al día** son **{days} días** de 24 h al año.",
+    questions: [
+      "¿Qué te ha sorprendido más de estas cifras?",
+      "¿Cuál de estos tiempos te gusta más? ¿Y cuál menos?",
+      "Si quisieras encontrar 30 minutos para otra cosa, ¿de dónde los sacarías?"
+    ]
+  },
+  detect: {
+    kicker: "Parte 2 · Detectives de privacidad",
+    title: "Detectives de privacidad",
+    lead: "Solo tienes estos posts públicos. ¿Qué puedes saber de esta persona?",
+    steps: [
+      "Mirad los posts de un perfil. Todos son ficticios.",
+      "Pulsad las pistas que veáis: textos, objetos, comentarios…",
+      "En el cuadro «¿Qué hemos deducido?» veréis qué se puede saber.",
+      "Pulsad «Revélalo» para ver todo lo que se podía deducir."
+    ],
+    notice: "Los perfiles, los nombres, el pueblo de Vilaverda y el Instituto Pic Roig son inventados. Cualquier parecido con personas reales es pura coincidencia.",
+    tip: "Truco: una pista sola dice poco. Las pistas **combinadas** dicen mucho.",
+    categories: [
+      { label: "Dónde vive" }, { label: "Dónde estudia" }, { label: "Rutina" }, { label: "Cuándo está solo/a" },
+      { label: "Amistades y familia" }, { label: "Posible contraseña" }, { label: "Aficiones" }
+    ],
+    ui: {
+      panel: "¿Qué hemos deducido?", total: "{n} pistas", reveal: "Revélalo 🔍", back: "← Volver a los posts",
+      reset: "Reinicia", hints: "Resalta las zonas clicables", scrollHint: "Desplázate para ver todos los posts ↓",
+      cluesTitle: "Pistas en los posts", conclTitle: "Qué se puede deducir",
+      got: "Lo habéis detectado", miss: "Se os ha pasado", harmless: "riesgo bajo",
+      exposure: "Exposición de este perfil",
+      levels: { baixa: "Baja", mitjana: "Media", alta: "Alta" },
+      summary: "Habéis encontrado {f} de {t} pistas y habéis podido deducir {c} de {k} cosas.",
+      allOpen: "Si alguien mirase todos los posts con atención, la exposición sería **alta**.",
+      safe: "Línea continua = pista que habéis encontrado · línea discontinua = pista que se os ha pasado. Pasa el cursor por encima de una deducción para ver sus pistas.",
+      alt: "Pista", post: "Post"
+    },
+    profiles: [
+      /* ------------------------------ ARNAU ------------------------------ */
+      {
+        bio: "Baloncesto 🏀 · 2.º ESO · {{a_vila|Vilaverda}} 📍",
+        clues: {
+          a_vila:   { label: "Bio: vive en Vilaverda" },
+          a_equip:  { label: "Camiseta: CB Vilaverda, dorsal 7" },
+          a_parada: { label: "Parada Pl. del Molí, bus L2 a las 7:45" },
+          a_insti:  { label: "«De camino al Instituto Pic Roig»" },
+          a_portal: { label: "Placa del portal: C/ dels Til·lers 14" },
+          a_pavello:{ label: "Check-in en el Pabellón Municipal" },
+          a_horari: { label: "Comentario: martes y jueves, 18:30" },
+          a_marc:   { label: "Amigo y compañero de equipo: @marc.j" },
+          a_sol:    { label: "«Solo en casa todo el fin de semana»" },
+          a_mare:   { label: "Su madre: @montse.f" },
+          a_gos:    { label: "Nombre del perro: Lluna" },
+          a_gosdata:{ label: "Cumpleaños del perro: 14 de marzo" },
+          a_jocs:   { label: "Le gustan los videojuegos" }
+        },
+        posts: [
+          { when: "hace 3 d",
+            scene: { tags: [ { label: "Camiseta del club" } ] },
+            caption: "¡Primer partido de la temporada! 🏀🔥 Dorsal 7, como siempre.",
+            comments: [ { t: "¡Qué camiseta más chula! A ganar muchos 💪" } ] },
+          { when: "story · 7:41",
+            scene: { tags: [ { t: ["PARADA PL. DEL MOLÍ", "L2 · 7:45"], label: "Cartel de la parada" } ] },
+            caption: "Cada mañana igual… De camino al {{a_insti|Instituto Pic Roig}} 😴🚌" },
+          { when: "hace 5 d",
+            scene: { tags: [ { label: "Placa del portal" } ] },
+            caption: "Zapatillas nuevas, día nuevo 👟 #ootd" },
+          { when: "hace 1 sem",
+            place: "{{a_pavello|📍 Pabellón Municipal de Vilaverda}}",
+            caption: "Entrenamiento duro hoy 💦 ¡Las piernas no responden!",
+            comments: [ { t: "Recordad: {{a_horari|martes y jueves a las 18:30}}, no llegues tarde 😅" } ] },
+          { when: "ayer",
+            scene: { tags: [ { t: ["ESTE FIN DE SEMANA"], label: "Texto de la story" } ] },
+            caption: "Mis padres se van de viaje y yo me quedo {{a_sol|solo en casa todo el fin de semana}} 😎 ¿Quién se apunta a una noche de {{a_jocs|videojuegos}}?" },
+          { when: "hace 2 sem",
+            caption: "¡{{a_gos|Lluna}} cumple 3 años hoy, nació el {{a_gosdata|14 de marzo}} 🐶🎂 ¡Mi vida!",
+            comments: [ { t: "¡Qué bonito, Arnau! Haremos pastel cuando lleguemos a casa 💕" } ] }
+        ],
+        conclusions: [
+          { text: "Vive en Vilaverda, por el barrio de la Plaça del Molí." },
+          { text: "La dirección casi exacta: calle dels Til·lers, número 14." },
+          { text: "Va al Instituto Pic Roig y coge el bus L2 hacia las 7:45." },
+          { text: "Entrena martes y jueves a las 18:30 en el Pabellón Municipal." },
+          { text: "Este fin de semana está solo en casa, y se puede saber qué casa es." },
+          { text: "Conocemos a un compañero de equipo (Marc) y el nombre de su madre (Montse)." },
+          { text: "Contraseña o pregunta de seguridad fácil de adivinar: Lluna + 14/03." }
+        ]
+      },
+      /* ------------------------------ LAIA ------------------------------ */
+      {
+        bio: "Natación 🏊‍♀️ · gatera 🐱 · amiga de mis amigas 💛",
+        clues: {
+          l_club:   { label: "Bolsa: Club Natación Aiguamoll" },
+          l_pis:    { label: "Check-in: Piscina Municipal de Aiguamoll" },
+          l_horari: { label: "«Lunes y miércoles a las 19:00»" },
+          l_carla:  { label: "Amiga: @carla.vv" },
+          l_vac:    { label: "Vacaciones: del 21 de junio al 5 de julio" },
+          l_billet: { label: "Foto del billete: vuelo 21 junio, 07:10" },
+          l_vista:  { label: "Desde el balcón: Farmacia Ribes" },
+          l_gat:    { label: "Nombre del gato: Cacau" },
+          l_gatany: { label: "Año en que lo adoptaron: 2019" },
+          l_pizza:  { label: "Caja: Pizzería Il Forn, Vilaverda" },
+          l_mare:   { label: "Su madre trabaja en la Farmacia Ribes" },
+          l_sola:   { label: "«Cenamos solas hasta las 22:00»" },
+          l_insti:  { label: "Cartel: Inst. Pic Roig, 2.º B" },
+          l_te:     { label: "Le gusta el té de melocotón" }
+        },
+        posts: [
+          { when: "hace 4 d",
+            scene: { tags: [ { label: "Bolsa del club" } ] },
+            place: "{{l_pis|📍 Piscina Municipal de Aiguamoll}}",
+            caption: "{{l_horari|Lunes y miércoles a las 19:00}}, ya no sé vivir sin ello 💪🏊‍♀️ #natación",
+            comments: [ { t: "Guárdame sitio en el vestuario 😂" } ] },
+          { when: "ayer",
+            scene: { tags: [ { t: ["VUELO · 21 JUN", "07:10 · BCN → MAH"], label: "Billete de avión" } ] },
+            caption: "¡¡¡YA SON VACACIONES!!! ☀️ {{l_vac|El sábado 21 de junio nos vamos a Menorca hasta el 5 de julio}} 🏝️✈️" },
+          { when: "hace 6 d",
+            scene: { tags: [ { t: ["FARMACIA RIBES"], label: "Cartel de la farmacia frente al balcón" } ] },
+            caption: "De guardia en el balcón con un {{l_te|té de melocotón}} 🍑 (es el sitio preferido del gato)." },
+          { when: "hace 2 sem",
+            caption: "Mi gato {{l_gat|Cacau}} es de la familia desde que lo adoptamos, en {{l_gatany|2019}} 🐱💜" },
+          { when: "hace 1 sem",
+            scene: { tags: [ { t: ["PIZZERÍA IL FORN", "VILAVERDA"], label: "Caja de la pizzería" } ] },
+            caption: "Cena después de nadar 🍕 {{l_mare|Mamá hace turno de tarde en la Farmacia Ribes}} y {{l_sola|cenamos solas hasta las 22:00}}." },
+          { when: "hace 3 sem",
+            scene: { tags: [ { t: ["INST. PIC ROIG", "2.º B"], label: "Cartel del instituto" } ] },
+            caption: "¡Último día de curso con las mías! 💛 Gracias por todo.",
+            comments: [ { t: "Ya quiero que sea septiembre 😭" } ] }
+        ],
+        conclusions: [
+          { text: "Vive en Vilaverda, en un piso con balcón frente a la Farmacia Ribes." },
+          { text: "Estudia 2.º B en el Instituto Pic Roig." },
+          { text: "Nada los lunes y miércoles a las 19:00 en la Piscina de Aiguamoll (CN Aiguamoll)." },
+          { text: "Del 21 de junio al 5 de julio la casa estará vacía." },
+          { text: "Algunas noches se queda en casa hasta las 22:00 sin su madre." },
+          { text: "Amiga: Carla. Su madre trabaja en la Farmacia Ribes." },
+          { text: "Nombre del gato + año de adopción: una contraseña o respuesta de seguridad fácil." }
+        ]
+      },
+      /* ------------------------------- POL ------------------------------- */
+      {
+        bio: "Skate 🛹 · 2.º ESO · barrio {{p_pins|Els Pins}}",
+        clues: {
+          p_pins:   { label: "Bio: barrio de Els Pins" },
+          p_live:   { label: "Directo: Skatepark Els Pins, ahora" },
+          p_escola: { label: "Primer colegio: CEIP La Font" },
+          p_pipa:   { label: "Mascota: hámster Pipa" },
+          p_musica: { label: "Le gusta el rap y la electrónica" },
+          p_avia:   { label: "Los miércoles cena en casa de la abuela Roser" },
+          p_colla:  { label: "La pandilla: @eric.sk8 y @nuria.r" },
+          p_sortida:{ label: "Sale del instituto a las 15:10" },
+          p_insti:  { label: "Cartel del Instituto Pic Roig" },
+          p_sol:    { label: "«Solo en casa de lunes a viernes»" }
+        },
+        posts: [
+          { when: "ahora mismo",
+            scene: { tags: [ { t: ["● EN DIRECTO", "SKATEPARK ELS PINS"], label: "Directo con ubicación" } ] },
+            caption: "Ahora mismo {{p_live|en el skatepark de Els Pins}}, en directo 🛹 ¿Quién viene?" },
+          { when: "story · ayer",
+            scene: { tags: [ { t: ["PRIMER COLE:", "CEIP LA FONT"], label: "Respuesta: primer colegio" },
+                             { t: ["MASCOTA:", "HÁMSTER PIPA"], label: "Respuesta: mascota" },
+                             { t: ["MÚSICA:", "RAP Y ELECTRÓNICA"], label: "Respuesta: música" } ] },
+            caption: "¡Preguntadme lo que queráis! 🙋 (respuestas aquí)" },
+          { when: "hace 3 d",
+            scene: { tags: [ { t: ["MIÉRCOLES EN CASA", "DE LA ABUELA ROSER"], label: "Nota: casa de la abuela" } ] },
+            caption: "¡Macarrones de la abuela! 🍝 Nadie cocina como ella." },
+          { when: "hace 1 sem",
+            caption: "Entrenando con la pandilla 🛹 {{p_colla|@eric.sk8 @nuria.r}} ¡Qué nivel!",
+            comments: [ { t: "Mañana a la salida del insti, {{p_sortida|a las 15:10}}, ¡todos al parque!" } ] },
+          { when: "hace 2 sem",
+            scene: { tags: [ { t: ["INSTITUTO PIC ROIG"], label: "Cartel del instituto" } ] },
+            caption: "Bici aparcada, empieza otra semana 😮‍💨" },
+          { when: "hace 3 sem",
+            caption: "Mis padres en el trabajo hasta las 20:00 y mi hermano mayor en la uni… así que {{p_sol|tardes solo en casa de lunes a viernes}} 🎮" }
+        ],
+        conclusions: [
+          { text: "Vive en el barrio de Els Pins, en Vilaverda." },
+          { text: "Va al Instituto Pic Roig; antes fue al CEIP La Font." },
+          { text: "Sale del instituto a las 15:10 y a menudo va al skatepark; los miércoles cena en casa de la abuela." },
+          { text: "Ahora mismo se sabe exactamente dónde está (directo con ubicación)." },
+          { text: "De lunes a viernes está solo en casa hasta las 20:00." },
+          { text: "Su pandilla (Eric y Núria) y la abuela Roser." },
+          { text: "Respuestas de seguridad típicas: primer colegio y nombre de la mascota." }
+        ]
+      }
+    ]
+  },
+  reflect2: {
+    kicker: "Parte 2 · Para pensar",
+    title: "Esto lo podría hacer cualquier desconocido en 5 minutos.",
+    question: "Alguien con malas intenciones, ¿qué podría hacer con ello?",
+    risks: [
+      { h: "Hacerse pasar por otra persona", p: "Escribir como si fuera un amigo o una amiga, con datos que solo conoces tú, para que nos lo creamos." },
+      { h: "Intentar entrar en tus cuentas", p: "Nombres de mascotas, fechas y colegios son contraseñas y respuestas de seguridad muy típicas." },
+      { h: "Saber dónde estás y dónde no", p: "Los horarios, los viajes y los directos cuentan cuándo alguien está en casa… y cuándo no." },
+      { h: "Hacerte sentir vigilado", p: "Saber demasiado de ti puede servir para burlarse, presionar o hacerte sentir incómodo." }
+    ],
+    good: "La buena noticia: no es culpa de quien publica. Pero tú puedes decidir qué compartes, con quién y cuándo.",
+    help: "Si alguien te hace sentir incómodo o te amenaza: no respondas, haz una captura, bloquéalo y cuéntaselo a una persona adulta de confianza (familia, tutor/a, orientación).",
+    discuss: "Para el debate: ¿qué pistas os han sorprendido más? ¿Cuáles no habríais pensado nunca que eran peligrosas?"
+  },
+  closing: {
+    kicker: "Cierre",
+    title: "5 hábitos para quedarte",
+    lead: "No son prohibiciones: son pequeñas decisiones que ponen el control en tus manos.",
+    habits: [
+      { h: "Privacidad", a: "Antes de publicar, revisa la foto: portal, uniforme, billetes, pantallas… Recorta o tapa lo que te identifica." },
+      { h: "Ubicación", a: "No publiques dónde estás en directo: súbelo cuando ya te hayas ido." },
+      { h: "Perfil privado", a: "Pon el perfil en privado y acepta solo a gente que conoces en persona." },
+      { h: "Piensa antes de publicar", a: "Pregúntate: ¿se lo enseñaría a un desconocido por la calle? Si dudas, no lo publiques." },
+      { h: "Controla el tiempo", a: "Ponte un límite diario (por ejemplo 2 h) y deja el móvil fuera de la habitación cuando duermes." }
+    ]
+  },
+  commit: {
+    kicker: "Cierre",
+    title: "Mi compromiso",
+    steps: [
+      "Elige UNO de los cinco hábitos. Solo uno.",
+      "Piensa cómo lo harás: cuándo, dónde y con quién.",
+      "Completa mentalmente la frase y no la digas en voz alta (es tuya).",
+      "Si quieres, imprime la ficha y guárdala donde la veas."
+    ],
+    starter: "Esta semana yo… ",
+    timerTitle: "Un minuto de silencio para elegir",
+    timerStart: "Empieza", timerStop: "Para", timerReset: "Volver a 1:00", timerDone: "¡Tiempo! 🎉",
+    print: "🖨️ Imprime o guarda en PDF",
+    thanks: "¡Gracias por participar! 💜",
+    note: "No se recoge ni se guarda ningún dato: el compromiso es solo tuyo.",
+    sheet: {
+      title: "Mis 5 hábitos digitales",
+      sub: "Marca lo que harás esta semana. Solo tú lo ves.",
+      commit: "Mi compromiso:",
+      start: "Esta semana yo…",
+      date: "Fecha:",
+      foot: "Tutoría sobre redes sociales · Instaxat es una red ficticia creada para la actividad."
+    }
+  }
+},
+
+/* =============================== ANGLÈS =============================== */
+en: {
+  meta: {
+    title: "Instaxat · Social media tutorial",
+    description: "Tutorial activity for 2nd year of ESO: your time on social media and privacy detectives. Everything happens in the browser, nothing is saved.",
+    progLabel: "Session progress",
+    langLabel: "Language"
+  },
+  author: { role: "teacher at Institut Ermengol IV de Bellcaire" },
+  parts: { 1: "Part 1 · Your time", 2: "Part 2 · Privacy detectives", 3: "Wrap-up" },
+  ui: {
+    prev: "← Previous", next: "Next →", end: "End",
+    minute: "Minute", of: "of", screen: "Screen",
+    keys: "← → to navigate · ↑ ↓ to adjust the hours",
+    progLabel: "Go to screen"
+  },
+  title: {
+    kicker: "Tutorial · Social media",
+    question: "How much of your life do you spend looking at your phone?",
+    sub: "We'll work it out together, no judging: just numbers… and a surprise or two.",
+    start: "Let's start →",
+    privacy: "Nothing is sent or saved anywhere: everything happens in this browser and is erased when you close it.",
+    authorLabel: "Activity created by"
+  },
+  calc: {
+    kicker: "Part 1 · Your time",
+    title: "How many hours a day on social media?",
+    lead: "Move the slider to an approximate figure: videos, messages, social networks, games with chat…",
+    sliderLabel: "Daily hours on social media", less: "Half an hour less", more: "Half an hour more",
+    perDay: "h/day",
+    week: "hours a week", month: "hours a month", year: "hours a year",
+    days: "whole days (24 h) a year",
+    life: "full 24-hour years between ages {start} and {end}",
+    awake: "That's roughly **{pct} %** of the time you spend awake.",
+    note: "Calculation: hours/day × 365 days a year. Month = year ÷ 12. Awake time = 24 h minus about 8 h of sleep."
+  },
+  life: {
+    kicker: "Part 1 · Your time",
+    title: "Your life, in little squares",
+    lead: "Each square is one year of life (the number is the year: 1, 2, 3…), up to age {end}.",
+    lived: "Years already lived", left: "Years left", social: "Time on social media (in 24-hour years)",
+    viewLabel: "How it's shown:", together: "All together", spread: "Spread out",
+    sentence: "At **{h} h a day**, between ages {start} and {end} you will add up **{years} years** of 24 hours on social media: **{pct} %** of the time you have left.",
+    foot: "“All together” piles this time up as if it happened in one go; “Spread out” shows it as a pink strip inside each year. The square with the black border is the year you are in now.",
+    cellTitle: "Year of life {n}",
+    ageLabel: "Your age", ageUnit: "years", ageLess: "One year less", ageMore: "One year more"
+  },
+  compare: {
+    kicker: "Part 1 · Your time",
+    title: "How does that compare with other things?",
+    lead: "Hours per year. Move the slider and watch the pink bar change.",
+    items: {
+      social: { label: "Social media", note: "According to the slider" },
+      cls:    { label: "Class hours", note: "Assumption: ~{v} teaching hours a year" },
+      sleep:  { label: "Sleeping", note: "Assumption: ~8 h a night ≈ {v} h/year" },
+      extra:  { label: "An after-school activity", note: "Assumption: {h} h/week × {w} weeks" }
+    },
+    equivTitle: "The same time, turned into…",
+    films: { label: "films", note: "of {v} h each" },
+    episodes: { label: "TV episodes", note: "of {v} min each" },
+    books: { label: "books read", note: "of about 250 pages (≈ {v} h each)" },
+    flights: { label: "Barcelona–New York flights", note: "(≈ {v} h each flight)" },
+    key: "Social media equals **{pct} %** of a year's class hours.",
+    hyp: "All the comparison figures are rough estimates and can be changed in the CONTENT.time object."
+  },
+  classMode: {
+    kicker: "Part 1 · Class mode (anonymous)",
+    title: "What about our class?",
+    lead: "Type or paste the daily hours of several students, separated by commas. No names or personal data.",
+    label: "Daily hours (one per student)",
+    placeholder: "For example: 1.5, 3, 4, 2.5, 6",
+    hint: "Write decimals with a point (2.5). If you separate values with semicolons or line breaks, you can also use a decimal comma (2,5).",
+    example: "Insert an invented example", clear: "Clear", useAvg: "Use the average on the slider",
+    n: "answers", avg: "average (h/day)", max: "maximum", min: "minimum",
+    histTitle: "How many students are in each range of hours?",
+    empty: "No data yet. Type some hours on the left.",
+    ignored: "{n} values were ignored (they must be numbers between 0 and 24).",
+    avgYear: "As a class, on average: **{y} h a year** per person."
+  },
+  reflect1: {
+    kicker: "Part 1 · Food for thought",
+    title: "To finish the first part",
+    phrase: "It's neither good nor bad: it's time. What do you want to do with it?",
+    editHint: "Click the sentence to edit it (it isn't saved anywhere).",
+    reset: "Reset the sentence",
+    summary: "At **{h} h a day** that's **{days} days** of 24 h a year.",
+    questions: [
+      "What surprised you most about these figures?",
+      "Which of these times do you like best? And which one least?",
+      "If you wanted to find 30 minutes for something else, where would you take them from?"
+    ]
+  },
+  detect: {
+    kicker: "Part 2 · Privacy detectives",
+    title: "Privacy detectives",
+    lead: "All you have are these public posts. What can you find out about this person?",
+    steps: [
+      "Look at the posts on a profile. They are all made up.",
+      "Click the clues you spot: texts, objects, comments…",
+      "In the “What have we worked out?” panel you'll see what can be known.",
+      "Press “Reveal it” to see everything that could be worked out."
+    ],
+    notice: "The profiles, the names, the town of Vilaverda and Pic Roig School are all made up. Any resemblance to real people is a coincidence.",
+    tip: "Tip: a single clue says little. **Combined** clues say a lot.",
+    categories: [
+      { label: "Where they live" }, { label: "Where they study" }, { label: "Routine" }, { label: "When they're alone" },
+      { label: "Friends and family" }, { label: "Possible password" }, { label: "Hobbies" }
+    ],
+    ui: {
+      panel: "What have we worked out?", total: "{n} clues", reveal: "Reveal it 🔍", back: "← Back to the posts",
+      reset: "Reset", hints: "Highlight clickable areas", scrollHint: "Scroll to see all the posts ↓",
+      cluesTitle: "Clues in the posts", conclTitle: "What can be worked out",
+      got: "You spotted it", miss: "You missed it", harmless: "low risk",
+      exposure: "This profile's exposure",
+      levels: { baixa: "Low", mitjana: "Medium", alta: "High" },
+      summary: "You found {f} of {t} clues and worked out {c} of {k} things.",
+      allOpen: "If someone looked at all the posts carefully, the exposure would be **high**.",
+      safe: "Solid line = clue you found · dashed line = clue you missed. Hover over a deduction to see its clues.",
+      alt: "Clue", post: "Post"
+    },
+    profiles: [
+      /* ------------------------------ ARNAU ------------------------------ */
+      {
+        bio: "Basketball 🏀 · 2nd ESO · {{a_vila|Vilaverda}} 📍",
+        clues: {
+          a_vila:   { label: "Bio: lives in Vilaverda" },
+          a_equip:  { label: "Shirt: CB Vilaverda, number 7" },
+          a_parada: { label: "Pl. del Molí stop, L2 bus at 7:45" },
+          a_insti:  { label: "“On my way to Pic Roig School”" },
+          a_portal: { label: "Door plaque: C/ dels Til·lers 14" },
+          a_pavello:{ label: "Check-in at the Municipal Sports Hall" },
+          a_horari: { label: "Comment: Tuesdays and Thursdays, 18:30" },
+          a_marc:   { label: "Friend and teammate: @marc.j" },
+          a_sol:    { label: "“Home alone all weekend”" },
+          a_mare:   { label: "His mother: @montse.f" },
+          a_gos:    { label: "Dog's name: Lluna" },
+          a_gosdata:{ label: "Dog's birthday: 14 March" },
+          a_jocs:   { label: "Likes video games" }
+        },
+        posts: [
+          { when: "3 d ago",
+            scene: { tags: [ { label: "Club shirt" } ] },
+            caption: "First game of the season! 🏀🔥 Number 7, as always.",
+            comments: [ { t: "Great shirt! Let's win loads of games 💪" } ] },
+          { when: "story · 7:41",
+            scene: { tags: [ { t: ["PL. DEL MOLÍ STOP", "L2 · 7:45"], label: "Bus stop sign" } ] },
+            caption: "Every morning the same… On my way to {{a_insti|Pic Roig School}} 😴🚌" },
+          { when: "5 d ago",
+            scene: { tags: [ { t: ["C/ DELS TIL·LERS", "No. 14"], label: "Door plaque" } ] },
+            caption: "New shoes, new day 👟 #ootd" },
+          { when: "1 wk ago",
+            place: "{{a_pavello|📍 Vilaverda Municipal Sports Hall}}",
+            caption: "Tough training today 💦 My legs aren't responding!",
+            comments: [ { t: "Remember: {{a_horari|Tuesdays and Thursdays at 18:30}}, don't be late 😅" } ] },
+          { when: "yesterday",
+            scene: { tags: [ { t: ["THIS WEEKEND"], label: "Story text" } ] },
+            caption: "My parents are going away and I'm staying {{a_sol|home alone all weekend}} 😎 Who's up for a {{a_jocs|video game}} night?" },
+          { when: "2 wk ago",
+            caption: "{{a_gos|Lluna}} turns 3 today, she was born on {{a_gosdata|14 March}} 🐶🎂 My whole world!",
+            comments: [ { t: "Aww, Arnau! We'll have cake when we get home 💕" } ] }
+        ],
+        conclusions: [
+          { text: "Lives in Vilaverda, near the Plaça del Molí." },
+          { text: "The almost exact address: Til·lers street, number 14." },
+          { text: "Goes to Pic Roig School and takes the L2 bus at around 7:45." },
+          { text: "Trains on Tuesdays and Thursdays at 18:30 at the Municipal Sports Hall." },
+          { text: "Is home alone this weekend, and you can work out which house it is." },
+          { text: "We know a teammate (Marc) and his mother's name (Montse)." },
+          { text: "An easy-to-guess password or security answer: Lluna + 14/03." }
+        ]
+      },
+      /* ------------------------------ LAIA ------------------------------ */
+      {
+        bio: "Swimming 🏊‍♀️ · cat person 🐱 · friend of my friends 💛",
+        clues: {
+          l_club:   { label: "Bag: Aiguamoll Swimming Club" },
+          l_pis:    { label: "Check-in: Aiguamoll Municipal Pool" },
+          l_horari: { label: "“Mondays and Wednesdays at 19:00”" },
+          l_carla:  { label: "Friend: @carla.vv" },
+          l_vac:    { label: "Holiday: 21 June to 5 July" },
+          l_billet: { label: "Ticket photo: flight 21 June, 07:10" },
+          l_vista:  { label: "From the balcony: Ribes Pharmacy" },
+          l_gat:    { label: "Cat's name: Cacau" },
+          l_gatany: { label: "Year he was adopted: 2019" },
+          l_pizza:  { label: "Box: Il Forn Pizzeria, Vilaverda" },
+          l_mare:   { label: "Her mother works at Ribes Pharmacy" },
+          l_sola:   { label: "“We have dinner on our own until 22:00”" },
+          l_insti:  { label: "Sign: Pic Roig School, 2nd B" },
+          l_te:     { label: "Likes peach tea" }
+        },
+        posts: [
+          { when: "4 d ago",
+            scene: { tags: [ { label: "Club bag" } ] },
+            place: "{{l_pis|📍 Aiguamoll Municipal Pool}}",
+            caption: "{{l_horari|Mondays and Wednesdays at 19:00}}, can't live without it now 💪🏊‍♀️ #swimming",
+            comments: [ { t: "Save me a spot in the changing room 😂" } ] },
+          { when: "yesterday",
+            scene: { tags: [ { t: ["FLIGHT · 21 JUN", "07:10 · BCN → MAH"], label: "Plane ticket" } ] },
+            caption: "HOLIDAYS START NOW!!! ☀️ {{l_vac|On Saturday 21 June we're off to Menorca until 5 July}} 🏝️✈️" },
+          { when: "6 d ago",
+            scene: { tags: [ { t: ["RIBES PHARMACY"], label: "Pharmacy sign opposite the balcony" } ] },
+            caption: "On balcony duty with a {{l_te|peach tea}} 🍑 (it's the cat's favourite spot)." },
+          { when: "2 wk ago",
+            caption: "My cat {{l_gat|Cacau}} has been part of the family since we adopted him in {{l_gatany|2019}} 🐱💜" },
+          { when: "1 wk ago",
+            scene: { tags: [ { t: ["IL FORN PIZZERIA", "VILAVERDA"], label: "Pizza box" } ] },
+            caption: "Dinner after swimming 🍕 {{l_mare|Mum works the late shift at Ribes Pharmacy}} and {{l_sola|we have dinner on our own until 22:00}}." },
+          { when: "3 wk ago",
+            scene: { tags: [ { t: ["PIC ROIG SCHOOL", "2nd B"], label: "School sign" } ] },
+            caption: "Last day of term with my girls! 💛 Thanks for everything.",
+            comments: [ { t: "I already want it to be September 😭" } ] }
+        ],
+        conclusions: [
+          { text: "Lives in Vilaverda, in a flat with a balcony facing Ribes Pharmacy." },
+          { text: "Studies in 2nd B at Pic Roig School." },
+          { text: "Swims on Mondays and Wednesdays at 19:00 at the Aiguamoll Pool (CN Aiguamoll)." },
+          { text: "From 21 June to 5 July the house will be empty." },
+          { text: "Some evenings she is at home until 22:00 without her mother." },
+          { text: "Friend: Carla. Her mother works at Ribes Pharmacy." },
+          { text: "Cat's name + year of adoption: an easy password or security answer." }
+        ]
+      },
+      /* ------------------------------- POL ------------------------------- */
+      {
+        bio: "Skate 🛹 · 2nd ESO · {{p_pins|Els Pins}} neighbourhood",
+        clues: {
+          p_pins:   { label: "Bio: Els Pins neighbourhood" },
+          p_live:   { label: "Live: Els Pins Skatepark, now" },
+          p_escola: { label: "First school: La Font Primary" },
+          p_pipa:   { label: "Pet: hamster Pipa" },
+          p_musica: { label: "Likes rap and electronic music" },
+          p_avia:   { label: "Wednesdays: dinner at Grandma Roser's" },
+          p_colla:  { label: "The crew: @eric.sk8 and @nuria.r" },
+          p_sortida:{ label: "Leaves school at 15:10" },
+          p_insti:  { label: "Pic Roig School sign" },
+          p_sol:    { label: "“Home alone Monday to Friday”" }
+        },
+        posts: [
+          { when: "right now",
+            scene: { tags: [ { t: ["● LIVE", "ELS PINS SKATEPARK"], label: "Live with location" } ] },
+            caption: "Right now {{p_live|at the Els Pins skatepark}}, live 🛹 Who's coming?" },
+          { when: "story · yesterday",
+            scene: { tags: [ { t: ["1ST SCHOOL:", "LA FONT PRIMARY"], label: "Answer: first school" },
+                             { t: ["PET:", "HAMSTER PIPA"], label: "Answer: pet" },
+                             { t: ["MUSIC:", "RAP & ELECTRONIC"], label: "Answer: music" } ] },
+            caption: "Ask me anything! 🙋 (answers here)" },
+          { when: "3 d ago",
+            scene: { tags: [ { t: ["WEDNESDAYS AT", "GRANDMA ROSER'S"], label: "Note: grandma's house" } ] },
+            caption: "Grandma's macaroni! 🍝 Nobody cooks like her." },
+          { when: "1 wk ago",
+            caption: "Practising with the crew 🛹 {{p_colla|@eric.sk8 @nuria.r}} What a level!",
+            comments: [ { t: "Tomorrow when school finishes, {{p_sortida|at 15:10}}, everyone to the park!" } ] },
+          { when: "2 wk ago",
+            scene: { tags: [ { t: ["PIC ROIG SCHOOL"], label: "School sign" } ] },
+            caption: "Bike parked, another week begins 😮‍💨" },
+          { when: "3 wk ago",
+            caption: "Parents at work until 20:00 and my big brother at uni… so {{p_sol|home alone every afternoon, Monday to Friday}} 🎮" }
+        ],
+        conclusions: [
+          { text: "Lives in the Els Pins neighbourhood, in Vilaverda." },
+          { text: "Goes to Pic Roig School; before that attended La Font Primary." },
+          { text: "Leaves school at 15:10 and often goes to the skatepark; on Wednesdays has dinner at his grandmother's." },
+          { text: "Right now you know exactly where he is (live video with location)." },
+          { text: "From Monday to Friday he is home alone until 20:00." },
+          { text: "His crew (Eric and Núria) and Grandma Roser." },
+          { text: "Typical security answers: first school and pet's name." }
+        ]
+      }
+    ]
+  },
+  reflect2: {
+    kicker: "Part 2 · Food for thought",
+    title: "Any stranger could do this in 5 minutes.",
+    question: "What could someone with bad intentions do with it?",
+    risks: [
+      { h: "Pretend to be someone else", p: "Writing as if they were a friend, using details only you know, so that we believe it." },
+      { h: "Try to get into your accounts", p: "Pet names, dates and schools are very typical passwords and security answers." },
+      { h: "Know where you are and where you aren't", p: "Schedules, trips and live videos show when someone is at home… and when they aren't." },
+      { h: "Make you feel watched", p: "Knowing too much about you can be used to make fun of you, pressure you or make you feel uncomfortable." }
+    ],
+    good: "The good news: it's not the fault of the person who posts. But you can decide what you share, with whom and when.",
+    help: "If someone makes you feel uncomfortable or threatens you: don't reply, take a screenshot, block them and tell a trusted adult (family, tutor, school counsellor).",
+    discuss: "For discussion: which clues surprised you most? Which ones would you never have thought were dangerous?"
+  },
+  closing: {
+    kicker: "Wrap-up",
+    title: "5 habits to keep",
+    lead: "They aren't bans: they are small decisions that put control in your hands.",
+    habits: [
+      { h: "Privacy", a: "Before posting, check the photo: front door, uniform, tickets, screens… Crop or cover whatever identifies you." },
+      { h: "Location", a: "Don't post where you are live: post it after you've left." },
+      { h: "Private profile", a: "Set your profile to private and only accept people you know in person." },
+      { h: "Think before you post", a: "Ask yourself: would I show this to a stranger in the street? If in doubt, don't post it." },
+      { h: "Control your time", a: "Set yourself a daily limit (for example 2 h) and keep your phone out of the bedroom when you sleep." }
+    ]
+  },
+  commit: {
+    kicker: "Wrap-up",
+    title: "My commitment",
+    steps: [
+      "Choose ONE of the five habits. Only one.",
+      "Think about how you'll do it: when, where and with whom.",
+      "Complete the sentence in your head and don't say it out loud (it's yours).",
+      "If you like, print the sheet and keep it somewhere you'll see it."
+    ],
+    starter: "This week I… ",
+    timerTitle: "One minute of silence to choose",
+    timerStart: "Start", timerStop: "Stop", timerReset: "Back to 1:00", timerDone: "Time's up! 🎉",
+    print: "🖨️ Print or save as PDF",
+    thanks: "Thanks for taking part! 💜",
+    note: "No data is collected or saved: the commitment is yours alone.",
+    sheet: {
+      title: "My 5 digital habits",
+      sub: "Tick what you will do this week. Only you can see it.",
+      commit: "My commitment:",
+      start: "This week I…",
+      date: "Date:",
+      foot: "Social media tutorial · Instaxat is a fictional network created for the activity."
+    }
+  }
+}
+};
+
+/* Fusiona les traduccions sobre el català: els textos de `over` substitueixen
+   els de `base`; tota la resta (números, emojis, ids…) es hereta. Les llistes
+   d'objectes es fusionen per posició; les de textos se substitueixen senceres. */
+function mergeContent(base, over) {
+  if (over === undefined) return base;
+  const isObj = v => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (Array.isArray(base) && Array.isArray(over)) {
+    if (!over.some(isObj)) return over;
+    return base.map((b, i) => mergeContent(b, over[i]));
+  }
+  if (isObj(base) && isObj(over)) {
+    const out = {};
+    Object.keys(base).forEach(k => { out[k] = mergeContent(base[k], over[k]); });
+    Object.keys(over).forEach(k => { if (!(k in out)) out[k] = over[k]; });
+    return out;
+  }
+  return over;
+}
+
+/* =====================================================================
+   CODI
+   ===================================================================== */
+(function () {
+'use strict';
+const LANGS = [
+  { code: 'ca', label: 'CA', name: 'Català' },
+  { code: 'es', label: 'ES', name: 'Castellano' },
+  { code: 'en', label: 'EN', name: 'English' }
+];
+const CONTENTS = { ca: CONTENT, es: mergeContent(CONTENT, TRANSLATIONS.es), en: mergeContent(CONTENT, TRANSLATIONS.en) };
+/* L'adreça pot dur el número de pantalla i l'idioma: #3&lang=es */
+function readHash() {
+  const m = /lang=(\w+)/.exec(location.hash);
+  return { n: parseInt(location.hash.slice(1), 10), lang: (m && CONTENTS[m[1]]) ? m[1] : 'ca' };
+}
+let lang = readHash().lang, C = CONTENTS[lang], T = C.time, D = C.detect;
+function useLang(code) { lang = code; C = CONTENTS[code]; T = C.time; D = C.detect; }
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+/* ---------- utilitats ---------- */
+function esc(s) { return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+function rich(s) { return esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+function fill(s, vals) { return String(s).replace(/\{(\w+)\}/g, (_, k) => (k in vals ? vals[k] : '{' + k + '}')); }
+/* Format català: punt de milers, coma decimal, sense zeros finals */
+function fmt(n, dec) {
+  dec = dec || 0;
+  const neg = n < 0; n = Math.abs(n);
+  let s = n.toFixed(dec), parts = s.split('.'), i = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'), d = parts[1];
+  if (d) d = d.replace(/0+$/, '');
+  return (neg ? '-' : '') + i + (d ? ',' + d : '');
+}
+/* Text amb pistes: {{id|text}} */
+function clueText(s) {
+  let out = '', last = 0, re = /\{\{(\w+)\|(.+?)\}\}/g, m;
+  while ((m = re.exec(s))) {
+    out += rich(s.slice(last, m.index));
+    out += '<button type="button" class="clue" data-clue="' + m[1] + '" aria-pressed="false">' + esc(m[2]) + '</button>';
+    last = re.lastIndex;
+  }
+  return out + rich(s.slice(last));
+}
+function plainClue(s) { return s.replace(/\{\{\w+\|(.+?)\}\}/g, '$1'); }
+
+const state = { hours: T.defaultHours, idx: 0, lifeMode: 'junt', cls: [], hints: false, age: T.startAge, profiles: {}, phrase: C.reflect1.phrase };
+D.profiles.forEach(p => { state.profiles[p.id] = { found: new Set(), revealed: false }; });
+
+/* ---------- càlculs ---------- */
+function derive(h) {
+  const year = h * 365, span = T.endAge - state.age, sleepDay = T.sleepHoursPerYear / 365;
+  return {
+    week: h * 7, month: year / 12, year: year, days: year / 24,
+    life: h * span / 24, lifePct: h / 24 * 100, awake: h / (24 - sleepDay) * 100,
+    films: year / T.filmHours, episodes: year / (T.episodeMinutes / 60), books: year / T.bookHours, flights: year / T.flightHours,
+    classPct: year / T.classHoursPerYear * 100
+  };
+}
+
+/* ---------- números animats ---------- */
+function setNum(el, to, dec) {
+  const from = (el._cur === undefined) ? to : el._cur;
+  cancelAnimationFrame(el._raf);
+  if (reduceMQ.matches || from === to) { el.textContent = fmt(to, dec); el._cur = to; return; }
+  const t0 = performance.now(), dur = 380;
+  (function step(now) {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    const v = k >= 1 ? to : from + (to - from) * e;
+    el.textContent = fmt(v, dec); el._cur = v;
+    if (k < 1) el._raf = requestAnimationFrame(step);
+  })(t0);
+}
+
+/* =====================================================================
+   PANTALLES
+   ===================================================================== */
+function hctl() {
+  let ticks = '';
+  for (let v = T.min; v <= T.max; v += 1) ticks += '<span>' + v + '</span>';
+  return '<div class="hctl" role="group" aria-label="' + esc(C.calc.sliderLabel) + '">' +
+    '<button type="button" class="stepbtn" data-step="-1" aria-label="' + esc(C.calc.less) + '">−</button>' +
+    '<div class="rangewrap"><input type="range" min="' + T.min + '" max="' + T.max + '" step="' + T.step + '" value="' + T.defaultHours + '" aria-label="' + esc(C.calc.sliderLabel) + '"><div class="ticks" aria-hidden="true">' + ticks + '</div></div>' +
+    '<button type="button" class="stepbtn" data-step="1" aria-label="' + esc(C.calc.more) + '">+</button>' +
+    '<div class="hval"><span class="hv">3</span><small>' + esc(C.calc.perDay) + '</small></div></div>';
+}
+
+function titleSlide() {
+  const t = C.title, pos = [[8, 14], [88, 18], [12, 74], [84, 70], [50, 6]];
+  const floats = t.float.map((e, i) => '<span class="floaty" style="left:' + pos[i % 5][0] + '%;top:' + pos[i % 5][1] + '%;animation-delay:' + (i * .7) + 's" aria-hidden="true">' + e + '</span>').join('');
+  return '<div class="title-wrap">' + floats +
+    '<svg class="biglogo" aria-hidden="true"><use href="#logo"/></svg>' +
+    '<span class="kicker">' + esc(t.kicker) + '</span>' +
+    '<h1 tabindex="-1" class="grad-text">' + esc(t.question) + '</h1>' +
+    '<p class="lead">' + esc(t.sub) + '</p>' +
+    '<button type="button" class="btn primary" data-act="next">' + esc(t.start) + '</button>' +
+    '<p class="small">🔒 ' + esc(t.privacy) + '</p>' +
+    '<p class="small author">' + esc(t.authorLabel) + ' <strong>' + esc(C.author.name) + '</strong>, ' + esc(C.author.role) + '</p></div>';
+}
+
+function calcSlide() {
+  const c = C.calc;
+  return '<span class="kicker">' + esc(c.kicker) + '</span><h1 tabindex="-1">' + esc(c.title) + '</h1><p class="lead">' + esc(c.lead) + '</p>' +
+    '<div style="margin-top:1rem">' + hctl() + '</div>' +
+    '<div class="stats">' +
+      '<div class="stat"><div class="num" data-num="week" data-dec="1">0</div><div class="unit">' + esc(c.week) + '</div></div>' +
+      '<div class="stat"><div class="num" data-num="month" data-dec="0">0</div><div class="unit">' + esc(c.month) + '</div></div>' +
+      '<div class="stat"><div class="num" data-num="year" data-dec="0">0</div><div class="unit">' + esc(c.year) + '</div></div>' +
+      '<div class="stat"><div class="num" data-num="days" data-dec="1">0</div><div class="unit">' + esc(c.days) + '</div></div>' +
+      '<div class="stat hero"><div class="num" data-num="life" data-dec="1">0</div><div class="unit" id="lifeUnit">' + esc(fill(c.life, { start: T.startAge, end: T.endAge })) + '</div></div>' +
+    '</div>' +
+    '<div class="callout" id="awakeLine"></div><p class="fine tall-only">' + esc(c.note) + '</p>';
+}
+
+function lifeSlide() {
+  const l = C.life;
+  let cells = '';
+  for (let a = 0; a < T.endAge; a++) cells += '<div class="cell" data-age="' + a + '" title="' + esc(fill(l.cellTitle, { n: a + 1 })) + '">' + (a + 1) + '</div>';
+  const rows = l.ageRows.map(r => '<span>' + esc(r) + '</span>').join('');
+  return '<div class="row-between" style="margin-bottom:.3rem"><span class="kicker" style="margin:0">' + esc(l.kicker) + '</span>' +
+    '<div class="agectl" role="group" aria-label="' + esc(l.ageLabel) + '"><span class="al">' + esc(l.ageLabel) + '</span>' +
+    '<button type="button" class="agebtn" data-age-step="-1" aria-label="' + esc(l.ageLess) + '">−</button>' +
+    '<span class="av2" id="ageVal" aria-live="polite"><b>' + T.startAge + '</b> ' + esc(l.ageUnit) + '</span>' +
+    '<button type="button" class="agebtn" data-age-step="1" aria-label="' + esc(l.ageMore) + '">+</button></div></div>' +
+    '<h1 tabindex="-1">' + esc(l.title) + '</h1><p class="lead tall-only">' + esc(fill(l.lead, { end: T.endAge })) + '</p>' +
+    '<div style="margin-top:.9rem">' + hctl() + '</div>' +
+    '<p class="sentence" id="lifeSentence"></p>' +
+    '<div class="lifewrap"><div class="rowlab" aria-hidden="true">' + rows + '</div><div class="lifegrid" id="lifeGrid" role="img" aria-label="' + esc(l.title) + '">' + cells + '</div></div>' +
+    '<div class="row-between"><div class="legend"><span><i style="background:var(--lived)"></i>' + esc(l.lived) + '</span><span><i style="background:var(--left)"></i>' + esc(l.left) + '</span><span><i style="background:var(--social)"></i>' + esc(l.social) + '</span></div>' +
+    '<div class="seg" role="group" aria-label="' + esc(l.viewLabel) + '"><button type="button" data-mode="junt" aria-pressed="true">' + esc(l.together) + '</button><button type="button" data-mode="repartit" aria-pressed="false">' + esc(l.spread) + '</button></div></div>' +
+    '<p class="fine tall-only">' + esc(l.foot) + '</p>';
+}
+
+function compareSlide() {
+  const c = C.compare, it = c.items;
+  const rows = [
+    ['social', it.social.label, it.social.note],
+    ['cls', it.cls.label, fill(it.cls.note, { v: fmt(T.classHoursPerYear) })],
+    ['sleep', it.sleep.label, fill(it.sleep.note, { v: fmt(T.sleepHoursPerYear) })],
+    ['extra', it.extra.label, fill(it.extra.note, { h: T.extraHoursPerWeek, w: T.extraWeeks })]
+  ].map(r => '<div class="barrow"><div class="lab">' + esc(r[1]) + '<small>' + esc(r[2]) + '</small></div><div class="track"><div class="fill ' + r[0] + '" data-bar="' + r[0] + '" style="width:0"><span class="bv"></span></div></div></div>').join('');
+  const eq = [['films', fmt(T.filmHours, 1)], ['episodes', fmt(T.episodeMinutes, 0)], ['books', fmt(T.bookHours, 1)], ['flights', fmt(T.flightHours, 1)]].map(e => {
+    const q = c[e[0]];
+    return '<div class="card equiv"><span class="em" aria-hidden="true">' + q.em + '</span><div><div class="n" data-num="' + e[0] + '" data-dec="0">0</div><div style="font-weight:800;line-height:1.1">' + esc(q.label) + '</div><small>' + esc(fill(q.note, { v: e[1] })) + '</small></div></div>';
+  }).join('');
+  return '<span class="kicker">' + esc(c.kicker) + '</span><h1 tabindex="-1">' + esc(c.title) + '</h1><p class="lead">' + esc(c.lead) + '</p>' +
+    '<div style="margin-top:.8rem">' + hctl() + '</div>' +
+    '<div class="cmpgrid"><div><div class="bars">' + rows + '</div><p class="keyline" id="cmpKey"></p></div>' +
+    '<div><h2 style="font-size:1.1rem;margin:.9rem 0 0;font-weight:800">' + esc(c.equivTitle) + '</h2><div class="equivs">' + eq + '</div></div></div>' +
+    '<p class="fine tall-only">' + esc(c.hyp) + '</p>';
+}
+
+function classSlide() {
+  const m = C.classMode, bl = m.bins.map(b => '<span>' + esc(b) + '</span>').join('');
+  let bars = ''; for (let i = 0; i < 8; i++) bars += '<div class="hbar"><span class="c"></span><div class="b" style="height:0"></div></div>';
+  return '<span class="kicker">' + esc(m.kicker) + '</span><h1 tabindex="-1">' + esc(m.title) + '</h1><p class="lead">' + esc(m.lead) + '</p>' +
+    '<div class="two"><div><label for="clsIn" style="font-weight:800;display:block;margin-bottom:.3rem">' + esc(m.label) + '</label>' +
+    '<textarea id="clsIn" class="cls" spellcheck="false" autocomplete="off" placeholder="' + esc(m.placeholder) + '"></textarea>' +
+    '<p class="fine" style="margin-top:.4rem">' + esc(m.hint) + '</p>' +
+    '<div class="btns"><button type="button" class="btn small" data-act="example">' + esc(m.example) + '</button><button type="button" class="btn small" data-act="clear">' + esc(m.clear) + '</button><button type="button" class="btn small primary" data-act="useavg">' + esc(m.useAvg) + '</button></div>' +
+    '<p class="fine" id="clsWarn" style="color:var(--warn);font-weight:700"></p></div>' +
+    '<div><div class="mini-stats"><div class="card mini"><b id="stN">–</b><span>' + esc(m.n) + '</span></div><div class="card mini"><b id="stAvg">–</b><span>' + esc(m.avg) + '</span></div><div class="card mini"><b id="stMax">–</b><span>' + esc(m.max) + '</span></div><div class="card mini"><b id="stMin">–</b><span>' + esc(m.min) + '</span></div></div>' +
+    '<h2 style="font-size:1.05rem;margin-top:1rem;font-weight:800">' + esc(m.histTitle) + '</h2>' +
+    '<div class="hist" id="hist" role="img" aria-label="' + esc(m.histTitle) + '">' + bars + '</div><div class="histlab">' + bl + '</div>' +
+    '<p class="sentence" id="clsYear" style="font-size:1.15rem"></p><p class="empty" id="clsEmpty">' + esc(m.empty) + '</p></div></div>';
+}
+
+function reflect1Slide() {
+  const r = C.reflect1;
+  const qs = r.questions.map(q => '<div class="card q"><i aria-hidden="true">💭</i><span>' + esc(q) + '</span></div>').join('');
+  return '<span class="kicker">' + esc(r.kicker) + '</span><h1 tabindex="-1">' + esc(r.title) + '</h1>' +
+    '<p class="lead" id="refSum"></p>' +
+    '<p class="reflect" id="phrase" contenteditable="true" spellcheck="false" role="textbox" aria-label="' + esc(r.editHint) + '"></p>' +
+    '<div class="row-between"><span class="fine" style="margin:0">' + esc(r.editHint) + '</span><button type="button" class="btn small" data-act="resetphrase">' + esc(r.reset) + '</button></div>' +
+    '<div class="qlist">' + qs + '</div>';
+}
+
+function detectIntroSlide() {
+  const d = D, steps = d.steps.map(s => '<div class="card step">' + esc(s) + '</div>').join('');
+  return '<span class="kicker">' + esc(d.kicker) + '</span><h1 tabindex="-1">' + esc(d.title) + '</h1><p class="lead">' + esc(d.lead) + '</p>' +
+    '<div class="steps">' + steps + '</div><div class="notice">🧪 ' + esc(d.notice) + '</div><div class="tip">💡 ' + rich(d.tip) + '</div>';
+}
+
+/* ---------- escenes SVG ---------- */
+function sceneSVG(sc, uid) {
+  let g = '';
+  (sc.items || []).forEach(it => {
+    const t = '<text x="' + it.x + '" y="' + it.y + '" font-size="' + it.s + '" text-anchor="middle" dominant-baseline="central">' + it.e + '</text>';
+    if (it.clue) g += '<g class="sclue" data-clue="' + it.clue + '" role="button" tabindex="0" aria-pressed="false" aria-label="' + esc(it.label || D.ui.alt) + '"><circle class="hit" cx="' + it.x + '" cy="' + it.y + '" r="' + (it.s * .66) + '"/>' + t + '</g>';
+    else g += t;
+  });
+  (sc.tags || []).forEach(tag => {
+    const fs = tag.fs || 5, lines = tag.t, lh = fs * 1.18;
+    const w = Math.min(98, Math.max.apply(null, lines.map(l => l.length)) * fs * .64 + 5), h = lines.length * lh + 3.2;
+    const x = Math.max(w / 2 + 1, Math.min(100 - w / 2 - 1, tag.x)), y = tag.y;
+    let txt = '';
+    lines.forEach((l, i) => { txt += '<text x="' + x + '" y="' + (y - h / 2 + 1.6 + lh * (i + .5)) + '" font-size="' + fs + '" text-anchor="middle" dominant-baseline="central">' + esc(l) + '</text>'; });
+    const rect = '<rect x="' + (x - w / 2) + '" y="' + (y - h / 2) + '" width="' + w + '" height="' + h + '" rx="2"/>';
+    if (tag.clue) g += '<g class="sclue tg stag ' + (tag.cls || '') + '" data-clue="' + tag.clue + '" role="button" tabindex="0" aria-pressed="false" aria-label="' + esc((tag.label || D.ui.alt) + ': ' + lines.join(' ')) + '">' + rect + txt + '</g>';
+    else g += '<g class="stag ' + (tag.cls || '') + '">' + rect + txt + '</g>';
+  });
+  return '<svg viewBox="0 0 100 62" preserveAspectRatio="xMidYMid meet" aria-hidden="false" role="group">' + g + '</svg>';
+}
+
+function postHTML(P, post, i) {
+  const sc = post.scene;
+  const coms = (post.comments || []).map(c => '<li><b>' + clueText(c.u) + '</b> ' + clueText(c.t) + '</li>').join('');
+  return '<article class="post" aria-label="' + esc(D.ui.post) + ' ' + (i + 1) + '">' +
+    '<div class="ptop"><span class="av" style="background:' + P.color + '" aria-hidden="true">' + P.avatar + '</span><b>' + esc(P.handle) + '</b><span class="when">♥ ' + post.likes + ' · ' + esc(post.when) + '</span></div>' +
+    '<div class="scene" style="background:linear-gradient(145deg,' + sc.bg[0] + ',' + sc.bg[1] + ')">' + sceneSVG(sc, P.id + i) + '</div>' +
+    '<div class="pcap">' + (post.place ? '<div class="place">' + clueText(post.place) + '</div>' : '') +
+    '<div><b>' + esc(P.handle) + '</b> ' + clueText(post.caption) + '</div>' +
+    (coms ? '<ul class="coms">' + coms + '</ul>' : '') + '</div></article>';
+}
+
+function profileSlide(P) {
+  const u = D.ui;
+  return '<div class="phead"><span class="av" style="background:' + P.color + '" aria-hidden="true">' + P.avatar + '</span>' +
+    '<div class="who"><b>' + esc(P.name) + '</b> <span>@' + esc(P.handle) + '</span></div>' +
+    '<h1 tabindex="-1" class="sr">' + esc(P.name) + ' (@' + esc(P.handle) + ')</h1>' +
+    '<div class="bio">' + clueText(P.bio) + '</div>' +
+    '<div class="actions"><button type="button" class="btn small pink" data-act="reveal">' + esc(u.reveal) + '</button></div></div>' +
+    '<div class="play"><div class="pbody"><div class="feed">' + P.posts.map((p, i) => postHTML(P, p, i)).join('') + '</div>' +
+    '<aside class="panel" aria-label="' + esc(u.panel) + '"><h2>' + esc(u.panel) + ' <span class="tot" data-tot>0</span></h2><ul class="cats" data-cats></ul>' +
+    '<label class="opt"><input type="checkbox" data-hints> ' + esc(u.hints) + '</label>' +
+    '<div class="btns"><button type="button" class="btn small" data-act="resetclues">' + esc(u.reset) + '</button></div></aside></div></div>' +
+    '<div class="board hidden" data-board></div>';
+}
+
+function reflect2Slide() {
+  const r = C.reflect2;
+  const rk = r.risks.map(x => '<div class="card rk"><div class="em" aria-hidden="true">' + x.em + '</div><h3>' + esc(x.h) + '</h3><p>' + esc(x.p) + '</p></div>').join('');
+  return '<span class="kicker">' + esc(r.kicker) + '</span><h1 tabindex="-1">' + esc(r.title) + '</h1><p class="lead" style="font-weight:700;color:var(--ink)">' + esc(r.question) + '</p>' +
+    '<div class="risk">' + rk + '</div><div class="good">💜 ' + esc(r.good) + '</div><div class="help">🤝 ' + esc(r.help) + '</div>' +
+    '<p class="fine" style="font-size:.95rem">💬 ' + esc(r.discuss) + '</p>';
+}
+
+function habitsSlide() {
+  const c = C.closing;
+  const hs = c.habits.map((h, i) => '<div class="card habit" style="--hc:' + h.color + '"><span class="num" aria-hidden="true">' + (i + 1) + '</span><span class="em" aria-hidden="true">' + h.em + '</span><h3>' + esc(h.h) + '</h3><p>' + esc(h.a) + '</p></div>').join('');
+  return '<span class="kicker">' + esc(c.kicker) + '</span><h1 tabindex="-1">' + esc(c.title) + '</h1><p class="lead">' + esc(c.lead) + '</p><div class="habits">' + hs + '</div>';
+}
+
+function commitSlide() {
+  const c = C.commit;
+  const st = c.steps.map(s => '<div class="card cstep">' + esc(s) + '</div>').join('');
+  return '<span class="kicker">' + esc(c.kicker) + '</span><h1 tabindex="-1">' + esc(c.title) + '</h1>' +
+    '<div class="commit-grid"><div>' + st + '<div class="starter">' + esc(c.starter) + '…</div></div>' +
+    '<div><div class="card timer"><div style="font-weight:800;margin-bottom:.4rem">' + esc(c.timerTitle) + '</div><div class="t" id="timerT" role="timer">1:00</div>' +
+    '<div class="btns" style="justify-content:center"><button type="button" class="btn small primary" data-act="timer" id="timerBtn">' + esc(c.timerStart) + '</button><button type="button" class="btn small" data-act="timerreset">' + esc(c.timerReset) + '</button></div></div>' +
+    '<div class="btns" style="justify-content:center;margin-top:1rem"><button type="button" class="btn primary" data-act="print">' + esc(c.print) + '</button></div>' +
+    '<p class="thanks" style="text-align:center">' + esc(c.thanks) + '</p><p class="fine" style="text-align:center">' + esc(c.note) + '</p></div></div>';
+}
+
+function buildPrintSheet() {
+  const s = C.commit.sheet, hs = C.closing.habits.map(h => '<li><span class="box"></span><div><b>' + esc(h.em + ' ' + h.h) + '</b><span>' + esc(h.a) + '</span></div></li>').join('');
+  $('#printSheet').innerHTML = '<h1><svg viewBox="0 0 48 48" aria-hidden="true"><use href="#logo"/></svg>' + esc(s.title) + '</h1><div class="sub">' + esc(s.sub) + '</div><ol>' + hs + '</ol>' +
+    '<div class="commit">' + esc(s.commit) + '<div class="line"></div><div class="line"></div><div class="line"></div></div>' +
+    '<div class="commit" style="margin-top:6mm">' + esc(s.start) + '</div><div class="line"></div>' +
+    '<div class="commit" style="margin-top:6mm">' + esc(s.date) + ' ______ / ______ / ________</div><div class="foot">' + esc(s.foot) + '<br>' + esc(C.title.authorLabel + ' ' + C.author.name + ', ' + C.author.role) + '.</div>';
+}
+
+/* =====================================================================
+   MUNTATGE
+   ===================================================================== */
+let SL = [];
+const stage = $('#stage'), prog = $('#prog'), langSel = $('#langSel');
+
+function slideDefs() {
+  return [
+    { id: 'title', part: 1, html: titleSlide },
+    { id: 'calc', part: 1, hours: true, html: calcSlide },
+    { id: 'life', part: 1, hours: true, html: lifeSlide },
+    { id: 'compare', part: 1, hours: true, html: compareSlide },
+    { id: 'class', part: 1, html: classSlide },
+    { id: 'reflect1', part: 1, html: reflect1Slide },
+    { id: 'detect', part: 2, html: detectIntroSlide }
+  ].concat(D.profiles.map(p => ({ id: 'p-' + p.id, part: 2, profile: p, html: () => profileSlide(p) })))
+   .concat([
+    { id: 'reflect2', part: 2, html: reflect2Slide },
+    { id: 'habits', part: 3, html: habitsSlide },
+    { id: 'commit', part: 3, html: commitSlide }
+  ]);
+}
+
+/* Construeix (o reconstrueix, en canviar d'idioma) pantalles, progrés i textos fixos */
+function build() {
+  SL = slideDefs();
+  stage.innerHTML = ''; prog.innerHTML = '';
+  SL.forEach(s => {
+    const sec = document.createElement('section');
+    sec.className = 'slide' + (s.profile ? ' nohints' : ''); sec.id = 's-' + s.id; sec.hidden = true;
+    sec.innerHTML = s.html(); stage.appendChild(sec); s.el = sec; s.min = C.minutes[s.id] || 0;
+  });
+  SL.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'p' + s.part;
+    b.setAttribute('aria-label', C.ui.progLabel + ' ' + (i + 1));
+    b.addEventListener('click', () => go(i));
+    prog.appendChild(b);
+  });
+  document.documentElement.lang = lang;
+  document.title = C.meta.title;
+  $('#metaDesc').setAttribute('content', C.meta.description);
+  prog.setAttribute('aria-label', C.meta.progLabel);
+  langSel.setAttribute('aria-label', C.meta.langLabel);
+  $$('button', langSel).forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  $('#brandName').textContent = C.brand.name;
+  $('#keysHint').textContent = C.ui.keys;
+  buildPrintSheet();
+}
+
+/* Torna a pintar l'estat (hores, pistes marcades, text de la classe…) sobre les pantalles noves */
+function restoreState(clsText) {
+  $('#clsIn').value = clsText; renderClass();
+  $('#phrase').textContent = state.phrase;
+  D.profiles.forEach(P => {
+    const st = state.profiles[P.id], root = $('#s-p-' + P.id);
+    st.found.forEach(id => $$('[data-clue="' + id + '"]', root).forEach(el => { el.classList.add('on'); el.setAttribute('aria-pressed', 'true'); }));
+    updatePanel(P);
+    if (st.revealed) setReveal(P, true);
+  });
+  if (state.hints) {
+    $$('.play').forEach(p => p.classList.add('hints'));
+    $$('.slide').forEach(s => s.classList.remove('nohints'));
+    $$('[data-hints]').forEach(c => { c.checked = true; });
+  }
+  renderHours();
+  $('#timerBtn').textContent = timerId ? C.commit.timerStop : C.commit.timerStart;
+  timerShow();
+}
+
+function setLang(code) {
+  if (!CONTENTS[code] || code === lang) return;
+  const prevPhrase = C.reflect1.phrase, clsText = $('#clsIn').value;
+  useLang(code);
+  if (state.phrase === prevPhrase) state.phrase = C.reflect1.phrase;   /* si no l'han editat, passa a l'idioma nou */
+  build(); restoreState(clsText);
+  go(state.idx, { keep: true });
+}
+
+function go(i, opts) {
+  const keep = !!(opts && opts.keep);   /* canvi d'idioma: mateixa pantalla, sense animació ni salt de focus */
+  i = Math.max(0, Math.min(SL.length - 1, i));
+  SL.forEach((s, k) => { s.el.hidden = (k !== i); s.el.classList.remove('enter'); });
+  const s = SL[i]; state.idx = i;
+  if (!keep && !reduceMQ.matches) { void s.el.offsetWidth; s.el.classList.add('enter'); }
+  if (!keep) s.el.scrollTop = 0;
+  $('#partChip').textContent = C.parts[s.part];
+  $('#clock').innerHTML = esc(C.ui.minute) + ' ≈ <b>' + s.min + '</b> ' + esc(C.ui.of) + ' ' + C.totalMinutes;
+  $('#screenNo').textContent = C.ui.screen + ' ' + (i + 1) + ' / ' + SL.length;
+  $$('button', prog).forEach((b, k) => { b.classList.toggle('done', k < i); b.classList.toggle('cur', k === i); });
+  $('#btnPrev').textContent = C.ui.prev; $('#btnNext').textContent = (i === SL.length - 1) ? C.ui.end : C.ui.next;
+  $('#btnPrev').disabled = (i === 0); $('#btnNext').disabled = (i === SL.length - 1);
+  try { history.replaceState(null, '', '#' + (i + 1) + (lang !== 'ca' ? '&lang=' + lang : '')); } catch (e) { /* file:// restringit en alguns navegadors */ }
+  if (s.hours) { if (!keep) $$('[data-num]', s.el).forEach(el => { el._cur = 0; }); renderHours(); }
+  if (s.profile && state.profiles[s.profile.id].revealed) requestAnimationFrame(() => drawLines(s.profile));
+  const h = $('h1', s.el); if (h && !keep) h.focus({ preventScroll: true });
+  if (document.activeElement && document.activeElement.type === 'range') document.activeElement.blur();
+}
+
+/* =====================================================================
+   HORES
+   ===================================================================== */
+function setHours(v) {
+  v = Math.round(v / T.step) * T.step;
+  state.hours = Math.max(T.min, Math.min(T.max, v));
+  renderHours();
+}
+function renderHours() {
+  const h = state.hours, d = derive(h), pct = (h - T.min) / (T.max - T.min) * 100;
+  $$('.hctl').forEach(c => {
+    const inp = $('input', c);
+    inp.value = h; inp.style.setProperty('--p', pct + '%');
+    inp.setAttribute('aria-valuetext', fmt(h, 1) + ' ' + C.calc.perDay);
+    $('.hv', c).textContent = fmt(h, 1);
+  });
+  $$('[data-num]').forEach(el => { if (el.dataset.num in d) setNum(el, d[el.dataset.num], +el.dataset.dec || 0); });
+  $('#awakeLine').innerHTML = rich(fill(C.calc.awake, { pct: fmt(d.awake, 0) }));
+  renderLife(d); renderCompare(d); renderRefSummary(d);
+}
+function renderLife(d) {
+  const age = state.age, span = T.endAge - age, S = d.life, h = state.hours;
+  $$('#lifeGrid .cell').forEach(cell => {
+    const a = +cell.dataset.age;
+    if (a < age) { cell.classList.add('lived'); cell.classList.remove('now', 'pk'); cell.style.setProperty('--f', 0); return; }
+    cell.classList.remove('lived');
+    const f = state.lifeMode === 'junt' ? Math.max(0, Math.min(1, S - (a - age))) : h / 24;
+    cell.style.setProperty('--f', f.toFixed(3));
+    cell.classList.toggle('now', a === age);
+    cell.classList.toggle('pk', f >= .5);
+  });
+  $('#ageVal').innerHTML = '<b>' + age + '</b> ' + esc(C.life.ageUnit);
+  $('#lifeUnit').textContent = fill(C.calc.life, { start: age, end: T.endAge });
+  $('#lifeSentence').innerHTML = rich(fill(C.life.sentence, { h: fmt(h, 1), start: age, end: T.endAge, years: fmt(S, 1), pct: fmt(S / span * 100, 1) }));
+}
+const barMax = Math.max(T.max * 365, T.classHoursPerYear, T.sleepHoursPerYear, T.extraHoursPerWeek * T.extraWeeks);
+function renderCompare(d) {
+  const vals = { social: d.year, cls: T.classHoursPerYear, sleep: T.sleepHoursPerYear, extra: T.extraHoursPerWeek * T.extraWeeks };
+  $$('[data-bar]').forEach(f => {
+    const v = vals[f.dataset.bar], w = v / barMax * 100, bv = $('.bv', f);
+    f.style.width = w.toFixed(2) + '%';
+    f.style.minWidth = '0';
+    bv.textContent = fmt(v, 0) + ' h';
+    /* si la barra és massa estreta, el valor surt a fora */
+    if (w < 14) { bv.style.cssText = 'position:absolute;left:calc(100% + .5rem);color:var(--ink);padding:0'; f.style.position = 'relative'; f.style.overflow = 'visible'; }
+    else { bv.style.cssText = ''; f.style.overflow = ''; }
+  });
+  $('#cmpKey').innerHTML = rich(fill(C.compare.key, { pct: fmt(d.classPct, 0) }));
+}
+function renderRefSummary(d) {
+  $('#refSum').innerHTML = rich(fill(C.reflect1.summary, { h: fmt(state.hours, 1), days: fmt(d.days, 1) }));
+}
+
+/* =====================================================================
+   MODE CLASSE
+   ===================================================================== */
+function parseHours(txt) {
+  const multi = /[;\n]/.test(txt);
+  const parts = multi ? txt.split(/[;\s]+/) : txt.split(/[,\s]+/);
+  const nums = []; let bad = 0;
+  parts.forEach(p => {
+    p = p.trim().replace(/h$/i, '');
+    if (multi) p = p.replace(/,+$/, '').replace(',', '.');
+    if (!p) return;
+    const v = Number(p);
+    if (!isFinite(v) || v < 0 || v > 24) bad++; else nums.push(v);
+  });
+  return { nums, bad };
+}
+function renderClass() {
+  const m = C.classMode, r = parseHours($('#clsIn').value), n = r.nums.length;
+  state.cls = r.nums;
+  $('#clsWarn').textContent = r.bad ? fill(m.ignored, { n: r.bad }) : '';
+  $('#clsEmpty').classList.toggle('hidden', n > 0);
+  const bars = $$('#hist .hbar'), counts = new Array(8).fill(0);
+  r.nums.forEach(v => { counts[Math.min(7, Math.floor(v))]++; });
+  const mx = Math.max.apply(null, counts.concat([1]));
+  bars.forEach((b, i) => { $('.b', b).style.height = (counts[i] / mx * 88).toFixed(1) + '%'; $('.c', b).textContent = counts[i] || ''; });
+  if (!n) { ['stN', 'stAvg', 'stMax', 'stMin'].forEach(id => { $('#' + id).textContent = '–'; }); $('#clsYear').innerHTML = ''; return; }
+  const avg = r.nums.reduce((a, b) => a + b, 0) / n;
+  $('#stN').textContent = n; $('#stAvg').textContent = fmt(avg, 1);
+  $('#stMax').textContent = fmt(Math.max.apply(null, r.nums), 1); $('#stMin').textContent = fmt(Math.min.apply(null, r.nums), 1);
+  $('#clsYear').innerHTML = rich(fill(m.avgYear, { y: fmt(avg * 365, 0) }));
+}
+
+/* =====================================================================
+   DETECTIUS
+   ===================================================================== */
+function updatePanel(P) {
+  const st = state.profiles[P.id], root = $('#s-p-' + P.id);
+  const cats = D.categories.map(cat => {
+    const ids = Object.keys(P.clues).filter(id => st.found.has(id) && P.clues[id].cat === cat.key);
+    return '<li class="' + (ids.length ? 'has' : '') + '"><span class="ic" aria-hidden="true">' + cat.icon + '</span><div><b>' + esc(cat.label) + '</b>' +
+      (ids.length ? '<small>' + ids.map(id => esc(P.clues[id].label)).join(' · ') + '</small>' : '') + '</div><span class="cnt">' + ids.length + '</span></li>';
+  }).join('');
+  $('[data-cats]', root).innerHTML = cats;
+  $('[data-tot]', root).textContent = fill(D.ui.total, { n: st.found.size });
+}
+function toggleClue(P, id) {
+  const st = state.profiles[P.id], root = $('#s-p-' + P.id);
+  if (!(id in P.clues)) return;
+  if (st.found.has(id)) st.found.delete(id); else st.found.add(id);
+  const on = st.found.has(id);
+  $$('[data-clue="' + id + '"]', root).forEach(el => { el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); });
+  updatePanel(P);
+}
+function unlocked(P, found) {
+  return P.conclusions.map(c => {
+    const n = c.clues.filter(id => found.has(id)).length;
+    return n >= (c.needs || 1) && (c.must || []).every(id => found.has(id));
+  });
+}
+const LINECOL = ['#7c3aed', '#e0156f', '#0284c7', '#d97706', '#059669', '#c026d3', '#dc2626'];
+function buildBoard(P) {
+  const st = state.profiles[P.id], u = D.ui, un = unlocked(P, st.found), cnt = un.filter(Boolean).length, tot = P.conclusions.length;
+  const ratio = cnt / tot, level = ratio <= .34 ? 'baixa' : ratio <= .67 ? 'mitjana' : 'alta';
+  /* ordre de les pistes: segons la primera deducció on apareixen */
+  const order = []; P.conclusions.forEach(c => c.clues.forEach(id => { if (order.indexOf(id) < 0) order.push(id); }));
+  Object.keys(P.clues).forEach(id => { if (order.indexOf(id) < 0) order.push(id); });
+  const used = {}; P.conclusions.forEach(c => c.clues.forEach(id => { used[id] = true; }));
+  const meter = ['baixa', 'mitjana', 'alta'].map(l => '<span class="' + l + (l === level ? ' on' : '') + '">' + esc(u.levels[l]) + '</span>').join('');
+  const cl = order.map(id => {
+    const c = P.clues[id], f = st.found.has(id);
+    return '<div class="bc ' + (f ? 'f' : 'm') + '" data-bc="' + id + '"><span class="e" aria-hidden="true">' + c.emoji + '</span><span>' + esc(c.label) + '</span>' + (used[id] ? '' : '<small>' + esc(u.harmless) + '</small>') + '</div>';
+  }).join('');
+  const cc = P.conclusions.map((c, i) => {
+    const cat = D.categories.filter(k => k.key === c.cat)[0];
+    const chips = c.clues.map(id => '<span class="' + (st.found.has(id) ? 'f' : '') + '">' + esc(P.clues[id].label) + '</span>').join('');
+    return '<div class="cc ' + (un[i] ? 'got' : 'miss') + '" data-cc="' + i + '" tabindex="0" style="--cc:' + LINECOL[i % LINECOL.length] + '"><div class="hd"><span aria-hidden="true">' + cat.icon + '</span>' + esc(cat.label) +
+      '<em>' + esc(un[i] ? u.got : u.miss) + '</em></div><p>' + esc(c.text) + '</p><div class="chips">' + chips + '</div></div>';
+  }).join('');
+  $('[data-board]', $('#s-p-' + P.id)).innerHTML =
+    '<div class="exp"><strong>' + esc(u.exposure) + ':</strong><div class="meter" role="img" aria-label="' + esc(u.levels[level]) + '">' + meter + '</div>' +
+    '<span class="txt">' + esc(fill(u.summary, { f: st.found.size, t: Object.keys(P.clues).length, c: cnt, k: tot })) + '</span></div>' +
+    '<div class="bgrid" data-bgrid><svg class="lines" aria-hidden="true"></svg><div class="bclues" aria-label="' + esc(u.cluesTitle) + '">' + cl + '</div><div class="bconc" aria-label="' + esc(u.conclTitle) + '">' + cc + '</div></div>' +
+    '<p class="safe">' + rich(u.allOpen) + ' ' + esc(u.safe) + '</p>';
+}
+function drawLines(P) {
+  const root = $('#s-p-' + P.id), grid = $('[data-bgrid]', root);
+  if (!grid || root.hidden) return;
+  const svg = $('.lines', grid), st = state.profiles[P.id];
+  if (getComputedStyle(svg).display === 'none') return;
+  const gr = grid.getBoundingClientRect();
+  svg.setAttribute('width', gr.width); svg.setAttribute('height', gr.height);
+  const paths = []; let k = 0;
+  P.conclusions.forEach((c, i) => {
+    const cEl = $('[data-cc="' + i + '"]', grid), cr = cEl.getBoundingClientRect(), x2 = cr.left - gr.left, y2 = cr.top - gr.top + cr.height / 2;
+    c.clues.forEach(id => {
+      const bEl = $('[data-bc="' + id + '"]', grid); if (!bEl) return;
+      const br = bEl.getBoundingClientRect(), x1 = br.right - gr.left, y1 = br.top - gr.top + br.height / 2, dx = (x2 - x1) * .55;
+      const found = st.found.has(id);
+      paths.push('<path data-c="' + i + '" class="' + (found && !reduceMQ.matches ? 'draw' : '') + '" pathLength="1" d="M' + x1 + ' ' + y1 + ' C' + (x1 + dx) + ' ' + y1 + ',' + (x2 - dx) + ' ' + y2 + ',' + x2 + ' ' + y2 +
+        '" stroke="' + LINECOL[i % LINECOL.length] + '" stroke-width="' + (found ? 3 : 2) + '"' + (found ? '' : ' stroke-dasharray="0.02 0.02" opacity=".55"') + (found && !reduceMQ.matches ? ' style="animation-delay:' + (k * 70) + 'ms"' : '') + '/>');
+      k++;
+    });
+  });
+  svg.innerHTML = paths.join('');
+}
+function focusConclusion(root, i) {
+  $$('.lines path', root).forEach(p => p.classList.toggle('dim', i !== null && p.dataset.c !== String(i)));
+}
+function setReveal(P, on) {
+  const st = state.profiles[P.id], root = $('#s-p-' + P.id);
+  st.revealed = on;
+  $('.play', root).classList.toggle('hidden', on);
+  $('[data-board]', root).classList.toggle('hidden', !on);
+  const btn = $('[data-act="reveal"]', root);
+  btn.textContent = on ? D.ui.back : D.ui.reveal;
+  btn.classList.toggle('pink', !on);
+  if (on) { buildBoard(P); requestAnimationFrame(() => drawLines(P)); }
+  root.scrollTop = 0;
+}
+
+/* =====================================================================
+   TEMPORITZADOR (compromís)
+   ===================================================================== */
+let timerLeft = 60, timerId = null;
+function timerShow() { $('#timerT').textContent = timerLeft > 0 ? Math.floor(timerLeft / 60) + ':' + String(timerLeft % 60).padStart(2, '0') : C.commit.timerDone; }
+function timerToggle() {
+  const b = $('#timerBtn');
+  if (timerId) { clearInterval(timerId); timerId = null; b.textContent = C.commit.timerStart; return; }
+  if (timerLeft <= 0) timerLeft = 60;
+  b.textContent = C.commit.timerStop;
+  /* el botó es torna a buscar a cada tic: en canviar d'idioma les pantalles es reconstrueixen */
+  timerId = setInterval(() => { timerLeft--; timerShow(); if (timerLeft <= 0) { clearInterval(timerId); timerId = null; $('#timerBtn').textContent = C.commit.timerStart; } }, 1000);
+  timerShow();
+}
+function timerReset() { clearInterval(timerId); timerId = null; timerLeft = 60; $('#timerBtn').textContent = C.commit.timerStart; timerShow(); }
+
+/* =====================================================================
+   EVENTS
+   ===================================================================== */
+$('#btnPrev').addEventListener('click', () => go(state.idx - 1));
+$('#btnNext').addEventListener('click', () => go(state.idx + 1));
+
+stage.addEventListener('click', e => {
+  const t = e.target;
+  const step = t.closest('.stepbtn');
+  if (step) { setHours(state.hours + (+step.dataset.step) * T.step); return; }
+  const ageBtn = t.closest('[data-age-step]');
+  if (ageBtn) { state.age = Math.max(T.ageMin, Math.min(T.ageMax, state.age + (+ageBtn.dataset.ageStep))); renderHours(); return; }
+  const mode = t.closest('[data-mode]');
+  if (mode) { state.lifeMode = mode.dataset.mode; $$('[data-mode]').forEach(b => b.setAttribute('aria-pressed', b === mode)); renderHours(); return; }
+  const act = t.closest('[data-act]');
+  const slide = t.closest('.slide'), S = SL.filter(s => s.el === slide)[0];
+  if (act) {
+    switch (act.dataset.act) {
+      case 'next': go(state.idx + 1); break;
+      case 'example': $('#clsIn').value = C.classMode.exampleData; renderClass(); break;
+      case 'clear': $('#clsIn').value = ''; renderClass(); $('#clsIn').focus(); break;
+      case 'useavg': if (state.cls.length) { setHours(state.cls.reduce((a, b) => a + b, 0) / state.cls.length); } break;
+      case 'resetphrase': state.phrase = C.reflect1.phrase; $('#phrase').textContent = state.phrase; break;
+      case 'reveal': if (S && S.profile) setReveal(S.profile, !state.profiles[S.profile.id].revealed); break;
+      case 'resetclues':
+        if (S && S.profile) { const P = S.profile; state.profiles[P.id].found.clear(); $$('[data-clue]', slide).forEach(el => { el.classList.remove('on'); el.setAttribute('aria-pressed', 'false'); }); updatePanel(P); }
+        break;
+      case 'timer': timerToggle(); break;
+      case 'timerreset': timerReset(); break;
+      case 'print': window.print(); break;
+    }
+    return;
+  }
+  const clue = t.closest('[data-clue]');
+  if (clue && S && S.profile) toggleClue(S.profile, clue.dataset.clue);
+});
+
+stage.addEventListener('input', e => {
+  if (e.target.matches('.rangewrap input')) setHours(+e.target.value);
+  else if (e.target.id === 'clsIn') renderClass();
+  else if (e.target.id === 'phrase') state.phrase = e.target.textContent;
+});
+stage.addEventListener('change', e => {
+  if (e.target.matches('[data-hints]')) {
+    state.hints = e.target.checked;
+    $$('.play').forEach(p => p.classList.toggle('hints', state.hints));
+    $$('.slide').forEach(s => s.classList.toggle('nohints', !state.hints));
+    $$('[data-hints]').forEach(c => { c.checked = state.hints; });
+  }
+});
+/* deixa anar el control i torna el focus perquè les fletxes naveguin */
+stage.addEventListener('pointerup', e => { if (e.target.matches('.rangewrap input')) setTimeout(() => e.target.blur(), 0); });
+
+/* hover / focus sobre les deduccions */
+stage.addEventListener('mouseover', e => { const c = e.target.closest('.cc'); if (c) focusConclusion(c.closest('.slide'), +c.dataset.cc); });
+stage.addEventListener('mouseout', e => { const c = e.target.closest('.cc'); if (c) focusConclusion(c.closest('.slide'), null); });
+stage.addEventListener('focusin', e => { const c = e.target.closest('.cc'); if (c) focusConclusion(c.closest('.slide'), +c.dataset.cc); });
+stage.addEventListener('focusout', e => { const c = e.target.closest('.cc'); if (c) focusConclusion(c.closest('.slide'), null); });
+
+window.addEventListener('resize', () => { const s = SL[state.idx]; if (s.profile && state.profiles[s.profile.id].revealed) drawLines(s.profile); });
+window.addEventListener('hashchange', () => {
+  const h = readHash();
+  if (h.lang !== lang) setLang(h.lang);
+  if (h.n && h.n - 1 !== state.idx) go(h.n - 1);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  const t = e.target;
+  if (t.matches('textarea,[contenteditable="true"],input[type="text"]')) { if (e.key === 'Escape') t.blur(); return; }
+  /* Enter / espai sobre una pista d'una imatge (SVG) */
+  if (t.classList && t.classList.contains('sclue') && (e.key === 'Enter' || e.key === ' ')) {
+    e.preventDefault(); const S = SL[state.idx]; if (S.profile) toggleClue(S.profile, t.dataset.clue); return;
+  }
+  const isRange = t.matches && t.matches('input[type="range"]');
+  const hours = !!SL[state.idx].hours;
+  switch (e.key) {
+    case 'ArrowRight': case 'PageDown': e.preventDefault(); go(state.idx + 1); break;
+    case 'ArrowLeft': case 'PageUp': e.preventDefault(); go(state.idx - 1); break;
+    case 'ArrowUp': if (hours) { e.preventDefault(); setHours(state.hours + T.step); } break;
+    case 'ArrowDown': if (hours) { e.preventDefault(); setHours(state.hours - T.step); } break;
+    case 'Home': if (!isRange) { e.preventDefault(); go(0); } break;
+    case 'End': if (!isRange) { e.preventDefault(); go(SL.length - 1); } break;
+  }
+});
+
+/* inici */
+LANGS.forEach(l => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = l.label; b.dataset.lang = l.code; b.lang = l.code;
+  b.title = l.name; b.setAttribute('aria-label', l.name);
+  b.addEventListener('click', () => setLang(l.code));
+  langSel.appendChild(b);
+});
+build();
+restoreState('');
+const startN = readHash().n;
+go(startN >= 1 && startN <= SL.length ? startN - 1 : 0);
+})();
+</script>
+</body>
+</html>

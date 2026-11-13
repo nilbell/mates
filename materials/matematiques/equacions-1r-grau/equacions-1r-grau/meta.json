@@ -1,0 +1,29 @@
+{
+  "titol": "Equacions de primer grau: balança, pas a pas i gràfic",
+  "descripcio": "Aplicatiu en un sol fitxer per visualitzar equacions de 1r grau: balança amb caixes x, boles i globus negatius (amb parelles que s'eliminen), resolució pas a pas (automàtica o triant les operacions) i gràfic de les dues rectes amb el punt de tall. Admet parèntesis, fraccions i decimals, i té botó d'equació aleatòria. Funciona sense internet.",
+  "materia": "matematiques",
+  "temes": [
+    "equacions-1r-grau",
+    "llenguatge-algebraic"
+  ],
+  "nivells": [
+    "2ESO",
+    "3ESO"
+  ],
+  "tipus": "interactiu",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": [
+    "balança",
+    "pas a pas",
+    "gràfic",
+    "globus",
+    "aleatori"
+  ],
+  "data": "2026-11-13"
+}

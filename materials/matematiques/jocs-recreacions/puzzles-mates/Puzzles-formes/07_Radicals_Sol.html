@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="ca"><head><meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='%232f5bea'/%3E%3Crect x='12' y='12' width='24' height='24' rx='3' fill='%23fff'/%3E%3Cpath d='M30 54h24V30z' fill='%23ffd166'/%3E%3Ccircle cx='22' cy='46' r='8' fill='%23ff7a7a'/%3E%3C/svg%3E"><title>Puzle</title>
+<style>
+html, body { margin: 0; background: #fff; }
+.page { display: flex; align-items: center; justify-content: center; overflow: hidden; page-break-after: always; }
+.wrap { position: relative; }
+#stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#stage svg { position: absolute; left: 0; top: 0; }
+.lb { position: absolute; white-space: nowrap; font-family: Arial, Helvetica, sans-serif; color: #000; line-height: 1.15; transform-origin: 50% 50%; text-align: center; }
+.lb.b { font-weight: 700; }
+.fr { display: inline-block; vertical-align: middle; text-align: center; margin: 0 .1em; font-size: .9em; line-height: 1.1; }
+.fr > span { display: block; padding: 0 .08em; }
+.fr > span:first-child { border-bottom: .07em solid #000; }
+sup, sub { font-size: .72em; line-height: 0; position: relative; vertical-align: baseline; }
+sup { top: -.5em; } sub { top: .25em; }
+sup .fr { font-size: 1em; line-height: 1; margin: 0 .05em; }
+sup.ix { top: -.7em; margin-right: -.1em; font-size: .6em; }
+.rad .rt { border-top: .07em solid #000; padding: 0 .1em; }
+#sol { box-sizing: border-box; padding: 14mm 14mm; font-family: Arial, Helvetica, sans-serif; overflow: hidden; }
+#sol h1 { font-size: 20pt; margin: 0 0 4mm; } #sol h1 small { font-weight: 400; font-size: 12pt; color: #333; }
+#sol p { font-size: 11pt; margin: 0 0 6mm; }
+.cols { columns: 2; column-gap: 12mm; }
+.row { break-inside: avoid; display: flex; align-items: center; gap: 3mm; padding: 1.6mm 0; border-bottom: .2mm solid #bbb; font-size: 13pt; }
+.row .n { width: 7mm; color: #666; font-size: 10pt; } .row .q { flex: 1; } .row .a { min-width: 28%; }
+@media screen { body { background: #ddd; } .page, #sol { background: #fff; margin: 10px auto; box-shadow: 0 1px 6px rgba(0,0,0,.3); } }
+</style></head>
+<body>
+<div class="page"><div class="wrap" id="wrap"><div id="stage"></div></div></div>
+<div id="sol"></div>
+<script>window.PUZ = 'arrels';</script>
+<script>
+// Generador de puzles matemàtics amb peces regulars (costats iguals).
+(function () {
+  'use strict';
+  const PUZ = window.PUZ;
+  const MIN = '−';
+
+  // ---------- Utilitats ----------
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; };
+  const lcm = (a, b) => a / gcd(a, b) * b;
+  const int = n => (n < 0 ? MIN + (-n) : String(n));
+  const frac = (n, d) => { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d) || 1; n /= g; d /= g; if (d === 1) return int(n); return (n < 0 ? MIN : '') + `{${Math.abs(n)}|${d}}`; };
+  const grp = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const dec = s => String(s).replace('.', ',');
+
+  function makeR(seed) {
+    const rnd = mulberry32(seed);
+    const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
+    const pick = arr => arr[ri(0, arr.length - 1)];
+    const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = ri(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+    return { rnd, ri, pick, shuffle };
+  }
+
+  const plain = s => s.replace(/[{}|^_¦]/g, '');
+  // Recull n parelles {q,a} amb respostes (i preguntes) úniques. types = llista de funcions que retornen {q,a} o null.
+  function collect(n, types, R) {
+    const out = [], sa = new Set(), sq = new Set(), sv = new Set(), V = x => Math.round(x * 1e6) / 1e6;
+    let att = 0;
+    while (out.length < n && att < 40000) {
+      const t = types[(out.length + Math.floor(att / 60)) % types.length];
+      att++;
+      const it = t(R);
+      if (!it || sa.has(it.a) || sq.has(it.q) || it.q === it.a) continue;
+      if (plain(it.q).length > (R.max || 28) || plain(it.a).length > (R.max || 28)) continue;
+      if (it.v !== undefined && sv.has(V(it.v))) continue;   // dues respostes amb el mateix valor numèric crearien ambigüitat
+      if (it.v !== undefined) sv.add(V(it.v));
+      sa.add(it.a); sq.add(it.q); out.push(it);
+    }
+    return out;
+  }
+
+  // ---------- Polinomis ----------
+  const ptrim = p => { p = p.slice(); while (p.length > 1 && p[p.length - 1] === 0) p.pop(); return p; };
+  const padd = (a, b) => ptrim(Array.from({ length: Math.max(a.length, b.length) }, (_, i) => (a[i] || 0) + (b[i] || 0)));
+  const psub = (a, b) => padd(a, b.map(c => -c));
+  const pmul = (a, b) => { const r = Array(a.length + b.length - 1).fill(0); a.forEach((x, i) => b.forEach((y, j) => { r[i + j] += x * y; })); return ptrim(r); };
+  const peval = (p, x) => p.reduce((s, c, i) => s + c * Math.pow(x, i), 0);
+  function pstr(p) {
+    let out = '';
+    for (let d = p.length - 1; d >= 0; d--) {
+      const c = p[d]; if (!c) continue; const ab = Math.abs(c);
+      const term = d === 0 ? String(ab) : (ab === 1 ? '' : String(ab)) + 'x' + (d > 1 ? `^{${d}}` : '');
+      if (!out) out = (c < 0 ? MIN : '') + term; else out += (c < 0 ? ' − ' : ' + ') + term;
+    }
+    return out || '0';
+  }
+  function mono(c, xe, ye) {
+    ye = ye || 0;
+    if (!xe && !ye) return int(c);
+    const co = c === 1 ? '' : (c === -1 ? MIN : int(c));
+    return co + (xe ? 'x' + (xe > 1 ? `^{${xe}}` : '') : '') + (ye ? 'y' + (ye > 1 ? `^{${ye}}` : '') : '');
+  }
+  const par = (c, s) => (c < 0 ? `(${s})` : s);
+
+  // ---------- Generadors de continguts ----------
+  const GEN = {};
+
+  GEN.fracIrred = (n, R) => { const { ri } = R; return collect(n, [() => {
+    const q = ri(2, 12), p = ri(1, q + 6); if (p === q || gcd(p, q) !== 1) return null;
+    const k = ri(2, 9); if (k * q > 99 || k * p > 99) return null;
+    return { q: `{${k * p}|${k * q}}`, a: `{${p}|${q}}` };
+  }], R); };
+
+  GEN.fracEquiv = (n, R) => { const { ri, rnd } = R; const seenBase = new Set(); return collect(n, [() => {
+    const b = ri(2, 9), a = ri(1, b + 4); if (a === b || gcd(a, b) !== 1) return null;
+    if (seenBase.has(a + '/' + b)) return null; seenBase.add(a + '/' + b);   // cada fracció base només un cop
+    const k = ri(2, 9);
+    if (rnd() < 0.5) return { q: `{${a}|${b}} = {?|${b * k}}`, a: `? = ${a * k}` };
+    return { q: `{${a}|${b}} = {${a * k}|?}`, a: `? = ${b * k}` };
+  }], R); };
+
+  GEN.fracOps = (n, R) => { const { ri, pick, rnd } = R;
+    const opnd = () => {
+      if (rnd() < 0.16) return [ri(1, 4), 1];
+      const d = ri(2, 8); let a = ri(1, rnd() < 0.2 ? 2 * d - 1 : d - 1); a = Math.max(1, a);
+      const g = gcd(a, d); return [a / g, d / g];
+    };
+    return collect(n, [() => {
+      let [a, b] = opnd(), [c, d] = opnd(); if (b === 1 && d === 1) return null;
+      const op = pick(['+', '−', '·', ':']); let rn, rd;
+      if ((op === '·' || op === ':') && (a === 1 && b === 1 || c === 1 && d === 1)) return null;   // sense multiplicar/dividir per 1
+      if (op === '+') { rn = a * d + c * b; rd = b * d; }
+      else if (op === '−') { rn = a * d - c * b; rd = b * d; if (rn < 0) { [a, b, c, d] = [c, d, a, b]; rn = -rn; } if (rn === 0) return null; }
+      else if (op === '·') { rn = a * c; rd = b * d; }
+      else { rn = a * d; rd = b * c; }
+      const g = gcd(rn, rd); rn /= g; rd /= g; if (rn > 60 || rd > 60) return null;
+      return { q: `${frac(a, b)} ${op} ${frac(c, d)}`, a: frac(rn, rd) };
+    }], R); };
+
+  GEN.potencies = (n, R) => { const { ri, pick } = R; const bases = [2, 3, 4, 5, 6, 7, 10];
+    return collect(n, [
+      () => { const b = pick(bases), m = ri(2, 6), k = ri(2, 6); return { q: `${b}^{${m}}·${b}^{${k}}`, a: `${b}^{${m + k}}`, v: Math.pow(b, m + k) }; },
+      () => { const b = pick(bases), m = ri(4, 9), k = ri(2, m - 1); return { q: `${b}^{${m}} : ${b}^{${k}}`, a: m - k === 1 ? `${b}` : `${b}^{${m - k}}`, v: Math.pow(b, m - k) }; },
+      () => { const b = pick(bases), m = ri(2, 4), k = ri(2, 4); return { q: `(${b}^{${m}})^{${k}}`, a: `${b}^{${m * k}}`, v: Math.pow(b, m * k) }; },
+      () => { const b = pick([2, 3, 4, 5, 10]), k = ri(1, 4); return { q: `${b}^{−${k}}`, a: `{1|${Math.pow(b, k)}}`, v: Math.pow(b, -k) }; },
+      () => { const c = pick([2, 3, -2, -3, 5, 10, -1, -5, 4]), e = ri(2, 5); return { q: `${c < 0 ? `(−${-c})` : c}^{${e}}`, a: int(Math.pow(c, e)), v: Math.pow(c, e) }; },
+      () => { const b = pick(bases), k = ri(2, 6), m = ri(1, k + 2), d = k - m; if (d === 0) return null; return { q: `${b}^{−${m}}·${b}^{${k}}`, a: d === 1 ? `${b}` : `${b}^{${d < 0 ? MIN + (-d) : d}}`, v: Math.pow(b, d) }; },
+      () => { const a = ri(1, 5), b = ri(2, 6), e = ri(2, 3); if (gcd(a, b) !== 1) return null; return { q: `({${a}|${b}})^{${e}}`, a: `{${Math.pow(a, e)}|${Math.pow(b, e)}}`, v: Math.pow(a / b, e) }; },
+      () => { const x = pick([2, 3, 5]), y = pick([2, 3, 5, 7]); if (x === y) return null; const e = ri(2, 4); return { q: `${x}^{${e}}·${y}^{${e}}`, a: `${x * y}^{${e}}`, v: Math.pow(x * y, e) }; },
+    ], R); };
+
+  GEN.monomis = (n, R) => { const { ri, pick, rnd } = R;
+    const nz = (a, b) => { let c = 0; while (!c) c = ri(a, b); return c; };
+    const vars = () => (rnd() < 0.3 ? [ri(1, 3), ri(1, 2)] : [ri(1, 4), 0]);
+    return collect(n, [
+      () => { const [xe, ye] = vars(); const k = ri(2, 3); const cs = Array.from({ length: k }, () => nz(-9, 9)); const t = cs.reduce((a, b) => a + b, 0); if (!t) return null;
+        let q = mono(cs[0], xe, ye); for (let i = 1; i < k; i++) q += (cs[i] < 0 ? ' − ' : ' + ') + mono(Math.abs(cs[i]), xe, ye); return { q, a: mono(t, xe, ye) }; },
+      () => { const a = nz(-6, 6), b = nz(-6, 6), [m, y1] = vars(), [k, y2] = vars(); return { q: `${mono(a, m, y1)}·${par(b, mono(b, k, y2))}`, a: mono(a * b, m + k, y1 + y2) }; },
+      () => { const a = nz(-6, 6), b = nz(-6, 6), m = ri(1, 3), k = ri(0, 3), y1 = rnd() < 0.3 ? ri(1, 2) : 0, y2 = y1 ? ri(0, y1) : 0; return { q: `${mono(a * b, m + k, y1 + y2)} : ${par(a, mono(a, m, y1))}`, a: mono(b, k, y2) }; },
+      () => { const a = nz(-3, 3), m = ri(1, 3), k = ri(2, 3); if (a === 1 && m === 1) return null; return { q: `(${mono(a, m)})^{${k}}`, a: mono(Math.pow(a, k), m * k) }; },
+    ], R); };
+
+  GEN.polinomis = (n, R) => { const { ri, pick, rnd } = R;
+    const nz = (a, b) => { let c = 0; while (!c) c = ri(a, b); return c; };
+    const rp = (deg) => { const p = Array.from({ length: deg + 1 }, () => ri(-5, 5)); p[deg] = nz(-4, 4); return p; };
+    return collect(n, [
+      () => { const A = rp(2), B = rp(ri(1, 2)); const r = padd(A, B); if (r.every(c => !c)) return null; return { q: `(${pstr(A)}) + (${pstr(B)})`, a: pstr(r) }; },
+      () => { const A = rp(2), B = rp(ri(1, 2)); const r = psub(A, B); if (r.every(c => !c)) return null; return { q: `(${pstr(A)}) − (${pstr(B)})`, a: pstr(r) }; },
+      () => { const c = nz(-4, 4), k = ri(1, 2); const m = Array(k + 1).fill(0); m[k] = c; const P = rp(1); return { q: `${mono(c, k)}(${pstr(P)})`, a: pstr(pmul(m, P)) }; },
+      () => { const a = pick([1, 1, 2, 3]), c = pick([1, 1, 2]), b = nz(-6, 6), d = nz(-6, 6); if (a === c && b === d) return null; return { q: `(${pstr([b, a])})(${pstr([d, c])})`, a: pstr(pmul([b, a], [d, c])) }; },
+      () => { const a = ri(1, 7), k = pick([1, 1, 2]); const s = pick([1, -1]); return { q: `(${pstr([s * a, k])})^{2}`, a: pstr(pmul([s * a, k], [s * a, k])) }; },
+      () => { const a = ri(1, 9), k = pick([1, 1, 2, 3]); return { q: `(${pstr([a, k])})(${pstr([-a, k])})`, a: pstr(pmul([a, k], [-a, k])) }; },
+      () => { const P = rp(2), v = pick([-3, -2, -1, 2, 3, 4]); return { q: `${pstr(P)}  per a x = ${int(v)}`, a: int(peval(P, v)) }; },
+      () => { const a = nz(-6, 6), b = nz(-6, 6); return { q: `(${pstr(pmul([a, 1], [b, 1]))}) : (${pstr([a, 1])})`, a: pstr([b, 1]) }; },
+    ], R); };
+
+  GEN.arrels = (n, R) => { const { ri, pick } = R; const sf = [2, 3, 5, 6, 7, 10, 11, 13];
+    const rad = (coef, p) => (coef === 1 ? '' : String(coef)) + `√{${p}}`;
+    return collect(n, [
+      () => { const k = ri(2, 7), m = pick(sf); if (k * k * m > 400) return null; return { q: `√{${k * k * m}}`, a: rad(k, m) }; },
+      () => { const k = ri(2, 4), m = pick([2, 3, 5, 6, 7]); return { q: `√[3]{${k * k * k * m}}`, a: `${k}√[3]{${m}}` }; },
+      () => { const m = pick(sf), a = ri(2, 9), b = ri(1, 9); const s = pick([1, -1]); if (s < 0 && a <= b) return null; const r = a + s * b; return { q: `${a}√{${m}} ${s > 0 ? '+' : '−'} ${b === 1 ? '' : b}√{${m}}`, a: rad(r, m) }; },
+      () => { const m = pick([2, 3, 5]), k1 = ri(1, 4), k2 = ri(1, 4); if (k1 === k2) return null; const [u, v] = [k1, k2].sort((x, y) => x - y); return { q: `√{${u * u * m}} + √{${v * v * m}}`, a: rad(u + v, m) }; },
+      () => { const x = pick([2, 3, 5, 6, 7, 8, 10, 12, 15, 18, 20, 27]), y = pick([2, 3, 5, 6, 8, 10, 12, 14, 18]); let p = x * y, k = 1; for (let f = 12; f >= 2; f--) { while (p % (f * f) === 0) { p /= f * f; k *= f; } } return { q: `√{${x}}·√{${y}}`, a: p === 1 ? String(k) : rad(k, p) }; },
+      () => { const m = pick([2, 3, 5]), k = ri(2, 5); return { q: `{√{${k * k * m}}|√{${m}}}`, a: String(k) }; },
+      () => { const m = pick([2, 3, 5, 6, 7]), a = ri(1, 12); const g = gcd(a, m); const cn = a / g, dn = m / g; return { q: `{${a}|√{${m}}}`, a: dn === 1 ? rad(cn, m) : `{${rad(cn, m)}|${dn}}` }; },
+      () => { const b = pick([2, 3, 5, 7, 10, 11]); return { q: `${b}^{{1|2}}`, a: `√{${b}}` }; },
+      () => { const b = pick([2, 3, 5, 7]), e = pick([2, 4]); return { q: `√[3]{${b}^{${e}}}`, a: `${b}^{{${e}|3}}` }; },
+      () => { const k = ri(2, 15); return { q: `√{${k * k}}`, a: String(k) }; },
+    ], R); };
+
+  GEN.segonGrau = (n, R) => { const { ri, pick } = R;
+    const eq = p => `${pstr(p)} = 0`;
+    const roots = (r1, r2) => (r1 === r2 ? `x = ${int(r1)}` : `x = ${int(Math.min(r1, r2))} i x = ${int(Math.max(r1, r2))}`);
+    return collect(n, [
+      () => { const r1 = ri(-7, 7), r2 = ri(-7, 7); if (!r1 && !r2) return null; if (r1 === r2) return null; return { q: eq([r1 * r2, -(r1 + r2), 1]), a: roots(r1, r2) }; },
+      () => { const r1 = ri(-6, 6), r2 = ri(-6, 6), a = pick([2, 3]); if (r1 === r2 || (!r1 && !r2)) return null; return { q: eq([a * r1 * r2, -a * (r1 + r2), a]), a: roots(r1, r2) }; },
+      () => { const k = ri(2, 12); return { q: `x^{2} − ${k * k} = 0`, a: `x = ±${k}` }; },
+      () => { const b = ri(-9, 9); if (!b) return null; return { q: eq([0, b, 1]), a: roots(0, -b) }; },
+      () => { const r = ri(-7, 7); if (!r) return null; return { q: eq([r * r, -2 * r, 1]), a: `x = ${int(r)}` }; },
+    ], R); };
+
+  GEN.logaritmes = (n, R) => { const { ri, pick } = R;
+    return collect(n, [
+      () => { const b = pick([2, 3, 4, 5, 10]), e = ri(-3, 5); const arg = e >= 0 ? String(Math.pow(b, e)) : `{1|${Math.pow(b, -e)}}`; if (e >= 0 && Math.pow(b, e) > 1100) return null; return { q: b === 10 ? `log ${arg}` : `log_{${b}} ${arg}`, a: int(e) }; },
+      () => { const p = pick([[4, 2, 1, 2], [9, 3, 1, 2], [8, 2, 1, 3], [25, 5, 1, 2], [27, 3, 1, 3], [16, 2, 1, 4], [4, 8, 3, 2]]); return { q: `log_{${p[0]}} ${p[1]}`, a: p[3] === 1 ? String(p[2]) : frac(p[2] * 1, p[3]) }; },
+      () => { const b = pick([2, 3, 5, 7]), A = ri(2, 9), B = ri(2, 9); if (A === B || A === b || B === b) return null; return { q: `log_{${b}} ${A} + log_{${b}} ${B}`, a: `log_{${b}} ${A * B}` }; },
+      () => { const b = pick([2, 3, 5]), B = ri(2, 6), k = ri(2, 6); if (B === b || k === b) return null; return { q: `log_{${b}} ${B * k} − log_{${b}} ${B}`, a: `log_{${b}} ${k}` }; },
+      () => { const b = pick([2, 3, 5]), A = ri(2, 6), k = ri(2, 4); if (A === b) return null; return { q: `${k}·log_{${b}} ${A}`, a: `log_{${b}} ${Math.pow(A, k)}` }; },
+      () => { const b = pick([2, 3, 5]), e = ri(2, 6); if (Math.pow(b, e) > 800) return null; return { q: `${b}^{x} = ${Math.pow(b, e)}`, a: `x = ${e}` }; },
+    ], R); };
+
+  GEN.notacio = (n, R) => { const { ri, pick } = R;
+    const mant = () => pick(['1', '2', '3', '4', '5', '6', '7', '8', '9', '1.2', '2.5', '3.7', '4.5', '5.6', '6.2', '7.3', '8.4', '9.1', '1.05', '3.25']);
+    return collect(n, [
+      () => { const m = mant(), e = ri(4, 9); const ds = m.replace('.', ''); const dl = m.includes('.') ? m.split('.')[1].length : 0; if (e < dl) return null; return { q: grp(ds + '0'.repeat(e - dl)), a: `${dec(m)}·10^{${e}}` }; },
+      () => { const m = mant(), e = ri(3, 8); const ds = m.replace('.', ''); const dl = m.includes('.') ? m.split('.')[1].length : 0; return { q: '0,' + '0'.repeat(e - 1) + ds, a: `${dec(m)}·10^{−${e - 0}}`.replace(/10\^\{−(\d+)\}/, (s, x) => `10^{−${x}}`) }; },
+      () => { const m = mant(), e = ri(3, 8); const ds = m.replace('.', ''); const dl = m.includes('.') ? m.split('.')[1].length : 0; if (e < dl) return null; return { q: `${dec(m)}·10^{${e}}`, a: grp(ds + '0'.repeat(e - dl)) }; },
+      () => { const a = pick([1, 2, 3]), b = pick([2, 3, 4]), e1 = ri(2, 8), e2 = ri(2, 8); if (a * b >= 10) return null; return { q: `(${a}·10^{${e1}})·(${b}·10^{${e2}})`, a: `${a * b}·10^{${e1 + e2}}` }; },
+      () => { const a = pick([2, 3]), b = pick([1, 2, 3]), e1 = ri(6, 12), e2 = ri(2, 5); return { q: `(${a * b}·10^{${e1}}) : (${a}·10^{${e2}})`, a: b === 1 ? `10^{${e1 - e2}}` : `${b}·10^{${e1 - e2}}` }; },
+      () => { const a = ri(1, 5), b = ri(1, 4), e = ri(2, 9); return { q: `${a}·10^{${e}} + ${b}·10^{${e}}`, a: `${a + b}·10^{${e}}` }; },
+      () => { const m = pick(['1', '2', '3', '5', '7']), e = ri(2, 8), e2 = e - 2; return { q: `${m}·10^{${e}} : 10^{${ri(1, 1)}}`, a: `${m}·10^{${e - 1}}` }; },
+    ], R); };
+
+  GEN.mcdmcm = (n, R) => { const { ri, pick } = R;
+    return collect(n, [
+      () => { const g = ri(2, 24), x = ri(2, 9), y = ri(2, 9); if (gcd(x, y) !== 1 || x === y) return null; return { q: `mcd(${g * x}, ${g * y})`, a: String(g) }; },
+      () => { const a = ri(4, 36), b = ri(4, 36); if (a === b || a % b === 0 || b % a === 0) return null; const l = lcm(a, b); if (l > 400) return null; return { q: `mcm(${a}, ${b})`, a: String(l) }; },
+      () => { const g = ri(2, 15), x = ri(2, 6), y = ri(2, 6), z = ri(2, 6); if (new Set([x, y, z]).size < 3) return null; const G = gcd(gcd(x, y), z); if (G !== 1) return null; return { q: `mcd(${g * x}, ${g * y}, ${g * z})`, a: String(g) }; },
+      () => { const a = pick([2, 3, 4, 5, 6, 8, 9, 10, 12]), b = pick([3, 4, 5, 6, 7, 9, 10, 15]), c = pick([2, 5, 6, 8, 12]); const l = lcm(lcm(a, b), c); if (l > 400 || new Set([a, b, c]).size < 3) return null; return { q: `mcm(${a}, ${b}, ${c})`, a: String(l) }; },
+      () => { const f = [[2, 3], [2, 2, 3], [2, 3, 5], [2, 2, 5], [2, 2, 2, 3], [3, 3, 5], [2, 3, 7], [2, 2, 3, 5], [2, 5, 5], [2, 3, 3], [2, 2, 2, 5], [3, 5, 7]]; const t = pick(f); const v = t.reduce((a, b) => a * b, 1); const cnt = {}; t.forEach(p => { cnt[p] = (cnt[p] || 0) + 1; }); return { q: `Descompon ${v}`, a: Object.keys(cnt).map(p => cnt[p] > 1 ? `${p}^{${cnt[p]}}` : p).join('·') }; },
+    ], R); };
+
+  GEN.percentatges = (n, R) => { const { ri, pick } = R;
+    return collect(n, [
+      () => { const p = pick([5, 10, 15, 20, 25, 30, 40, 50, 60, 75]), c = ri(2, 40) * 20; return { q: `${p} % de ${c}`, a: String(c * p / 100) }; },
+      () => { const p = pick([5, 10, 20, 25, 50]), c = ri(2, 30) * 20; return { q: `${c} + ${p} %`, a: String(c * (100 + p) / 100) }; },
+      () => { const p = pick([10, 20, 25, 30, 40, 50]), c = ri(2, 30) * 20; return { q: `${c} € − ${p} %`, a: `${c * (100 - p) / 100} €` }; },
+      () => { const p = pick([5, 10, 20, 25, 40, 50, 75]), b = ri(2, 20) * 20; const a = b * p / 100; if (a !== Math.floor(a)) return null; return { q: `? % de ${b} = ${a}`, a: `${p} %` }; },
+      () => { const p = pick([10, 20, 25, 50]), c = ri(2, 30) * 20; return { q: `${p} % de x = ${c * p / 100}`, a: `x = ${c}` }; },
+    ], R); };
+
+  // ---------- Formes ----------
+  const S = 100, H3 = S * Math.sqrt(3) / 2;
+  const V = (a, b) => [S * (a + b / 2), -H3 * b];
+  const upT = (a, b) => [V(a, b), V(a + 1, b), V(a, b + 1)];
+  const dnT = (a, b) => [V(a + 1, b), V(a, b + 1), V(a + 1, b + 1)];
+  const SHAPES = {
+    triangle: { nom: 'Triangle', make: () => { const n = 4, t = []; for (let a = 0; a < n; a++) for (let b = 0; a + b < n; b++) { t.push(upT(a, b)); if (a + b <= n - 2) t.push(dnT(a, b)); } return t; } },
+    rombe: { nom: 'Rombe', make: () => { const n = 3, t = []; for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) { t.push(upT(a, b)); t.push(dnT(a, b)); } return t; } },
+    hexagon: { nom: 'Hexàgon', make: () => { const r = 2, t = [], inn = (a, b) => Math.max(Math.abs(a), Math.abs(b), Math.abs(a + b)) <= r;
+      for (let a = -r - 1; a <= r + 1; a++) for (let b = -r - 1; b <= r + 1; b++) {
+        if (inn(a, b) && inn(a + 1, b) && inn(a, b + 1)) t.push(upT(a, b));
+        if (inn(a + 1, b) && inn(a, b + 1) && inn(a + 1, b + 1)) t.push(dnT(a, b));
+      } return t; } },
+    estrella: { nom: 'Estrella', make: () => {
+      const hex = [upT(0, 0), upT(-1, 0), upT(0, -1), dnT(-1, 0), dnT(0, -1), dnT(-1, -1)], O = V(0, 0), t = hex.slice();
+      const eq = (p, q) => Math.abs(p[0] - q[0]) < 1e-6 && Math.abs(p[1] - q[1]) < 1e-6;
+      hex.forEach(tr => { const o = tr.findIndex(p => eq(p, O)); const P = tr[(o + 1) % 3], Q = tr[(o + 2) % 3]; t.push([P, Q, [P[0] + Q[0] - O[0], P[1] + Q[1] - O[1]]]); });
+      return t; } },
+    flor: { nom: 'Flor', make: () => hexes([[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1], [1, -1], [-1, 1]]) },
+    rusc: { nom: 'Rusc', make: () => { const l = []; for (let q = 1; q <= 3; q++) l.push([q, -1]); for (let q = 0; q <= 3; q++) l.push([q, 0]); for (let q = 0; q <= 2; q++) l.push([q, 1]); return hexes(l); } },
+    quadrat: { nom: 'Quadrat', make: () => px(['XXXX', 'XXXX', 'XXXX', 'XXXX']) },
+    rect: { nom: 'Rectangle', make: () => px(['XXXX', 'XXXX', 'XXXX']) },
+    escala: { nom: 'Escala', make: () => px(['XXXX', 'XXX.', 'XX..']) },
+    ele: { nom: 'Lletra L', make: () => px(['XXX.', 'XXX.', 'XXXX']) },
+    quadrat3: { nom: 'Quadrat gran', make: () => px(['XXX', 'XXX', 'XXX']) },
+    cor: { nom: 'Cor', make: () => px(['XX.XX', 'XXXXX', 'XXXXX', '.XXX.', '..X..']) },
+    creu: { nom: 'Creu', make: () => px(['.XX.', '.XX.', 'XXXX', 'XXXX', '.XX.', '.XX.']) },
+    fletxa: { nom: 'Fletxa', make: () => px(['..X..', '.XXX.', 'XXXXX', '..X..', '..X..', '..X..']) },
+    casa: { nom: 'Casa', make: () => px(['..X..', '.XXX.', 'XXXXX', 'XXXXX', 'XXXXX']) },
+    diamant: { nom: 'Diamant', make: () => px(['..X..', '.XXX.', 'XXXXX', '.XXX.', '..X..']) },
+    // ---- Figures mixtes (triangles + quadrats + hexàgons, tots amb el mateix costat) ----
+    casa2: { nom: 'Casa amb teulada', make: () => px(['XXX', 'XXX']).concat([upT(0, 0), upT(1, 0), upT(2, 0), dnT(0, 0), dnT(1, 0)]) },
+    arbre: { nom: 'Arbre', make: () => { const t = []; for (let a = 0; a < 3; a++) for (let b = 0; a + b < 3; b++) { t.push(upT(a, b)); if (a + b <= 1) t.push(dnT(a, b)); }
+      t.push([[S, 0], [2 * S, 0], [2 * S, S], [S, S]], [[S, S], [2 * S, S], [2 * S, 2 * S], [S, 2 * S]]); return t; } },
+    cohet: { nom: 'Coet', make: () => px(['XX', 'XX', 'XX', 'XX']).concat([upT(0, 0), upT(1, 0), dnT(0, 0), upT(0, 1)],
+      [[[0, 3 * S], [0, 4 * S], [-H3, 3.5 * S]], [[2 * S, 3 * S], [2 * S, 4 * S], [2 * S + H3, 3.5 * S]]]) },
+    sol: { nom: 'Sol', make: () => { const t = [], hv = [0, 1, 2, 3, 4, 5].map(k => { const a = (-90 + 60 * k) * Math.PI / 180; return [S * Math.cos(a), S * Math.sin(a)]; }); t.push(hv.slice());
+      const nrm = hv.map((P, k) => { const Q = hv[(k + 1) % 6], m = [(P[0] + Q[0]) / 2, (P[1] + Q[1]) / 2], l = Math.hypot(...m); return [m[0] / l, m[1] / l]; });
+      hv.forEach((P, k) => { const Q = hv[(k + 1) % 6], n = nrm[k]; t.push([P, Q, [Q[0] + S * n[0], Q[1] + S * n[1]], [P[0] + S * n[0], P[1] + S * n[1]]]); });
+      hv.forEach((P, k) => { const n0 = nrm[(k + 5) % 6], n1 = nrm[k]; t.push([P, [P[0] + S * n0[0], P[1] + S * n0[1]], [P[0] + S * n1[0], P[1] + S * n1[1]]]); }); return t; } },
+  };
+  function px(rows) { const t = []; rows.forEach((r, y) => [...r].forEach((c, x) => { if (c === 'X') t.push([[x * S, y * S], [(x + 1) * S, y * S], [(x + 1) * S, (y + 1) * S], [x * S, (y + 1) * S]]); })); return t; }
+  function hexes(list) { return list.map(([q, r]) => { const cx = S * Math.sqrt(3) * (q + r / 2), cy = 1.5 * S * r; return [0, 1, 2, 3, 4, 5].map(k => { const a = (-90 + 60 * k) * Math.PI / 180; return [cx + S * Math.cos(a), cy + S * Math.sin(a)]; }); }); }
+
+  // ---------- Puzles ----------
+  const PUZZLES = {
+    'fraccions-irreductibles': { titol: 'Fraccions irreductibles', ajuda: 'Uneix cada fracció amb la seva forma irreductible.', forma: 'triangle', gen: 'fracIrred', seed: 11 },
+    'fraccions-equivalents': { titol: 'Fraccions equivalents', ajuda: 'Uneix cada igualtat de fraccions equivalents amb el valor que falta.', forma: 'cor', gen: 'fracEquiv', seed: 12 },
+    'fraccions-operacions': { titol: 'Operacions amb fraccions', ajuda: 'Uneix cada operació amb el seu resultat (fracció irreductible).', forma: 'quadrat', gen: 'fracOps', seed: 13 },
+    'potencies': { titol: 'Potències', ajuda: 'Uneix cada potència amb el seu resultat o expressió simplificada.', forma: 'creu', gen: 'potencies', seed: 14 },
+    'monomis': { oneLine: true, max: 22, titol: 'Operacions amb monomis', ajuda: 'Uneix cada operació amb monomis amb el seu resultat.', forma: 'escala', gen: 'monomis', seed: 15 },
+    'polinomis': { oneLine: true, max: 22, titol: 'Operacions amb polinomis', ajuda: 'Uneix cada operació amb polinomis amb el seu resultat.', forma: 'rect', gen: 'polinomis', seed: 16 },
+    'arrels': { titol: 'Radicals (4t ESO)', ajuda: 'Uneix cada expressió amb radicals amb la seva forma simplificada.', forma: 'sol', gen: 'arrels', seed: 17 },
+    'equacions-2n-grau': { oneLine: true, max: 22, titol: 'Equacions de 2n grau', ajuda: 'Uneix cada equació amb les seves solucions.', forma: 'quadrat3', gen: 'segonGrau', seed: 18 },
+    'logaritmes': { oneLine: true, max: 20, titol: 'Logaritmes (4t ESO)', ajuda: 'Uneix cada expressió logarítmica amb el seu valor o forma simplificada.', forma: 'ele', gen: 'logaritmes', seed: 19 },
+    'notacio-cientifica': { max: 24, titol: 'Notació científica', ajuda: 'Uneix cada nombre o operació amb la seva expressió en notació científica.', forma: 'arbre', gen: 'notacio', seed: 20 },
+    'mcd-mcm': { titol: 'MCD, mcm i descomposició', ajuda: 'Uneix cada càlcul amb el seu resultat.', forma: 'estrella', gen: 'mcdmcm', seed: 21 },
+    'percentatges': { titol: 'Percentatges', ajuda: 'Uneix cada càlcul amb el seu resultat.', forma: 'casa2', gen: 'percentatges', seed: 22 },
+  };
+
+  // ---------- Marcatge -> HTML ----------
+  // {N|D} fracció, ^{..} exponent, _{..} subíndex, √{..} arrel, √[n]{..} arrel n-èsima
+  function fmt(s) {
+    let i = 0;
+    function seq(end) {
+      let out = '';
+      while (i < s.length && s[i] !== end) {
+        const c = s[i];
+        if (c === '^' || c === '_') { i += 2; const inner = seq('}'); i++; out += `<${c === '^' ? 'sup' : 'sub'}>${inner}</${c === '^' ? 'sup' : 'sub'}>`; }
+        else if (c === '√') {
+          i++; let idx = '';
+          if (s[i] === '[') { const j = s.indexOf(']', i); idx = s.slice(i + 1, j); i = j + 1; }
+          i++; const inner = seq('}'); i++;
+          out += `<span class="rad">${idx ? `<sup class="ix">${idx}</sup>` : ''}√<span class="rt">${inner}</span></span>`;
+        } else if (c === '{') { i++; const nn = seq('|'); i++; const dd = seq('}'); i++; out += `<span class="fr"><span>${nn}</span><span>${dd}</span></span>`; }
+        else if (c === '¦') { out += '<br>'; i++; }
+        else { out += c; i++; }
+      }
+      return out;
+    }
+    return seq(null);
+  }
+
+  // Parteix una expressió llarga en dues línies pel millor operador de nivell 0
+  function breakPoint(s) {
+    const ops = [' + ', ' − ', ' : ', ' = ', ' i ', ' per ', '·'];
+    let depth = 0, best = null;
+    for (let i = 0; i < s.length; i++) {
+      const ch = s[i];
+      if ('({['.includes(ch)) depth++; else if (')}]'.includes(ch)) depth--;
+      else if (depth === 0 && i > 0) {
+        for (const op of ops) if (s.startsWith(op, i)) {
+          const score = Math.abs(i - s.length / 2);
+          if (!best || score < best.score) best = { i, op, score };
+        }
+      }
+    }
+    if (!best) return null;
+    return best.op === '·' ? s.slice(0, best.i) + '¦' + s.slice(best.i) : s.slice(0, best.i) + '¦' + s.slice(best.i + 1);
+  }
+
+  // ---------- Tipografia d'un sol traç (per marcar amb làser sense gravar) ----------
+  // Cel·la: alçada de majúscula/dígit = 7 (y=0 dalt, y=7 línia base); x-height: y=2. w = amplada de la lletra.
+  const FONTG = (() => {
+    const g = {};
+    const def = (chars, w, ...p) => { chars.split('').forEach(c => { g[c] = { w, p }; }); };
+    def('0', 5, [[1.5, 0], [3.5, 0], [5, 1.5], [5, 5.5], [3.5, 7], [1.5, 7], [0, 5.5], [0, 1.5], [1.5, 0]]);
+    def('1', 3, [[0, 1.8], [2, 0], [2, 7]]);
+    def('2', 5, [[0, 1.5], [1.5, 0], [3.5, 0], [5, 1.5], [5, 3], [0, 7], [5, 7]]);
+    def('3', 5, [[0, 1], [1.5, 0], [3.5, 0], [5, 1.2], [5, 2.8], [3.5, 3.5], [2, 3.5]], [[3.5, 3.5], [5, 4.2], [5, 5.8], [3.5, 7], [1.5, 7], [0, 6]]);
+    def('4', 5, [[4, 7], [4, 0], [0, 5], [5.5, 5]]);
+    def('5', 5, [[5, 0], [0.5, 0], [0, 3.2], [1.5, 2.7], [3.5, 2.7], [5, 4], [5, 5.8], [3.5, 7], [1.5, 7], [0, 6]]);
+    def('6', 5, [[4.5, 0.5], [2.5, 0], [1, 1], [0, 3], [0, 5.5], [1.5, 7], [3.5, 7], [5, 5.5], [5, 4], [3.5, 2.8], [1.5, 2.8], [0, 4]]);
+    def('7', 5, [[0, 0], [5, 0], [2, 7]]);
+    def('8', 5, [[1.5, 3.4], [0.3, 2.4], [0.3, 1.2], [1.5, 0], [3.5, 0], [4.7, 1.2], [4.7, 2.4], [3.5, 3.4], [1.5, 3.4], [0, 4.5], [0, 5.8], [1.5, 7], [3.5, 7], [5, 5.8], [5, 4.5], [3.5, 3.4]]);
+    def('9', 5, [[0.5, 6.5], [2.5, 7], [4, 6], [5, 4], [5, 1.5], [3.5, 0], [1.5, 0], [0, 1.5], [0, 3], [1.5, 4.2], [3.5, 4.2], [5, 3]]);
+    def('D', 5, [[0, 0], [0, 7], [2.5, 7], [4.5, 6], [5, 3.5], [4.5, 1], [2.5, 0], [0, 0]]);
+    def('a', 4, [[4, 3.2], [3, 2.2], [1.5, 2], [0.3, 3], [0, 4.5], [0.3, 6], [1.5, 7], [3, 6.8], [4, 5.8]], [[4, 2], [4, 7]]);
+    def('c', 4, [[4, 3], [3, 2.2], [1.5, 2], [0.3, 3], [0, 4.5], [0.3, 6], [1.5, 7], [3, 6.8], [4, 6]]);
+    def('d', 4, [[4, 3.2], [3, 2.2], [1.5, 2], [0.3, 3], [0, 4.5], [0.3, 6], [1.5, 7], [3, 6.8], [4, 5.8]], [[4, 0], [4, 7]]);
+    def('e', 4, [[0, 4.5], [4, 4.5], [4, 3.5], [3, 2.2], [1.5, 2], [0.3, 3], [0, 4.5], [0.3, 6], [1.5, 7], [3, 6.8], [4, 6]]);
+    def('g', 4, [[4, 3.2], [3, 2.2], [1.5, 2], [0.3, 3], [0, 4.5], [0.3, 6], [1.5, 7], [3, 6.8], [4, 5.8]], [[4, 2], [4, 8.5], [3.2, 9.7], [1.5, 10], [0.5, 9.5]]);
+    def('i', 2, [[1, 2], [1, 7]], [[1, 0.3], [1, 0.9]]);
+    def('l', 2, [[1, 0], [1, 7]]);
+    def('m', 6, [[0, 7], [0, 2]], [[0, 3.2], [1, 2.1], [2.2, 2], [3, 2.8], [3, 7]], [[3, 3.2], [4, 2.1], [5.2, 2], [6, 2.8], [6, 7]]);
+    def('n', 4, [[0, 7], [0, 2]], [[0, 3.3], [1.2, 2.2], [2.5, 2], [3.7, 2.5], [4, 3.8], [4, 7]]);
+    def('o', 4, [[1.5, 2], [3, 2], [4, 3.2], [4, 5.8], [3, 7], [1.5, 7], [0, 5.8], [0, 3.2], [1.5, 2]]);
+    def('p', 4, [[0, 2], [0, 10]], [[0, 3], [1, 2.2], [2.5, 2], [3.7, 3], [4, 4.5], [3.7, 6], [2.5, 7], [1, 6.8], [0, 6]]);
+    def('r', 3, [[0, 2], [0, 7]], [[0, 3.8], [1, 2.5], [2.2, 2], [3.2, 2.2]]);
+    def('s', 4, [[3.8, 3], [3, 2.2], [1.5, 2], [0.4, 2.7], [0.4, 3.8], [1.8, 4.5], [3, 5], [4, 6], [3.5, 6.8], [2, 7], [0.5, 6.7], [0, 6]]);
+    def('x', 4, [[0, 2], [4, 7]], [[4, 2], [0, 7]]);
+    def('y', 4, [[0, 2], [2, 6.5]], [[4, 2], [1.5, 9], [0.5, 10]]);
+    def('+', 5, [[0, 3.5], [5, 3.5]], [[2.5, 1], [2.5, 6]]);
+    def('−-', 5, [[0, 3.5], [5, 3.5]]);
+    def('·', 1.5, [[0.7, 3.2], [0.8, 3.8]]);
+    def(':', 1.5, [[0.7, 2.2], [0.8, 3]], [[0.7, 6], [0.8, 6.8]]);
+    def('=', 5, [[0, 2.5], [5, 2.5]], [[0, 4.8], [5, 4.8]]);
+    def('(', 3, [[2.5, -1], [1, 1], [0.5, 3.5], [1, 6], [2.5, 8]]);
+    def(')', 3, [[0.5, -1], [2, 1], [2.5, 3.5], [2, 6], [0.5, 8]]);
+    def('√', 5, [[0, 4], [1.2, 3.5], [2.5, 7.5], [5, -0.5]]);
+    def(',', 1.5, [[1, 6.4], [1, 7.2], [0.2, 8.6]]);
+    def('.', 1.5, [[0.7, 6.4], [0.8, 7]]);
+    def('?', 4.5, [[0, 1.5], [1.2, 0], [3, 0], [4.2, 1.2], [4.2, 2.8], [2.5, 4], [2.5, 5]], [[2.5, 6.4], [2.5, 7]]);
+    def('%', 6, [[5, 0], [0.5, 7]], [[1, 0.5], [2.4, 0.5], [2.4, 2.2], [1, 2.2], [1, 0.5]], [[3.6, 4.8], [5, 4.8], [5, 6.5], [3.6, 6.5], [3.6, 4.8]]);
+    def('€', 5, [[4.5, 1], [3.3, 0], [1.8, 0], [0.3, 1.5], [0, 3.5], [0.3, 5.5], [1.8, 7], [3.3, 7], [4.5, 6]], [[0, 2.8], [3.8, 2.8]], [[0, 4.2], [3.8, 4.2]]);
+    def('±', 5, [[0, 2.5], [5, 2.5]], [[2.5, 0.2], [2.5, 4.8]], [[0, 6.6], [5, 6.6]]);
+    return g;
+  })();
+  const missingGlyphs = new Set();
+  function glyphRun(str, x, base, targetW, fs, out) {
+    const sy = fs * 0.716 / 7; let pen = 0; const parts = [];
+    for (const ch of str) {
+      if (ch === ' ' || ch === ' ' || ch === ' ') { pen += 2.6; continue; }
+      const gl = FONTG[ch]; if (!gl) { missingGlyphs.add(ch); pen += 4; continue; }
+      gl.p.forEach(pl => parts.push(pl.map(([gx, gy]) => [pen + gx, gy])));
+      pen += gl.w + 1.6;
+    }
+    const nat = Math.max(pen - 1.6, 1);
+    const sx = Math.min(1.5 * sy, Math.max(0.6 * sy, targetW / nat));
+    const off = x + (targetW - nat * sx) / 2;
+    parts.forEach(pl => out.push(pl.map(([gx, gy]) => [off + gx * sx, base - (7 - gy) * sy])));
+  }
+
+  // ---------- Disseny ----------
+  const MODE = new URLSearchParams(location.search).get('mode') || 'print';   // print | hand | laser
+  const CUT = MODE !== 'print';
+  const MM = 96 / 25.4;
+  const R = makeR(PUZZLES[PUZ].seed);
+  const cfg = PUZZLES[PUZ], shape = SHAPES[cfg.forma];
+  let tiles = shape.make();
+  const rk = v => Math.round(v * 10) / 10;
+  const areaOf = pts => { let a = 0; for (let i = 0; i < pts.length; i++) { const [x1, y1] = pts[i], [x2, y2] = pts[(i + 1) % pts.length]; a += x1 * y2 - x2 * y1; } return a / 2; };
+  tiles = tiles.map(p => (areaOf(p) > 0 ? p.slice().reverse() : p));   // antihorari visual
+  const ekey = (p, q) => { const a = `${rk(p[0])},${rk(p[1])}`, b = `${rk(q[0])},${rk(q[1])}`; return a < b ? a + '|' + b : b + '|' + a; };
+  const emap = new Map();
+  tiles.forEach((p, ti) => p.forEach((pt, i) => { const k = ekey(pt, p[(i + 1) % p.length]); if (!emap.has(k)) emap.set(k, []); emap.get(k).push({ ti, i }); }));
+  const internal = [...emap.entries()].filter(([, v]) => v.length === 2);
+  R.max = cfg.max || 28;
+  const pairs = GEN[cfg.gen](internal.length, R);
+  const errors = [];
+  if (pairs.length < internal.length) errors.push(`només ${pairs.length} de ${internal.length} parelles`);
+  const order = R.shuffle(internal.map((_, i) => i));
+  const content = new Map();   // "ti:i" -> {html, bold}
+  internal.forEach(([k, v], idx) => {
+    const it = pairs[order[idx] % Math.max(1, pairs.length)]; if (!it) return;
+    const qFirst = R.rnd() < 0.5, [A, B] = qFirst ? [v[0], v[1]] : [v[1], v[0]];
+    content.set(`${A.ti}:${A.i}`, { t: it.q, bold: false });
+    content.set(`${B.ti}:${B.i}`, { t: it.a, bold: true });
+  });
+
+  // geometria de pàgina
+  const xs = tiles.flat().map(p => p[0]), ys = tiles.flat().map(p => p[1]);
+  const X0 = Math.min(...xs), Y0 = Math.min(...ys), W = Math.max(...xs) - X0, H = Math.max(...ys) - Y0;
+  const M = 9;   // marge mm
+  const land = Math.min((297 - 2 * M) / W, (210 - 2 * M) / H), port = Math.min((210 - 2 * M) / W, (297 - 2 * M) / H);
+  const landscape = land >= port, mmU = Math.max(land, port);   // mm per unitat
+  const PW = landscape ? 297 : 210, PH = landscape ? 209 : 296;
+  document.head.insertAdjacentHTML('beforeend', `<style>@page{size:A4 ${landscape ? 'landscape' : 'portrait'};margin:0}.page{width:${PW}mm;height:${PH}mm}</style>`);
+  const wrap = document.getElementById('wrap'), stage = document.getElementById('stage');
+  const sc = mmU * MM;
+  wrap.style.width = (W * sc) + 'px'; wrap.style.height = (H * sc) + 'px';
+  stage.style.width = W + 'px'; stage.style.height = H + 'px'; stage.style.transform = `scale(${sc})`;
+  const GAP = 1.3 / mmU, FONT = S * 0.115, SW = 0.4 / mmU;
+
+  function inset(pts, g) {
+    const n = pts.length, out = [];
+    for (let i = 0; i < n; i++) {
+      const p0 = pts[(i + n - 1) % n], p1 = pts[i], p2 = pts[(i + 1) % n];
+      let d1 = [p1[0] - p0[0], p1[1] - p0[1]], d2 = [p2[0] - p1[0], p2[1] - p1[1]];
+      const l1 = Math.hypot(...d1), l2 = Math.hypot(...d2); d1 = [d1[0] / l1, d1[1] / l1]; d2 = [d2[0] / l2, d2[1] / l2];
+      const n1 = [d1[1], -d1[0]], n2 = [d2[1], -d2[0]], dot = 1 + n1[0] * n2[0] + n1[1] * n2[1];
+      const k = 1 / Math.max(dot, 0.08);
+      out.push([p1[0] + (n1[0] + n2[0]) * k * g, p1[1] + (n1[1] + n2[1]) * k * g]);
+    }
+    return out;
+  }
+
+  // ---- línies de tall úniques (cada costat compartit només un cop) i unió de trams rectes ----
+  const uedges = [...emap.keys()].map(k => k.split('|').map(s => s.split(',').map(Number)));
+  function straightRuns(edges) {
+    const groups = new Map();
+    edges.forEach(([a, b]) => {
+      let ang = Math.atan2(b[1] - a[1], b[0] - a[0]); if (ang < 0) ang += Math.PI; if (ang > Math.PI - 1e-6) ang = 0;
+      const th = Math.round(ang * 180 / Math.PI * 2) / 2, rr = th * Math.PI / 180, nx = -Math.sin(rr), ny = Math.cos(rr);
+      const key = th + '|' + Math.round(a[0] * nx + a[1] * ny);
+      if (!groups.has(key)) groups.set(key, { rr, nx, ny, ds: [], segs: [] });
+      const g = groups.get(key), t0 = a[0] * Math.cos(rr) + a[1] * Math.sin(rr), t1 = b[0] * Math.cos(rr) + b[1] * Math.sin(rr);
+      g.ds.push(a[0] * nx + a[1] * ny); g.segs.push([Math.min(t0, t1), Math.max(t0, t1)]);
+    });
+    const runs = [];
+    groups.forEach(g => {
+      const d = g.ds.reduce((s, v) => s + v, 0) / g.ds.length, cs = Math.cos(g.rr), sn = Math.sin(g.rr);
+      g.segs.sort((p, q) => p[0] - q[0]);
+      let cur = null;
+      const flush = () => { if (cur) runs.push([[cur[0] * cs + d * g.nx, cur[0] * sn + d * g.ny], [cur[1] * cs + d * g.nx, cur[1] * sn + d * g.ny]]); };
+      g.segs.forEach(s => { if (cur && s[0] <= cur[1] + 1.5) cur[1] = Math.max(cur[1], s[1]); else { flush(); cur = [s[0], s[1]]; } });
+      flush();
+    });
+    return runs;
+  }
+  const runs = straightRuns(uedges);
+
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+  const insets = tiles.map(p => inset(p, CUT ? 0.5 / mmU : GAP));
+  if (!CUT) {
+    insets.forEach(p => { svg += `<polygon points="${p.map(q => (q[0] - X0).toFixed(2) + ',' + (q[1] - Y0).toFixed(2)).join(' ')}" fill="#fff" stroke="#000" stroke-width="${SW.toFixed(2)}" stroke-linejoin="round"/>`; });
+  } else {
+    runs.forEach(([a, b]) => { svg += `<line x1="${(a[0] - X0).toFixed(2)}" y1="${(a[1] - Y0).toFixed(2)}" x2="${(b[0] - X0).toFixed(2)}" y2="${(b[1] - Y0).toFixed(2)}" stroke="#000" stroke-width="${SW.toFixed(2)}" stroke-linecap="round"/>`; });
+  }
+  svg += '</svg>';
+  stage.insertAdjacentHTML('beforeend', svg);
+  const labels = []; let minFontMm = 99;
+
+  const sizes = [];
+  const placeAll = UNI => tiles.forEach((p, ti) => {
+    const n = p.length, ins = insets[ti];
+    const nlab = [...Array(n).keys()].filter(i => content.has(`${ti}:${i}`)).length;
+    const frac = n === 3 ? (nlab >= 3 ? 0.52 : 0.62) : n === 4 ? 0.68 : 0.8;
+    const FONT = S * (n === 3 ? 0.1 : 0.115);
+    for (let i = 0; i < n; i++) {
+      const c = content.get(`${ti}:${i}`); if (!c) continue;
+      const a = ins[i], b = ins[(i + 1) % n], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy);
+      const ux = dx / len, uy = dy / len, nx = uy, ny = -ux;
+      const el = document.createElement('div'); el.className = 'lb' + (c.bold ? ' b' : ''); el.style.fontSize = FONT + 'px';
+      stage.appendChild(el);
+      // amplada disponible: l'edat de l'angle limita el text perquè no es creui amb el de l'aresta veïna
+      const tanHalf = Math.tan((Math.PI - 2 * Math.PI / n) / 2);   // angle interior / 2
+      const fit = raw => {
+        let fs = FONT, w = 0, h = 0;
+        for (let it = 0; it < 4; it++) {
+          el.innerHTML = fmt(raw); el.style.fontSize = fs + 'px'; w = el.offsetWidth; h = el.offsetHeight;
+          const pL = content.has(`${ti}:${(i + n - 1) % n}`), nL = content.has(`${ti}:${(i + 1) % n}`);
+          const loss = ((pL ? 1 : 0) + (nL ? 1 : 0)) * (h + fs * 0.28) / tanHalf;
+          const cap = len * (pL && nL ? frac : (pL || nL) ? Math.min(0.85, frac + 0.14) : 0.9);
+          const avail = Math.min(cap, len - loss - fs * 0.4);
+          const k = Math.min(1, avail / w);
+          if (k > 0.985) break;
+          fs = Math.max(FONT * (cfg.oneLine ? 0.3 : 0.42), fs * k);
+        }
+        return { fs, raw };
+      };
+      let best = fit(c.t);
+      const br = cfg.oneLine ? null : breakPoint(c.t);   // «oneLine»: tot el text en una sola línia (lletra més petita si cal)
+      if (br && best.fs < FONT * 0.999) { const alt = fit(br); if (alt.fs > best.fs * 1.03) best = alt; }
+      if (UNI) best = { fs: UNI, raw: c.t };
+      sizes.push(best.fs);
+      el.innerHTML = fmt(best.raw); el.style.fontSize = best.fs + 'px';
+      minFontMm = Math.min(minFontMm, best.fs * mmU);
+      const w = el.offsetWidth;
+      const h = el.offsetHeight, pad = best.fs * 0.28;
+      const cx = (a[0] + b[0]) / 2 + nx * (h / 2 + pad), cy = (a[1] + b[1]) / 2 + ny * (h / 2 + pad);
+      el.style.left = (cx - X0 - w / 2) + 'px'; el.style.top = (cy - Y0 - h / 2) + 'px';
+      el.style.transform = `rotate(${Math.atan2(dy, dx) * 180 / Math.PI}deg)`;
+      labels.push({ el, cx, cy, ang: Math.atan2(dy, dx) * 180 / Math.PI, tr: el.style.transform });
+    }
+  });
+  placeAll(null);
+  if (cfg.oneLine) {   // una sola mida de lletra per a tot el puzle: la més petita que cal perquè tot càpiga en una línia
+    const uni = Math.min(...sizes);
+    labels.forEach(L => L.el.remove()); labels.length = 0; minFontMm = 99;
+    placeAll(uni);
+  }
+
+  // ---------- Exportació per a làser: TALL (vermell) + MARCATGE d'un sol traç (blau), en mm ----------
+  if (CUT) {
+    document.getElementById('sol').style.display = 'none';
+    const MARG = 5 / mmU, Wu = W + 2 * MARG, Hu = H + 2 * MARG, tx = x => x - X0 + MARG, ty = y => y - Y0 + MARG;
+    const markPolys = [];
+    labels.forEach(L => {
+      const el = L.el; el.style.transform = 'none';
+      const ob = el.getBoundingClientRect(), w = ob.width / sc, h = ob.height / sc, polys = [];
+      (function walk(nd) {
+        if (nd.nodeType === 3) {
+          const raw = nd.textContent, lead = raw.length - raw.trimStart().length, trail = raw.length - raw.trimEnd().length;
+          if (lead + trail >= raw.length) return;
+          const r = document.createRange(); r.setStart(nd, lead); r.setEnd(nd, raw.length - trail);
+          const rc = r.getClientRects()[0]; if (!rc) return;
+          const fs = parseFloat(getComputedStyle(nd.parentElement).fontSize);
+          glyphRun(raw.trim(), (rc.left - ob.left) / sc, (rc.top - ob.top) / sc + fs * 0.905, rc.width / sc, fs, polys);
+        } else if (nd.nodeType === 1) {
+          const rr = nd.getBoundingClientRect();
+          if (nd.matches('.fr > span:first-child')) { const bw = parseFloat(getComputedStyle(nd).borderBottomWidth), y = (rr.bottom - ob.top) / sc - bw / 2; polys.push([[(rr.left - ob.left) / sc, y], [(rr.right - ob.left) / sc, y]]); }
+          if (nd.classList.contains('rt')) { const bw = parseFloat(getComputedStyle(nd).borderTopWidth), y = (rr.top - ob.top) / sc + bw / 2; polys.push([[(rr.left - ob.left) / sc, y], [(rr.right - ob.left) / sc, y]]); }
+          nd.childNodes.forEach(walk);
+        }
+      })(el);
+      el.style.transform = L.tr;
+      const a = L.ang * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
+      polys.forEach(pl => markPolys.push(pl.map(([u, v]) => { const dx = u - w / 2, dy = v - h / 2; return [tx(L.cx) + dx * ca - dy * sa, ty(L.cy) + dx * sa + dy * ca]; })));
+    });
+    const f2 = v => (+v.toFixed(2));
+    const cutLines = runs.map(([a, b]) => [[tx(a[0]), ty(a[1])], [tx(b[0]), ty(b[1])]]);
+    const len = pls => pls.reduce((s, pl) => s + pl.slice(1).reduce((q, p, i) => q + Math.hypot(p[0] - pl[i][0], p[1] - pl[i][1]), 0), 0) * mmU;
+    let out = `<svg xmlns="http://www.w3.org/2000/svg" width="${f2(Wu * mmU)}mm" height="${f2(Hu * mmU)}mm" viewBox="0 0 ${f2(Wu)} ${f2(Hu)}">\n`;
+    out += `<g id="TALL_vermell" fill="none" stroke="#FF0000" stroke-width="${f2(0.25 / mmU)}" stroke-linecap="round">\n`;
+    cutLines.forEach(([a, b]) => { out += `<line x1="${f2(a[0])}" y1="${f2(a[1])}" x2="${f2(b[0])}" y2="${f2(b[1])}"/>\n`; });
+    out += `</g>\n<g id="MARCATGE_blau" fill="none" stroke="#0000FF" stroke-width="${f2(0.2 / mmU)}" stroke-linecap="round" stroke-linejoin="round">\n`;
+    markPolys.forEach(pl => { out += `<polyline points="${pl.map(p => f2(p[0]) + ',' + f2(p[1])).join(' ')}"/>\n`; });
+    out += '</g>\n</svg>\n';
+    // DXF (mm, Y amunt): capa TALL (vermell, color 1) i capa MARCATGE (blau, color 5)
+    const dx = (layer, a, b) => `0\nLINE\n8\n${layer}\n10\n${(a[0] * mmU).toFixed(3)}\n20\n${((Hu - a[1]) * mmU).toFixed(3)}\n30\n0\n11\n${(b[0] * mmU).toFixed(3)}\n21\n${((Hu - b[1]) * mmU).toFixed(3)}\n31\n0\n`;
+    let dxf = '0\nSECTION\n2\nHEADER\n9\n$INSUNITS\n70\n4\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n2\n0\nLAYER\n2\nTALL\n70\n0\n62\n1\n6\nCONTINUOUS\n0\nLAYER\n2\nMARCATGE\n70\n0\n62\n5\n6\nCONTINUOUS\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n';
+    cutLines.forEach(([a, b]) => { dxf += dx('TALL', a, b); });
+    markPolys.forEach(pl => { for (let i = 1; i < pl.length; i++) dxf += dx('MARCATGE', pl[i - 1], pl[i]); });
+    dxf += '0\nENDSEC\n0\nEOF\n';
+    const perim = tiles.reduce((s, p) => s + p.reduce((q, pt, i) => q + Math.hypot(pt[0] - p[(i + 1) % p.length][0], pt[1] - p[(i + 1) % p.length][1]), 0), 0) * mmU;
+    const stats = { pecesFigura: tiles.length, parelles: internal.length, costatMm: +(S * mmU).toFixed(1), liniesRectes: runs.length, costatsUnics: uedges.length,
+      tallMm: Math.round(len(cutLines)), tallSeparatMm: Math.round(perim), marcatgeMm: Math.round(len(markPolys)), ample: +(Wu * mmU).toFixed(0), alt: +(Hu * mmU).toFixed(0), glifsFaltants: [...missingGlyphs].join('') };
+    document.body.setAttribute('data-stats', JSON.stringify(stats));
+    const holder = (id, txt) => { const s = document.createElement('script'); s.type = 'text/plain'; s.id = id; s.textContent = txt; document.body.appendChild(s); };
+    holder('svgout', out); holder('dxfout', dxf);
+  }
+
+  // pàgina de solucions
+  const sol = document.getElementById('sol');
+  sol.style.width = PW + 'mm'; sol.style.height = PH + 'mm';
+  let rows = '';
+  pairs.forEach((it, i) => { rows += `<div class="row"><span class="n">${i + 1}</span><span class="q">${fmt(it.q.replace(/¦/g, ' '))}</span><span class="ar">→</span><b class="a">${fmt(it.a.replace(/¦/g, ' '))}</b></div>`; });
+  sol.innerHTML = `<h1>${cfg.titol} <small>· forma: ${shape.nom} · ${tiles.length} peces</small></h1><p>${cfg.ajuda} Retalla per les línies i forma la figura (${shape.nom.toLowerCase()}) fent coincidir cada pregunta amb la seva resposta.</p><div class="cols">${rows}</div>`;
+
+  document.body.setAttribute('data-pairs', JSON.stringify(pairs.map(p => [p.q, p.a])));
+  document.title = cfg.titol + ' — ' + shape.nom;
+  document.body.setAttribute('data-info', `peces=${tiles.length}; parelles=${internal.length}; orientacio=${landscape ? 'apaisat' : 'vertical'}; costat=${(S * mmU).toFixed(1)}mm; lletraMin=${minFontMm.toFixed(1)}mm; errors=${errors.join(',') || 'cap'}`);
+})();
+
+</script>
+</body></html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conjunts numèrics</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='32' rx='29' ry='24' fill='%23e8dcf6' stroke='%237b4bb7' stroke-width='3'/%3E%3Cellipse cx='28' cy='35' rx='21' ry='16' fill='%23fde3c4' stroke='%23ee8a22' stroke-width='3'/%3E%3Cellipse cx='26' cy='37' rx='14' ry='10' fill='%23d3e6fa' stroke='%232f7fd0' stroke-width='3'/%3E%3Cellipse cx='25' cy='38' rx='7' ry='5' fill='%23d4f1dc' stroke='%232fa84f' stroke-width='3'/%3E%3Ccircle cx='50' cy='29' r='5' fill='%23fff0ae' stroke='%23d9a800' stroke-width='3'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f4ee; --ink:#1f2933; --muted:#5b6770; --card:#fff; --line:#d9d4c8;
+  --n:#2fa84f;  --n-bg:#d4f1dc;  --n-d:#17612e;
+  --z:#2f7fd0;  --z-bg:#d3e6fa;  --z-d:#174f8a;
+  --q:#ee8a22;  --q-bg:#fde3c4;  --q-d:#8a4806;
+  --i:#d9a800;  --i-bg:#fff0ae;  --i-d:#7a5f00;
+  --r:#d9435a;  --r-bg:#fbdadf;  --r-d:#8f1d30;
+  --c:#7b4bb7;  --c-bg:#e8dcf6;  --c-d:#4b2680;
+  --fs:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(16px * var(--fs))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,sans-serif;line-height:1.35}
+body.proj{--fs:1.35}
+button{font:inherit;cursor:pointer}
+.sym,.zhead b,.sbtn b,.card h3 b{font-family:"Cambria Math","Segoe UI Symbol","STIX Two Math",serif}
+
+/* capçalera */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.2rem;padding:.6rem 1rem;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:20}
+.top h1{font-size:1.25rem;margin:0}
+.brand{display:flex;align-items:center;gap:.5rem}
+.logo{width:2.1rem;height:2.1rem;flex:none}
+.tabs{display:flex;gap:.3rem}
+.tabs button,.tools button{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tools{margin-left:auto;display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.pill{font-size:.85rem;color:var(--muted);font-family:"Cambria Math","Segoe UI Symbol",serif}
+.primary{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:.7rem;padding:.4rem 1rem;font-weight:700}
+.primary:disabled{opacity:.4;cursor:not-allowed}
+.ghostbtn{background:#fff;border:2px solid var(--line);border-radius:.7rem;padding:.4rem 1rem;font-weight:600}
+
+main{max-width:1100px;margin:0 auto;padding:.8rem 1rem 3rem}
+section[hidden]{display:none}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-bottom:.4rem}
+.bar .grow{flex:1}
+.msg{min-height:3.2rem;padding:.4rem .7rem;border-radius:.7rem;font-size:1.05rem;background:#fff;border:2px solid var(--line);margin-bottom:.5rem}
+.msg.ok{border-color:#2fa84f;background:#effbf2}
+.msg.bad{border-color:#d9435a;background:#fff3f5}
+.done{background:#effbf2;border:3px solid #2fa84f;border-radius:1rem;padding:.7rem 1rem;margin-bottom:.6rem;font-size:1.15rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.done[hidden]{display:none}
+
+/* nombres (fitxes) */
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:3.2rem;padding:.3rem .8rem;background:#fff;border:2px solid #b2ac9c;border-radius:.8rem;font-size:1.35rem;font-weight:600;cursor:grab;box-shadow:0 2px 0 rgba(0,0,0,.14);user-select:none;-webkit-user-select:none;touch-action:none;font-family:"Cambria Math",Cambria,"Times New Roman",serif;white-space:nowrap}
+.chip.dragging{opacity:.3}
+.chip.sel{outline:4px solid #1f2933;outline-offset:2px}
+.chip.ok{border-color:#2fa84f;background:#eafaef}
+.chip.bad{border-color:#d9435a;background:#fff0f2}
+.chip.locked{cursor:default}
+.chip.ghost{position:fixed;z-index:100;pointer-events:none;box-shadow:0 8px 18px rgba(0,0,0,.3);transform:rotate(-3deg) scale(1.08);cursor:grabbing}
+.chip.shake{animation:shake .45s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;font-size:.85em;margin:0 .1em}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 .2em}
+.rt{white-space:nowrap}
+.rin{border-top:2px solid currentColor;padding:0 .12em;margin-left:.03em}
+/* arrel amb fracció: signe més gran i espai perquè la ratlla no toqui el numerador */
+.rt.big{display:inline-flex;align-items:stretch;vertical-align:middle}
+.rt.big .rs{flex:none;width:.7em;height:auto;overflow:visible;margin-right:-1px}
+.rt.big .rs path{fill:none;stroke:currentColor;stroke-width:2.2px;vector-effect:non-scaling-stroke;stroke-linejoin:miter;stroke-linecap:butt}
+.rt.big .rin{padding:.15em .2em 0;display:inline-flex;align-items:center}
+.rt sup{font-size:.6em;vertical-align:.55em;margin-right:-.05em}
+.per{text-decoration:overline;text-decoration-thickness:2px}
+
+/* safata + diagrama d'arrossegar */
+.tray{position:sticky;top:3.4rem;z-index:10;display:flex;flex-wrap:wrap;gap:.5rem;padding:.6rem;min-height:3.9rem;background:#fff;border:2px dashed #b2ac9c;border-radius:1rem;margin-bottom:.7rem}
+.tray:empty::after{content:"Tots els nombres són als conjunts";color:var(--muted);align-self:center;font-size:.95rem}
+.zone{--zc:var(--c);--zb:var(--c-bg);--zd:var(--c-d);border:3px solid var(--zc);background:var(--zb);border-radius:1.6rem;padding:.4rem .7rem .7rem;display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.zone.over{outline:4px dashed var(--ink);outline-offset:2px}
+.z-N{--zc:var(--n);--zb:var(--n-bg);--zd:var(--n-d)}
+.z-Z{--zc:var(--z);--zb:var(--z-bg);--zd:var(--z-d)}
+.z-Q{--zc:var(--q);--zb:var(--q-bg);--zd:var(--q-d)}
+.z-I{--zc:var(--i);--zb:var(--i-bg);--zd:var(--i-d)}
+.z-R{--zc:var(--r);--zb:var(--r-bg);--zd:var(--r-d)}
+.z-C{--zc:var(--c);--zb:var(--c-bg);--zd:var(--c-d)}
+.zhead{font-weight:700;color:var(--zd);font-size:1rem}
+.zhead b{font-size:1.4rem;margin-right:.35rem}
+.ztop{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.2rem .6rem}
+.zhead{padding-top:.25rem;white-space:nowrap}
+.zone .chips{flex:1;display:flex;flex-wrap:wrap;gap:.35rem;min-height:2.3rem;min-width:3rem}
+.zone .chips .chip{font-size:1.1rem;padding:.15rem .55rem;min-width:2.6rem}
+.zone>.row{display:flex;gap:.7rem;align-items:stretch}
+.row>.zone:first-child{flex:3}
+.row>.zone:last-child{flex:1.1;min-width:9rem}
+.z-N{min-height:4.2rem}
+.z-I{min-height:6rem}
+
+/* classificar */
+.stage{background:#fff;border:3px solid var(--line);border-radius:1.4rem;padding:1.2rem;text-align:center;margin-bottom:.8rem}
+.bignum{font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-size:3.6rem;font-weight:600;min-height:5rem;display:flex;align-items:center;justify-content:center}
+.setbtns{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:.8rem}
+.sbtn{--zc:var(--c);--zb:var(--c-bg);min-width:7.2rem;border:3px solid var(--zc);background:#fff;border-radius:1rem;padding:.5rem .8rem;display:flex;flex-direction:column;align-items:center;gap:.1rem;color:var(--ink)}
+.sbtn b{font-size:2rem;line-height:1.1}
+.sbtn small{font-size:.8rem;font-weight:600}
+.sbtn.on{background:var(--zb);box-shadow:inset 0 0 0 3px var(--zc)}
+.sbtn.ok{background:#d9f5e1;border-color:#2fa84f;box-shadow:inset 0 0 0 3px #2fa84f}
+.sbtn.bad{background:#ffdde2;border-color:#d9435a;box-shadow:inset 0 0 0 3px #d9435a}
+.sbtn.miss{background:#fff;border-style:dashed;border-color:#d98a00;box-shadow:inset 0 0 0 3px #f3c46a}
+.sbtn[data-k=N]{--zc:var(--n);--zb:var(--n-bg)}
+.sbtn[data-k=Z]{--zc:var(--z);--zb:var(--z-bg)}
+.sbtn[data-k=Q]{--zc:var(--q);--zb:var(--q-bg)}
+.sbtn[data-k=I]{--zc:var(--i);--zb:var(--i-bg)}
+.sbtn[data-k=R]{--zc:var(--r);--zb:var(--r-bg)}
+.sbtn[data-k=C]{--zc:var(--c);--zb:var(--c-bg)}
+.sumlist{text-align:left;max-width:34rem;margin:.6rem auto 0;padding-left:1.2rem}
+.sumlist li{margin:.25rem 0}
+
+/* teoria */
+.thsvg{background:#fff;border:3px solid var(--line);border-radius:1.4rem;padding:.4rem;margin-bottom:1rem}
+.thsvg svg{display:block;width:100%;height:auto;max-width:860px;margin:0 auto}
+.thsvg [data-set]{cursor:default}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:.8rem;margin-bottom:1rem}
+.card{--zc:var(--c);background:#fff;border:2px solid var(--line);border-left:10px solid var(--zc);border-radius:1rem;padding:.6rem .9rem;transition:box-shadow .15s,transform .15s}
+.card.hl{box-shadow:0 0 0 4px var(--zc);transform:translateY(-2px)}
+.card h3{margin:0 0 .2rem;font-size:1.1rem}
+.card h3 b{font-size:1.6rem;margin-right:.3rem;color:var(--zc)}
+.card p{margin:.2rem 0 .4rem;font-size:.98rem}
+.card .ex{display:flex;flex-wrap:wrap;gap:.35rem}
+.card .ex .chip{cursor:default;font-size:1.05rem;padding:.15rem .55rem;min-width:0;box-shadow:none}
+.rule{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem 1rem}
+.rule h3{margin:.1rem 0 .4rem}
+.rule ol{margin:.2rem 0 .5rem;padding-left:1.4rem}
+.rule li{margin:.25rem 0}
+.rule .sy{font-family:"Cambria Math","Segoe UI Symbol",serif;font-weight:700}
+.tl{font-family:"Cambria Math","Segoe UI Symbol",system-ui,serif}
+
+/* configuració */
+dialog{border:3px solid var(--ink);border-radius:1.2rem;padding:1rem 1.4rem;max-width:34rem;width:calc(100% - 2rem);font-size:1rem}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog h2{margin:.1rem 0 .5rem}
+fieldset{border:2px solid var(--line);border-radius:.8rem;margin:.6rem 0;padding:.4rem .8rem .6rem}
+legend{font-weight:700;padding:0 .3rem}
+dialog label{display:block;margin:.3rem 0}
+dialog label.dis{opacity:.45}
+dialog .sy{font-family:"Cambria Math","Segoe UI Symbol",serif;font-weight:700;font-size:1.15em}
+dialog small{color:var(--muted)}
+.dfoot{text-align:right;margin-top:.6rem}
+
+@media (max-width:760px){
+  .zone>.row{flex-direction:column}
+  .bignum{font-size:2.6rem}
+  .tray{top:5.6rem}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1 class="brand"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="32" rx="29" ry="24" fill="#e8dcf6" stroke="#7b4bb7" stroke-width="3"/><ellipse cx="28" cy="35" rx="21" ry="16" fill="#fde3c4" stroke="#ee8a22" stroke-width="3"/><ellipse cx="26" cy="37" rx="14" ry="10" fill="#d3e6fa" stroke="#2f7fd0" stroke-width="3"/><ellipse cx="25" cy="38" rx="7" ry="5" fill="#d4f1dc" stroke="#2fa84f" stroke-width="3"/><circle cx="50" cy="29" r="5" fill="#fff0ae" stroke="#d9a800" stroke-width="3"/></svg>Conjunts numèrics</h1>
+  <nav class="tabs" aria-label="Mode de joc">
+    <button data-view="drag" class="on">Arrossega</button>
+    <button data-view="class">Classifica</button>
+    <button data-view="theory">Teoria</button>
+  </nav>
+  <div class="tools">
+    <span id="actPill" class="pill" title="Conjunts actius"></span>
+    <button id="btnProj" title="Lletra gran per a la pissarra digital">Pantalla gran</button>
+    <button id="btnCfg">Configuració</button>
+  </div>
+</header>
+
+<main>
+  <!-- MODE 1: ARROSSEGAR -->
+  <section id="view-drag">
+    <div class="bar">
+      <button class="primary" id="dNew">Nova ronda</button>
+      <button class="primary" id="dCheck" hidden>Comprova</button>
+      <span id="dProg" class="pill"></span>
+    </div>
+    <div id="dMsg" class="msg" aria-live="polite"></div>
+    <div id="dDone" class="done" hidden><span id="dDoneTxt"></span><button class="primary" id="dAgain">Nova ronda</button></div>
+    <div id="tray" class="tray"></div>
+    <div id="diagram"></div>
+  </section>
+
+  <!-- MODE 2: CLASSIFICAR -->
+  <section id="view-class" hidden>
+    <div class="bar">
+      <button class="primary" id="cNew">Nova ronda</button>
+      <span id="cProg" class="pill"></span>
+    </div>
+    <div id="cPlay">
+      <div class="stage">
+        <div id="cNum" class="bignum"></div>
+        <p style="margin:.2rem 0 0;color:var(--muted)">Marca <b>tots</b> els conjunts als quals pertany aquest nombre.</p>
+      </div>
+      <div id="cBtns" class="setbtns"></div>
+      <div id="cMsg" class="msg" aria-live="polite"></div>
+      <button class="primary" id="cGo">Comprova</button>
+    </div>
+    <div id="cSummary" class="stage" hidden></div>
+  </section>
+
+  <!-- TEORIA -->
+  <section id="view-theory" hidden>
+    <div class="thsvg" id="thSvg"></div>
+    <div class="cards" id="thCards"></div>
+    <div class="rule" id="thRule"></div>
+  </section>
+</main>
+
+<dialog id="cfg">
+  <h2>Configuració</h2>
+  <fieldset>
+    <legend>Conjunts que ja s'han treballat</legend>
+    <label><input type="checkbox" checked disabled> <span class="sy">ℕ</span> Naturals</label>
+    <label><input type="checkbox" checked disabled> <span class="sy">ℤ</span> Enters</label>
+    <label><input type="checkbox" id="cfQ"> <span class="sy">ℚ</span> Racionals (fraccions i decimals)</label>
+    <label><input type="checkbox" id="cfR"> <span class="sy">𝕀</span> Irracionals i <span class="sy">ℝ</span> Reals</label>
+    <label><input type="checkbox" id="cfC"> <span class="sy">ℂ</span> Complexos</label>
+    <small>Si actives un conjunt gran, s'activen també els que hi caben a dins.</small>
+  </fieldset>
+  <fieldset>
+    <legend>Tipus de nombres</legend>
+    <label id="lbFrac"><input type="checkbox" id="cfFrac"> Fraccions i decimals exactes (3/4, 0,25)</label>
+    <label id="lbPer"><input type="checkbox" id="cfPer"> Decimals periòdics (0,333…, 1,2727…)</label>
+    <label id="lbRoot"><input type="checkbox" id="cfRoot"> Arrels, π i altres irracionals (√16, √2, π)</label>
+  </fieldset>
+  <fieldset>
+    <legend>Joc</legend>
+    <label><input type="checkbox" id="cfZero"> El 0 és un nombre natural</label>
+    <label>Nombres per ronda:
+      <select id="cfCount"><option>8</option><option>12</option><option>16</option><option>20</option></select>
+    </label>
+    <label><input type="radio" name="fb" value="now"> Mode arrossega: correcció <b>immediata</b> (explica l'error al moment)</label>
+    <label><input type="radio" name="fb" value="end"> Mode arrossega: correcció <b>al final</b> (botó «Comprova»)</label>
+  </fieldset>
+  <div class="dfoot"><button class="primary" id="cfgClose">Tanca</button></div>
+</dialog>
+
+<script>
+(()=>{
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* ===== Dades ===== */
+const SETS={
+  N:{sym:'ℕ',name:'Naturals'}, Z:{sym:'ℤ',name:'Enters'}, Q:{sym:'ℚ',name:'Racionals'},
+  I:{sym:'𝕀',name:'Irracionals'}, R:{sym:'ℝ',name:'Reals'}, C:{sym:'ℂ',name:'Complexos'}
+};
+const ORDER=['N','Z','Q','I','R','C'];
+// conjunts als quals pertany un nombre segons el conjunt MÉS PETIT on cap
+const MEMBER={N:['N','Z','Q','R','C'],Z:['Z','Q','R','C'],Q:['Q','R','C'],I:['I','R','C'],C:['C']};
+const BASE={
+  N:"És un nombre natural.",
+  Z:"És un enter (no és natural: és negatiu).",
+  Q:"Es pot escriure com a fracció: és racional.",
+  I:"Té infinites xifres decimals sense període i no es pot escriure com a fracció: és irracional.",
+  C:"Té part imaginària (i): és complex però no és real."
+};
+// [conjunt més petit, tipus, nombre, valor, nota]
+const POOL=[
+ ['N','int','3'],['N','int','7'],['N','int','12'],['N','int','25'],['N','int','48'],['N','int','100'],['N','int','365'],
+ ['N','int','0','','El 0 es considera natural (conveni habitual a Catalunya).'],
+ ['N','int','−(−6)','6'],['N','int','2³','8'],['N','int','5²','25'],
+ ['N','frac','6/3','2'],['N','frac','20/4','5'],['N','frac','15/5','3'],['N','frac','12/4','3'],['N','frac','18/6','3'],
+ ['N','root','√16','4'],['N','root','√25','5'],['N','root','√81','9'],['N','root','√49','7'],['N','root','∛8','2'],['N','root','√100','10'],
+
+ ['Z','int','−1'],['Z','int','−5'],['Z','int','−9'],['Z','int','−17'],['Z','int','−30'],['Z','int','−250'],
+ ['Z','int','2−9','−7'],['Z','int','3−11','−8'],
+ ['Z','frac','−8/2','−4'],['Z','frac','−12/3','−4'],['Z','frac','−10/5','−2'],['Z','frac','−9/3','−3'],['Z','frac','−20/4','−5'],
+ ['Z','root','−√9','−3'],['Z','root','−√36','−6'],['Z','root','−√64','−8'],['Z','root','−∛27','−3'],
+
+ ['Q','frac','1/2'],['Q','frac','3/4'],['Q','frac','−7/3'],['Q','frac','5/8'],['Q','frac','−2/5'],['Q','frac','9/7'],['Q','frac','−11/4'],['Q','frac','7/10'],
+ ['Q','frac','0,25','1/4'],['Q','frac','−1,5','−3/2'],['Q','frac','3,14','157/50'],['Q','frac','0,125','1/8'],['Q','frac','−2,75','−11/4'],['Q','frac','8,4','42/5'],
+ ['Q','per','0,{3}','1/3'],['Q','per','0,{6}','2/3'],['Q','per','1,{27}','14/11'],['Q','per','0,8{3}','5/6'],['Q','per','−2,{45}','−27/11'],['Q','per','0,{12}','4/33'],['Q','per','3,1{6}','19/6'],['Q','per','0,{18}','2/11'],
+ ['Q','root','√(1/4)','1/2'],['Q','root','√(9/16)','3/4'],['Q','root','√(4/25)','2/5'],['Q','root','√(1/9)','1/3'],['Q','root','√(16/25)','4/5'],['Q','root','√0,36','3/5'],
+
+ ['I','root','√2','1,41421356…'],['I','root','√3','1,7320508…'],['I','root','√5','2,2360679…'],['I','root','√7','2,6457513…'],['I','root','√10','3,1622776…'],['I','root','√11','3,3166247…'],
+ ['I','root','π','3,14159265…','π és el quocient entre la longitud d\'una circumferència i el seu diàmetre.'],
+ ['I','root','φ','1,6180339…','φ és el nombre auri, (1+√5)/2.'],
+ ['I','root','e','2,7182818…','e és el nombre d\'Euler.'],
+ ['I','root','−√2','−1,4142135…'],['I','root','2π','6,2831853…'],['I','root','1+√2','2,4142135…'],['I','root','3√2','4,2426406…'],
+ ['I','root','2−√3','0,2679491…'],['I','root','∛2','1,2599210…'],['I','root','∛5','1,7099759…'],['I','root','−π','−3,14159265…'],
+ ['I','root','0,1010010001…','','Cada vegada hi ha un 0 més: les xifres no es repeteixen mai.'],
+
+ ['C','cplx','2+3i'],['C','cplx','−i'],['C','cplx','5i'],['C','cplx','1−2i'],['C','cplx','4−i'],['C','cplx','−3+2i'],['C','cplx','−2i'],
+ ['C','cplx','√(−4)','2i'],['C','cplx','√(−9)','3i'],['C','cplx','√(−1)','i']
+];
+
+/* ===== Configuració ===== */
+const KEY='conjunts-numerics-cfg-v1';
+const DEF={Q:true,R:true,C:true,zeroNat:true,frac:true,per:true,root:true,count:12,fb:'now',proj:false};
+let cfg={...DEF};
+try{Object.assign(cfg,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function norm(){ if(cfg.C)cfg.R=true; if(cfg.R)cfg.Q=true; }
+norm();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(cfg))}catch(e){}};
+const active=()=>['N','Z',...(cfg.Q?['Q']:[]),...(cfg.R?['I','R']:[]),...(cfg.C?['C']:[])];
+const actOrdered=()=>ORDER.filter(k=>active().includes(k));
+
+/* ===== Utilitats ===== */
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+// notació -> HTML (fraccions, arrels, període)
+function fmt(s){
+  return s
+   .replace(/\{([^}]*)\}/g,'<span class="per">$1</span>')
+   .replace(/(\d+)\/(\d+)/g,'<span class="fr"><span>$1</span><span>$2</span></span>')
+   .replace(/∛(\d+)/g,'<span class="rt"><sup>3</sup>√<span class="rin">$1</span></span>')
+   .replace(/√\(([^)]*)\)/g,(m,x)=>x.includes('class="fr"')
+      ?`<span class="rt big"><svg class="rs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,60 L18,52 L46,99 L100,0"/></svg><span class="rin">${x}</span></span>`
+      :`<span class="rt">√<span class="rin">${x}</span></span>`)
+   .replace(/√(\d+(?:,\d+)?)/g,'<span class="rt">√<span class="rin">$1</span></span>');
+}
+const symList=ks=>ks.map(k=>SETS[k].sym).join(', ');
+
+function buildPool(){
+  const act=active();
+  return POOL.map((p,i)=>({id:i,min:p[0],kind:p[1],h:p[2],val:p[3]||'',note:p[4]||''}))
+    .map(it=>({...it,min:(it.h==='0'&&!cfg.zeroNat)?'Z':it.min}))
+    .filter(it=>{
+      if(it.kind==='frac') return cfg.frac&&act.includes('Q');
+      if(it.kind==='per')  return cfg.per&&act.includes('Q');
+      if(it.kind==='root') return cfg.root&&act.includes('R');
+      if(it.kind==='cplx') return act.includes('C');
+      return true;
+    }).filter(it=>act.includes(it.min));
+}
+function makeRound(n){
+  const groups={};
+  buildPool().forEach(it=>(groups[it.min]=groups[it.min]||[]).push(it));
+  Object.keys(groups).forEach(k=>groups[k]=shuffle(groups[k]));
+  const keys=Object.keys(groups), out=[];
+  while(out.length<n&&keys.some(k=>groups[k].length)){
+    for(const k of shuffle(keys)){ if(out.length>=n)break; const it=groups[k].pop(); if(it)out.push(it); }
+  }
+  return shuffle(out);
+}
+function why(it){
+  const t=[];
+  if(it.val) t.push(`${fmt(it.h)} ${it.min==='I'?'≈':'='} ${fmt(it.val)}`);
+  t.push(it.h==='0'&&it.min==='Z'?'El 0 és un enter (aquí no el considerem natural).':BASE[it.min]);
+  if(it.note&&!(it.h==='0'&&it.min==='Z')) t.push(it.note);
+  return t.join('. ').replace(/\.\./g,'.').replace(/\.$/,'')+'.';
+}
+function answer(it){ return MEMBER[it.min].filter(k=>active().includes(k)); }
+function setMsg(id,html,cls){const e=$('#'+id);e.innerHTML=html;e.className='msg '+(cls||'')}
+
+/* ===== MODE ARROSSEGA ===== */
+const D={items:[],byId:new Map(),errors:0,done:0,sel:null,finished:false};
+const chipEl=it=>{const d=document.createElement('div');d.className='chip';d.dataset.id=it.id;d.innerHTML=fmt(it.h);return d};
+const zoneHTML=(k,inner='')=>`<div class="zone z-${k}" data-set="${k}"><div class="ztop"><div class="zhead"><b>${SETS[k].sym}</b>${SETS[k].name}</div><div class="chips"></div></div>${inner}</div>`;
+function diagramHTML(){
+  const a=active(); let chain=zoneHTML('Z',zoneHTML('N'));
+  if(a.includes('Q')) chain=zoneHTML('Q',chain);
+  if(!a.includes('R')) return chain;
+  let top=zoneHTML('R',`<div class="row">${chain}${zoneHTML('I')}</div>`);
+  if(a.includes('C')) top=zoneHTML('C',top);
+  return top;
+}
+function newDrag(){
+  D.items=makeRound(cfg.count); D.byId=new Map(D.items.map(i=>[String(i.id),i]));
+  D.errors=0; D.done=0; D.sel=null; D.finished=false;
+  $('#dDone').hidden=true;
+  $('#diagram').innerHTML=diagramHTML();
+  const tray=$('#tray'); tray.innerHTML=''; tray.style.minHeight=''; D.items.forEach(it=>tray.append(chipEl(it)));
+  tray.style.minHeight=tray.offsetHeight+'px'; // evita que el diagrama es mogui quan la safata es buida
+  $('#dCheck').hidden=cfg.fb!=='end';
+  setMsg('dMsg',"Arrossega cada nombre (o toca'l i després toca el conjunt) al conjunt <b>més petit</b> on hi càpiga.",'');
+  updProg();
+}
+function updProg(){
+  const placed=$$('#diagram .chip').length;
+  $('#dProg').textContent=`${placed} / ${D.items.length} col·locats`;
+  $('#dCheck').disabled=placed<D.items.length||D.finished;
+}
+function hint(it,k){
+  const sup=MEMBER[it.min].includes(k)&&k!==it.min;
+  if(k==='R'&&it.min!=='C') return `${fmt(it.h)} és real, però ℝ es divideix en <b>ℚ</b> i <b>𝕀</b>: col·loca'l en un d'aquests dos.`;
+  if(sup) return `${fmt(it.h)} sí que pertany a ${SETS[k].sym}, però hi ha un conjunt <b>més petit</b> on també hi cap.`;
+  return `${fmt(it.h)} no pertany a ${SETS[k].sym} (${SETS[k].name}). Pista: ${why(it)}`;
+}
+function placeIn(chip,zone){
+  const it=D.byId.get(chip.dataset.id), k=zone.dataset.set;
+  const box=zone.querySelector(':scope > .ztop > .chips');
+  if(cfg.fb==='now'){
+    if(k===it.min){
+      box.append(chip); chip.classList.add('ok','locked'); D.done++;
+      setMsg('dMsg','✔ '+why(it),'ok'); updProg();
+      if(D.done===D.items.length) finish();
+    }else{
+      D.errors++; chip.classList.remove('shake'); void chip.offsetWidth; chip.classList.add('shake');
+      setMsg('dMsg','✘ '+hint(it,k),'bad');
+    }
+  }else{
+    box.append(chip); chip.dataset.zone=k; chip.classList.remove('ok','bad');
+    setMsg('dMsg','',''); updProg();
+  }
+}
+function backToTray(chip){
+  if(cfg.fb!=='end'||chip.parentElement===$('#tray')||D.finished) return;
+  $('#tray').append(chip); chip.classList.remove('ok','bad'); delete chip.dataset.zone; updProg();
+}
+function checkEnd(){
+  const bad=[];
+  $$('#diagram .chip').forEach(c=>{
+    const it=D.byId.get(c.dataset.id), ok=c.dataset.zone===it.min;
+    c.classList.toggle('ok',ok); c.classList.toggle('bad',!ok); if(!ok)bad.push([it,c.dataset.zone]);
+  });
+  D.errors+=bad.length;
+  if(!bad.length) return finish();
+  setMsg('dMsg',`✘ Hi ha <b>${bad.length}</b> nombre${bad.length>1?'s':''} mal col·locat${bad.length>1?'s':''} (en vermell). Mou-los i torna a comprovar.<br>`+bad.map(([it,k])=>'• '+hint(it,k)).join('<br>'),'bad');
+}
+function finish(){
+  D.finished=true; $$('#diagram .chip').forEach(c=>c.classList.add('locked'));
+  $('#dDoneTxt').innerHTML=D.errors?`Ronda completada! Has fet <b>${D.errors}</b> error${D.errors>1?'s':''}. Repetim?`:`Ronda completada <b>sense cap error</b>!`;
+  $('#dDone').hidden=false; $('#dCheck').disabled=true;
+  setMsg('dMsg','',''); updProg();
+  $('#dDone').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+// arrossegament amb punter (ratolí i tàctil)
+let drag=null;
+const targetAt=(x,y)=>{const el=document.elementFromPoint(x,y); return el&&(el.closest('#diagram .zone')||el.closest('#tray'))};
+function setOver(t){$$('.zone.over').forEach(z=>z.classList.remove('over')); if(t&&t.classList.contains('zone'))t.classList.add('over')}
+function clearSel(){if(D.sel)D.sel.classList.remove('sel');D.sel=null}
+document.addEventListener('pointerdown',e=>{
+  const chip=e.target.closest('#view-drag .chip');
+  if(!chip||chip.classList.contains('locked')||D.finished)return;
+  if(e.pointerType==='mouse'&&e.button!==0)return;
+  e.preventDefault(); clearSel();
+  const r=chip.getBoundingClientRect();
+  drag={chip,ox:e.clientX-r.left,oy:e.clientY-r.top,sx:e.clientX,sy:e.clientY,moved:false,ghost:null,w:r.width};
+});
+window.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  if(!drag.moved){
+    if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<6)return;
+    drag.moved=true; const g=drag.chip.cloneNode(true);
+    g.className='chip ghost'; g.style.width=drag.w+'px'; document.body.append(g); drag.ghost=g; drag.chip.classList.add('dragging');
+  }
+  drag.ghost.style.left=(e.clientX-drag.ox)+'px'; drag.ghost.style.top=(e.clientY-drag.oy)+'px';
+  setOver(targetAt(e.clientX,e.clientY));
+  if(e.clientY>innerHeight-60)scrollBy(0,18); else if(e.clientY<140)scrollBy(0,-18);
+});
+function endDrag(e,drop){
+  if(!drag)return; const d=drag; drag=null;
+  if(d.ghost)d.ghost.remove(); d.chip.classList.remove('dragging'); setOver(null);
+  if(!d.moved){ if(drop){D.sel=d.chip;d.chip.classList.add('sel');setMsg('dMsg','Ara toca el conjunt on vols posar-lo.','')} return; }
+  if(!drop)return;
+  const t=targetAt(e.clientX,e.clientY); if(!t)return;
+  if(t.id==='tray')backToTray(d.chip); else placeIn(d.chip,t);
+}
+window.addEventListener('pointerup',e=>endDrag(e,true));
+window.addEventListener('pointercancel',e=>endDrag(e,false));
+$('#diagram').addEventListener('click',e=>{
+  if(!D.sel||e.target.closest('.chip'))return;
+  const z=e.target.closest('.zone'); if(!z)return;
+  const c=D.sel; clearSel(); placeIn(c,z);
+});
+$('#tray').addEventListener('click',e=>{
+  if(!D.sel||e.target.closest('.chip'))return;
+  const c=D.sel; clearSel(); backToTray(c);
+});
+$('#dNew').onclick=$('#dAgain').onclick=newDrag;
+$('#dCheck').onclick=checkEnd;
+
+/* ===== MODE CLASSIFICA ===== */
+const K={items:[],i:0,sel:new Set(),phase:'ask',first:0,errs:[]};
+function newClass(){
+  K.items=makeRound(cfg.count); K.i=0; K.first=0; K.errs=[];
+  $('#cSummary').hidden=true; $('#cPlay').hidden=false; showQ();
+}
+function showQ(){
+  const it=K.items[K.i]; K.sel=new Set(); K.phase='ask';
+  $('#cNum').innerHTML=fmt(it.h);
+  $('#cBtns').innerHTML=actOrdered().map(k=>`<button class="sbtn" data-k="${k}"><b>${SETS[k].sym}</b><small>${SETS[k].name}</small></button>`).join('');
+  setMsg('cMsg','Quins conjunts?',''); $('#cGo').textContent='Comprova';
+  $('#cProg').textContent=`Nombre ${K.i+1} de ${K.items.length}`;
+}
+$('#cBtns').addEventListener('click',e=>{
+  const b=e.target.closest('.sbtn'); if(!b||K.phase!=='ask')return;
+  const k=b.dataset.k; K.sel.has(k)?K.sel.delete(k):K.sel.add(k); b.classList.toggle('on',K.sel.has(k));
+});
+$('#cBtns').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#cGo').click()}});
+$('#cGo').onclick=()=>{
+  const it=K.items[K.i];
+  if(K.phase==='ask'){
+    if(!K.sel.size){setMsg('cMsg','Marca almenys un conjunt abans de comprovar.','bad');return}
+    const exp=new Set(answer(it));
+    const ok=exp.size===K.sel.size&&[...exp].every(k=>K.sel.has(k));
+    $$('#cBtns .sbtn').forEach(b=>{
+      const k=b.dataset.k, e=exp.has(k), s=K.sel.has(k);
+      b.classList.remove('on'); b.classList.toggle('ok',e&&s); b.classList.toggle('bad',s&&!e); b.classList.toggle('miss',e&&!s);
+    });
+    if(ok)K.first++; else K.errs.push(it);
+    setMsg('cMsg',(ok?'✔ Correcte! ':`✘ ${fmt(it.h)} pertany a: <b>${symList(answer(it))}</b>.<br>(Verd: ben marcat · vermell: sobra · taronja discontinu: et faltava.)<br>`)+why(it),ok?'ok':'bad');
+    K.phase='shown'; $('#cGo').textContent=K.i+1<K.items.length?'Següent':'Veure resultat';
+  }else{
+    K.i++; if(K.i<K.items.length) return showQ();
+    $('#cPlay').hidden=true; $('#cProg').textContent='';
+    const s=$('#cSummary'); s.hidden=false;
+    s.innerHTML=`<h2 style="margin:.2rem">Ronda acabada!</h2><p style="font-size:1.2rem">Has encertat <b>${K.first}</b> de <b>${K.items.length}</b> a la primera.</p>`
+      +(K.errs.length?`<p style="margin-bottom:0">Per repassar:</p><ul class="sumlist">${K.errs.map(it=>`<li>${fmt(it.h)} → <b>${symList(answer(it))}</b></li>`).join('')}</ul>`:'<p>Sense errors, enhorabona!</p>')
+      +'<p><button class="primary" id="cAgain">Nova ronda</button></p>';
+    $('#cAgain').onclick=newClass;
+  }
+};
+$('#cNew').onclick=newClass;
+
+/* ===== TEORIA ===== */
+const EXS={C:'2+3i · −i · √−4',Q:['1/2','−3/4','0,25'],Z:['−1','−2','−3']};
+function theorySVG(){
+  const has=k=>active().includes(k);
+  const bx=(cx,cy,rx,ry)=>({cx,cy,rx,ry});
+  const col=k=>k.toLowerCase();
+  const lab=(x,y,k,size,extra='')=>`<text x="${x}" y="${y}" text-anchor="middle" class="tl" style="fill:var(--${col(k)}-d)"><tspan font-size="${size+5}" font-weight="700">${SETS[k].sym}</tspan><tspan font-size="${size}" font-weight="700"> ${SETS[k].name}</tspan>${extra}</text>`;
+  const side=(b,c,lines)=>{const x=((c.cx+c.rx)+(b.cx+b.rx))/2,y=c.cy-(lines.length-1)*9;return `<text x="${x}" y="${y+5}" text-anchor="middle" font-size="14" class="tl" style="fill:var(--ink)">${lines.map((l,i)=>`<tspan x="${x}" dy="${i?18:0}">${l}</tspan>`).join('')}</text>`};
+  function node(k,b){
+    let inner='',label='';
+    const top=b.cy-b.ry;
+    if(k==='C'){
+      const rb=bx(b.cx,b.cy+14,b.rx-26,b.ry-52); inner=node('R',rb);
+      label=lab(b.cx,top+((rb.cy-rb.ry)-top)*.5+6,'C',19,`<tspan font-size="15" font-weight="400" dx="14">${EXS.C}</tspan>`);
+    }else if(k==='R'){
+      const cb=bx(b.cx-.41*b.rx,b.cy+.03*b.ry,.545*b.rx,.8*b.ry), ib=bx(b.cx+.62*b.rx,b.cy+.03*b.ry,.318*b.rx,.64*b.ry);
+      inner=node(has('Q')?'Q':'Z',cb)+node('I',ib); label=lab(b.cx,top+30,'R',19);
+    }else if(k==='Q'||k==='Z'){
+      const c=k==='Q'?bx(b.cx-.11*b.rx,b.cy+.09*b.ry,.75*b.rx,.72*b.ry):bx(b.cx-.15*b.rx,b.cy+.10*b.ry,.63*b.rx,.61*b.ry);
+      inner=node(k==='Q'?'Z':'N',c)+side(b,c,EXS[k]);
+      label=lab(c.cx,top+((c.cy-c.ry)-top)*.5+7,k,18);
+    }else if(k==='N'){
+      label=lab(b.cx,b.cy-4,'N',17)+`<text x="${b.cx}" y="${b.cy+22}" text-anchor="middle" font-size="15" class="tl" style="fill:var(--ink)">${cfg.zeroNat?'0 · 1 · 2 · 3 …':'1 · 2 · 3 · 4 …'}</text>`;
+    }else if(k==='I'){
+      label=lab(b.cx,b.cy-18,'I',17)+`<text x="${b.cx}" y="${b.cy+10}" text-anchor="middle" font-size="15" class="tl" style="fill:var(--ink)"><tspan x="${b.cx}">√2 · √3</tspan><tspan x="${b.cx}" dy="21">π · φ · e</tspan></text>`;
+    }
+    return `<g data-set="${k}"><ellipse cx="${b.cx}" cy="${b.cy}" rx="${b.rx}" ry="${b.ry}" style="fill:var(--${col(k)}-bg);stroke:var(--${col(k)});stroke-width:3"/>${inner}${label}</g>`;
+  }
+  const outer=has('C')?'C':has('R')?'R':has('Q')?'Q':'Z';
+  return `<svg viewBox="0 0 760 476" role="img" aria-label="Diagrama dels conjunts numèrics">${node(outer,bx(380,238,365,218))}</svg>`;
+}
+function renderTheory(){
+  $('#thSvg').innerHTML=theorySVG();
+  const defs={
+    N:[cfg.zeroNat?'Serveixen per <b>comptar</b>: 0, 1, 2, 3, 4, …':'Serveixen per <b>comptar</b>: 1, 2, 3, 4, …',cfg.zeroNat?['0','1','7','100']:['1','7','25','100']],
+    Z:['Els naturals, els seus <b>oposats</b> (negatius) i el 0: …, −2, −1, 0, 1, 2, …',['−5','−1','0','8']],
+    Q:['Tots els nombres que es poden escriure com a <b>fracció</b> a/b (b ≠ 0). Els decimals són exactes (0,25) o <b>periòdics</b> (0,333…).',['1/2','−7/3','0,25','0,{3}']],
+    I:['Decimals amb <b>infinites xifres que no es repeteixen</b>. No es poden escriure com a fracció.',['√2','π','φ','e']],
+    R:['Tots els punts de la <b>recta numèrica</b>: ℝ = ℚ ∪ 𝕀 (racionals i irracionals).',['−4','1/3','√2','π']],
+    C:['Nombres de la forma <b>a + bi</b>, amb i² = −1. Els reals són els complexos amb b = 0.',['2+3i','−i','√(−4)','5']]
+  };
+  $('#thCards').innerHTML=actOrdered().map(k=>`<div class="card" data-card="${k}" style="--zc:var(--${k.toLowerCase()})"><h3><b>${SETS[k].sym}</b>${SETS[k].name}</h3><p>${defs[k][0]}</p><div class="ex">${defs[k][1].map(x=>`<span class="chip">${fmt(x)}</span>`).join('')}</div></div>`).join('');
+  const steps=[];
+  if(has('C'))steps.push('Té una <i>i</i> (o l\'arrel d\'un nombre negatiu)? → <span class="sy">ℂ</span> (no és real).');
+  if(has('I'))steps.push('Té infinites xifres decimals que no es repeteixen (√2, π…)? → <span class="sy">𝕀</span> irracional.');
+  if(has('Q'))steps.push('Es pot escriure com a fracció o és un decimal exacte o periòdic? → <span class="sy">ℚ</span> racional.');
+  steps.push('Sense decimals i negatiu? → <span class="sy">ℤ</span>.');
+  steps.push('Sense decimals i positiu (o 0)? → <span class="sy">ℕ</span>.');
+  const ex=answer({min:'Z'});
+  $('#thRule').innerHTML=`<h3>Com classificar un nombre</h3><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol><b>Recorda:</b> un nombre pertany a tots els conjunts que «l'envolten». Per exemple, −3 pertany a ${symList(ex)}. ${has('R')?'Un nombre real és racional o irracional, mai les dues coses.':''}`;
+}
+function has(k){return active().includes(k)}
+$('#thSvg').addEventListener('mouseover',e=>{
+  const g=e.target.closest('[data-set]'); $$('.card.hl').forEach(c=>c.classList.remove('hl'));
+  if(g){const c=$(`.card[data-card="${g.dataset.set}"]`); if(c)c.classList.add('hl')}
+});
+$('#thSvg').addEventListener('mouseleave',()=>$$('.card.hl').forEach(c=>c.classList.remove('hl')));
+
+/* ===== Navegació i configuració ===== */
+function showView(v){
+  $$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+  $$('main > section').forEach(s=>s.hidden=s.id!=='view-'+v);
+  if(v==='theory')renderTheory();
+}
+$$('.tabs button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+
+function syncCfgUI(){
+  $('#cfQ').checked=cfg.Q; $('#cfR').checked=cfg.R; $('#cfC').checked=cfg.C;
+  $('#cfFrac').checked=cfg.frac; $('#cfPer').checked=cfg.per; $('#cfRoot').checked=cfg.root;
+  $('#cfZero').checked=cfg.zeroNat; $('#cfCount').value=String(cfg.count);
+  $$('input[name=fb]').forEach(r=>r.checked=r.value===cfg.fb);
+  $('#lbFrac').classList.toggle('dis',!cfg.Q); $('#lbPer').classList.toggle('dis',!cfg.Q); $('#lbRoot').classList.toggle('dis',!cfg.R);
+  $('#actPill').textContent='Conjunts: '+symList(actOrdered());
+  document.body.classList.toggle('proj',!!cfg.proj);
+  $('#btnProj').textContent=cfg.proj?'Pantalla normal':'Pantalla gran';
+}
+function applyCfg(restart){
+  norm(); save(); syncCfgUI();
+  if(restart){ newDrag(); newClass(); if(!$('#view-theory').hidden)renderTheory(); }
+}
+$('#cfQ').onchange=e=>{cfg.Q=e.target.checked; if(!cfg.Q){cfg.R=false;cfg.C=false} applyCfg(true)};
+$('#cfR').onchange=e=>{cfg.R=e.target.checked; if(!cfg.R)cfg.C=false; applyCfg(true)};
+$('#cfC').onchange=e=>{cfg.C=e.target.checked; applyCfg(true)};
+$('#cfFrac').onchange=e=>{cfg.frac=e.target.checked; applyCfg(true)};
+$('#cfPer').onchange=e=>{cfg.per=e.target.checked; applyCfg(true)};
+$('#cfRoot').onchange=e=>{cfg.root=e.target.checked; applyCfg(true)};
+$('#cfZero').onchange=e=>{cfg.zeroNat=e.target.checked; applyCfg(true)};
+$('#cfCount').onchange=e=>{cfg.count=+e.target.value; applyCfg(true)};
+$$('input[name=fb]').forEach(r=>r.onchange=()=>{cfg.fb=r.value; applyCfg(true)});
+$('#btnCfg').onclick=()=>{syncCfgUI();$('#cfg').showModal()};
+$('#cfgClose').onclick=()=>$('#cfg').close();
+$('#btnProj').onclick=()=>{cfg.proj=!cfg.proj; applyCfg(false)};
+
+syncCfgUI(); newDrag(); newClass();
+})();
+</script>
+</body>
+</html>

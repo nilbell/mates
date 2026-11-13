@@ -1,0 +1,31 @@
+{
+  "titol": "Puzles matemàtics: galeria i generador",
+  "descripcio": "Galeria de 12 puzles de peces i 3 fantasmes d'equacions (per imprimir o per a tall làser), amb el generador per crear-ne de nous.",
+  "materia": "matematiques",
+  "temes": [
+    "jocs-recreacions",
+    "fraccions",
+    "divisibilitat",
+    "percentatges",
+    "potencies",
+    "notacio-cientifica",
+    "nombres-reals",
+    "arrels",
+    "llenguatge-algebraic",
+    "polinomis",
+    "equacions-1r-grau",
+    "equacions-2n-grau",
+    "funcions-exp-log"
+  ],
+  "nivells": ["1ESO", "2ESO", "3ESO", "4ESO", "1BAT"],
+  "tipus": "joc",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": ["puzle", "làser"],
+  "data": "2026-10-22"
+}

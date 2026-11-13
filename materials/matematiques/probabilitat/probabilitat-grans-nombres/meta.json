@@ -1,0 +1,25 @@
+{
+  "titol": "Simulador de la llei dels grans nombres",
+  "descripcio": "Simulador en un sol fitxer: moneda, daus, bossa de boles i dau trucat, fins a 1.000.000 de tirades, amb taula de freqüències i gràfics. Funciona sense internet.",
+  "materia": "matematiques",
+  "temes": [
+    "probabilitat",
+    "estadistica"
+  ],
+  "nivells": [
+    "4ESO"
+  ],
+  "tipus": "interactiu",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": [
+    "simulador",
+    "grans nombres"
+  ],
+  "data": "2026-10-22"
+}

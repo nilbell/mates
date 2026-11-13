@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='%232f5bea'/%3E%3Crect x='12' y='12' width='24' height='24' rx='3' fill='%23fff'/%3E%3Cpath d='M30 54h24V30z' fill='%23ffd166'/%3E%3Ccircle cx='22' cy='46' r='8' fill='%23ff7a7a'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puzles matemàtics — galeria</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #ffffff; --ink: #1d2330; --muted: #667085; --line: #e3e6ec;
+    --accent: #2f5bea; --accent-ink: #ffffff; --cut: #e5251f; --mark: #1f3fd1; --chip: #eef1f7;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 4px 14px rgba(16,24,40,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11141b; --card: #1a1f2a; --ink: #eef1f7; --muted: #9aa3b5; --line: #2a3140; --chip: #252c3b; --accent: #6f8fff; --accent-ink: #0b1020; --shadow: none; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  header { padding: 28px 20px 8px; max-width: 1280px; margin: 0 auto; }
+  h1 { margin: 0 0 4px; font-size: 26px; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); }
+  .bar { max-width: 1280px; margin: 14px auto 0; padding: 0 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .seg { display: inline-flex; background: var(--chip); border-radius: 10px; padding: 3px; }
+  .seg button { border: 0; background: transparent; color: var(--ink); padding: 8px 14px; border-radius: 8px; font: inherit; cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--card); box-shadow: var(--shadow); font-weight: 600; }
+  .legend { display: none; gap: 14px; align-items: center; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
+  body.laser .legend { display: flex; }
+  .dot { display: inline-block; width: 22px; height: 0; border-top: 3px solid; vertical-align: middle; margin-right: 6px; }
+  main { max-width: 1280px; margin: 0 auto; padding: 16px 20px 40px; }
+  h2 { font-size: 18px; margin: 28px 0 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .thumb { display: block; position: relative; background: #fff; border-bottom: 1px solid var(--line); aspect-ratio: 4 / 3; overflow: hidden; }
+  .thumb img { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); object-fit: contain; }
+  .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .name { font-weight: 650; font-size: 16px; }
+  .num { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; }
+  .shape { display: inline-block; background: var(--chip); border-radius: 999px; padding: 2px 10px; font-size: 12px; color: var(--muted); }
+  .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .meta span { background: var(--chip); border-radius: 6px; padding: 2px 8px; font-size: 12.5px; }
+  .laserinfo { display: none; font-size: 13px; color: var(--muted); }
+  body.laser .laserinfo { display: block; }
+  .laserinfo b { color: var(--ink); }
+  .save { color: #107a3e; font-weight: 600; }
+  @media (prefers-color-scheme: dark) { .save { color: #46c27e; } }
+  .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; }
+  .btns a { text-decoration: none; font-size: 13px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); background: var(--card); display: inline-flex; gap: 6px; align-items: center; }
+  .btns a:hover { border-color: var(--accent); }
+  .btns a.p { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btns a b { font-size: 10.5px; letter-spacing: .04em; opacity: .8; }
+  body:not(.laser) .only-laser { display: none; }
+  body.laser .only-print { display: none; }
+  .note { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-top: 10px; color: var(--muted); font-size: 14px; }
+  .note b, .note code { color: var(--ink); }
+  .note ul { margin: 6px 0 0; padding-left: 20px; }
+  footer { max-width: 1280px; margin: 0 auto; padding: 0 20px 30px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1><svg aria-hidden="true" class="logo" style="width:1.3em;height:1.3em;vertical-align:-.25em;margin-right:.45rem" viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="14" fill="#2f5bea"/><rect x="12" y="12" width="24" height="24" rx="3" fill="#fff"/><path d="M30 54h24V30z" fill="#ffd166"/><circle cx="22" cy="46" r="8" fill="#ff7a7a"/></svg>Puzles matemàtics</h1>
+  <p>Peces regulars de costat igual. Clica una figura per obrir el PDF, o tria el format que necessitis.</p>
+</header>
+<div class="bar">
+  <div class="seg" role="group" aria-label="Vista">
+    <button id="vPrint" aria-pressed="true">Per imprimir</button>
+    <button id="vLaser" aria-pressed="false">Per a làser (tall + marcatge)</button>
+  </div>
+  <div class="legend">
+    <span><i class="dot" style="border-color:var(--cut)"></i>Tall</span>
+    <span><i class="dot" style="border-color:var(--mark)"></i>Marcatge (un sol traç, sense gravar)</span>
+  </div>
+</div>
+<main>
+  <div class="note only-laser" id="laserNote">
+    <b>Versió làser optimitzada.</b> Cada costat compartit es talla un sol cop (sense separació) i els trams rectes s'uneixen en una sola línia contínua.
+    El text es <b>marca amb línies d'un sol traç</b> (no s'emplena, així no cal gravar): és ràpid i no depèn de cap tipografia.
+    <ul>
+      <li><b>SVG</b> i <b>DXF</b> en milímetres, a escala 1:1. Capa <code>TALL</code> (vermell) i capa <code>MARCATGE</code> (blau).</li>
+      <li>Al programa del làser (LightBurn, RDWorks, LaserGRBL…): assigna <b>Tall</b> al vermell i <b>Línia</b> a baixa potència/alta velocitat al blau. Fes primer el marcatge i després el tall.</li>
+      <li>La mida és la d'un full A4 (el costat de peça és a la targeta). Es pot escalar al programa: tot el contingut és vectorial.</li>
+    </ul>
+  </div>
+  <h2>Puzles de formes</h2>
+  <div class="grid" id="grid"></div>
+  <h2>Fantasma d'equacions de primer grau</h2>
+  <div class="grid" id="ghosts"></div>
+  <div class="note">Els fantasmes tenen les peces irregulars de l'original; de moment només tenen PDF i HTML (sense versió làser optimitzada).</div>
+</main>
+<footer>Cada PDF té 2 pàgines: peces per retallar i solucionari. «Retall a mà» és la mateixa figura sense separació entre peces i amb les línies compartides (menys talls amb tisores).</footer>
+<script>
+const DATA = [{"file":"01_Fraccions-irreductibles_Triangle","titol":"Fraccions irreductibles","forma":"Triangle","peces":16,"parelles":18,"costat":55.4,"linies":12,"costatsUnics":30,"tall":1663,"tallSep":2660,"ample":232,"alt":202},{"file":"02_Fraccions-equivalents_Cor","titol":"Fraccions equivalents","forma":"Cor","peces":18,"parelles":25,"costat":38.4,"linies":13,"costatsUnics":47,"tall":1805,"tallSep":2765,"ample":202,"alt":202},{"file":"03_Operacions-fraccions_Quadrat","titol":"Operacions amb fraccions","forma":"Quadrat","peces":16,"parelles":24,"costat":48,"linies":10,"costatsUnics":40,"tall":1920,"tallSep":3072,"ample":202,"alt":202},{"file":"04_Potencies_Creu","titol":"Potències","forma":"Creu","peces":16,"parelles":22,"costat":46.5,"linies":12,"costatsUnics":42,"tall":1953,"tallSep":2976,"ample":196,"alt":289},{"file":"05_Monomis_Escala","titol":"Operacions amb monomis","forma":"Escala","peces":9,"parelles":11,"costat":64,"linies":9,"costatsUnics":25,"tall":1600,"tallSep":2304,"ample":266,"alt":202},{"file":"06_Polinomis_Rectangle","titol":"Operacions amb polinomis","forma":"Rectangle","peces":12,"parelles":17,"costat":64,"linies":9,"costatsUnics":31,"tall":1984,"tallSep":3072,"ample":266,"alt":202},{"file":"07_Radicals_Sol","titol":"Radicals (4t ESO)","forma":"Sol","peces":13,"parelles":18,"costat":51.4,"linies":30,"costatsUnics":30,"tall":1543,"tallSep":2469,"ample":202,"alt":202},{"file":"08_Equacions-2n-grau_Quadrat-gran","titol":"Equacions de 2n grau","forma":"Quadrat gran","peces":9,"parelles":12,"costat":64,"linies":8,"costatsUnics":24,"tall":1536,"tallSep":2304,"ample":202,"alt":202},{"file":"09_Logaritmes_L","titol":"Logaritmes (4t ESO)","forma":"Lletra L","peces":10,"parelles":13,"costat":64,"linies":9,"costatsUnics":27,"tall":1728,"tallSep":2560,"ample":266,"alt":202},{"file":"10_Notacio-cientifica_Arbre","titol":"Notació científica","forma":"Arbre","peces":11,"parelles":11,"costat":60.7,"linies":13,"costatsUnics":24,"tall":1456,"tallSep":2124,"ample":192,"alt":289},{"file":"11_MCD-mcm_Estrella","titol":"MCD, mcm i descomposició","forma":"Estrella","peces":12,"parelles":12,"costat":64,"linies":9,"costatsUnics":24,"tall":1536,"tallSep":2304,"ample":202,"alt":232},{"file":"12_Percentatges_Casa","titol":"Percentatges","forma":"Casa amb teulada","peces":11,"parelles":14,"costat":67,"linies":14,"costatsUnics":25,"tall":1675,"tallSep":2613,"ample":211,"alt":202}];
+const GHOSTS = [{"titol":"Original","pdf":"fantasma_1_original.pdf","html":"fantasma_1_original.html","img":"Puzzles-formes/previews/fantasma_1_original.png"},{"titol":"Sense decimals (fraccions)","pdf":"fantasma_2_sense_decimals.pdf","html":"fantasma_2_sense_decimals.html","img":"Puzzles-formes/previews/fantasma_2_sense_decimals.png"},{"titol":"Sense fraccions (resultats enters)","pdf":"fantasma_3_sense_fraccions.pdf","html":"fantasma_3_sense_fraccions.html","img":"Puzzles-formes/previews/fantasma_3_sense_fraccions.png"}];
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('ca-ES', { maximumFractionDigits: 1 });
+function card(d) {
+  const pdf = `Puzzles-formes/${d.file}.pdf`, html = `Puzzles-formes/${d.file}.html`;
+  const sv = `Laser/${d.file}.svg`, dx = `Laser/${d.file}.dxf`, hand = `Laser/${d.file}_retall.pdf`;
+  const saved = Math.round((1 - d.tall / d.tallSep) * 100);
+  const el = document.createElement('article'); el.className = 'card';
+  el.innerHTML = `
+    <a class="thumb" href="${pdf}" target="_blank" rel="noopener" title="Obre el PDF">
+      <img class="only-print" loading="lazy" src="Puzzles-formes/previews/${d.file}.png" alt="${d.titol} (${d.forma})">
+      <img class="only-laser" loading="lazy" src="${sv}" alt="Versió làser de ${d.titol}">
+    </a>
+    <div class="body">
+      <div class="top"><span class="name">${d.titol}</span><span class="num">${d.file.slice(0, 2)}</span></div>
+      <div><span class="shape">${d.forma}</span></div>
+      <div class="meta"><span>${d.peces} peces</span><span>${d.parelles} parelles</span><span>costat ${fmt(d.costat)} mm</span></div>
+      <div class="laserinfo only-laser">Tall: <b>${fmt(d.tall / 1000)} m</b> en <b>${d.linies}</b> línies rectes
+        (en lloc de ${d.costatsUnics} costats) · <span class="save">−${saved}% de tall</span> respecte a peces separades.
+        Mida del fitxer: ${d.ample}×${d.alt} mm.</div>
+      <div class="btns only-print">
+        <a class="p" href="${pdf}" target="_blank" rel="noopener"><b>PDF</b> Imprimir</a>
+        <a href="${html}" target="_blank" rel="noopener"><b>HTML</b> Obrir</a>
+        <a href="${hand}" target="_blank" rel="noopener"><b>PDF</b> Retall a mà</a>
+      </div>
+      <div class="btns only-laser">
+        <a class="p" href="${sv}" download><b>SVG</b> Làser</a>
+        <a href="${dx}" download><b>DXF</b> Làser</a>
+        <a href="${hand}" target="_blank" rel="noopener"><b>PDF</b> Retall a mà</a>
+        <a href="${pdf}" target="_blank" rel="noopener"><b>PDF</b> Imprimir</a>
+      </div>
+    </div>`;
+  return el;
+}
+DATA.forEach(d => $('#grid').appendChild(card(d)));
+GHOSTS.forEach(g => {
+  const el = document.createElement('article'); el.className = 'card';
+  el.innerHTML = `
+    <a class="thumb" href="${g.pdf}" target="_blank" rel="noopener" title="Obre el PDF"><img loading="lazy" src="${g.img}" alt="${g.titol}"></a>
+    <div class="body">
+      <div class="top"><span class="name">${g.titol}</span></div>
+      <div><span class="shape">Fantasma</span></div>
+      <div class="meta"><span>24 peces</span><span>33 parelles</span></div>
+      <div class="btns"><a class="p" href="${g.pdf}" target="_blank" rel="noopener"><b>PDF</b> Imprimir</a><a href="${g.html}" target="_blank" rel="noopener"><b>HTML</b> Obrir</a></div>
+    </div>`;
+  $('#ghosts').appendChild(el);
+});
+function setView(laser) {
+  document.body.classList.toggle('laser', laser);
+  $('#vPrint').setAttribute('aria-pressed', String(!laser)); $('#vLaser').setAttribute('aria-pressed', String(laser));
+  try { localStorage.setItem('puzzlesView', laser ? 'laser' : 'print'); } catch (e) {}
+}
+$('#vPrint').onclick = () => setView(false); $('#vLaser').onclick = () => setView(true);
+let saved = null; try { saved = localStorage.getItem('puzzlesView'); } catch (e) {}
+const q = new URLSearchParams(location.search).get('v');
+setView(q ? q === 'laser' : saved === 'laser');
+</script>
+</body>
+</html>

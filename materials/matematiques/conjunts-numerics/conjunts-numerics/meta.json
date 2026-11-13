@@ -1,0 +1,31 @@
+{
+  "titol": "Conjunts numèrics: arrossega i classifica",
+  "descripcio": "Minijoc en un sol fitxer per repartir nombres en ℕ, ℤ, ℚ, 𝕀, ℝ i ℂ: mode arrossega (diagrama de caixes imbricades), mode classifica (marcar tots els conjunts) i teoria amb dibuix. Es poden desactivar els conjunts que encara no s'han donat. Funciona sense internet.",
+  "materia": "matematiques",
+  "temes": [
+    "conjunts-numerics",
+    "nombres-reals"
+  ],
+  "nivells": [
+    "1ESO",
+    "2ESO"
+  ],
+  "tipus": "joc",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": [
+    "naturals",
+    "enters",
+    "racionals",
+    "irracionals",
+    "reals",
+    "complexos",
+    "arrossegar"
+  ],
+  "data": "2026-10-23"
+}
