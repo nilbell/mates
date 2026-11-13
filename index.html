@@ -3,101 +3,108 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Repositori matemàtiques</title>
+<title>Mates ESO · Repositori de matemàtiques</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f5fd0'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 11h16'/%3E%3Cpath d='M13 11l-1 12'/%3E%3Cpath d='M20 11v9q0 3 3 3'/%3E%3C/g%3E%3C/svg%3E">
 <style>
-  :root {
-    --bg: #f6f7f9; --surf: #ffffff; --text: #1d2330; --muted: #5d6679; --line: #dde1e8;
-    --accent: #2f5fd0; --accent-bg: #e6edfb; --accent-text: #ffffff;
-    --propi: #1c7a4a; --propi-bg: #e0f3e8; --extern: #9a5b00; --extern-bg: #fbeed5;
+  :root { --bg:#f6f8fc; --surf:#fff; --ink:#1f2937; --muted:#64748b; --line:#e2e8f0; --a:#2f5fd0; --a2:#e6edfb; --fosc:#1e3a8a; --h:68px; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15.5px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif; }
+
+  /* capçalera */
+  .cap { position:sticky; top:0; z-index:20; height:var(--h); display:flex; align-items:center; gap:14px; padding:0 24px;
+         background:linear-gradient(100deg,var(--fosc),var(--a) 70%,#4f8cff); color:#fff; box-shadow:0 2px 12px rgba(30,58,138,.35); }
+  .cap svg { width:42px; height:42px; flex:none; filter:drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+  .cap h1 { margin:0; font-size:1.55rem; line-height:1; letter-spacing:-.01em; }
+  .cap .lema { margin:3px 0 0; font-size:.85rem; opacity:.85; }
+  .cap .dreta { margin-left:auto; font-size:.9rem; opacity:.9; white-space:nowrap; }
+
+  .app { display:grid; grid-template-columns:300px 1fr; min-height:calc(100vh - var(--h)); }
+  aside { background:var(--surf); border-right:1px solid var(--line); padding:20px 18px; position:sticky; top:var(--h); height:calc(100vh - var(--h)); overflow:auto; }
+  .bloc { margin:18px 0 6px; font-size:.72rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .bloc:first-of-type { margin-top:14px; }
+  input[type=search], select { width:100%; font:inherit; padding:9px 12px; border:1.5px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); }
+  input[type=search]:focus, select:focus { outline:0; border-color:var(--a); box-shadow:0 0 0 3px var(--a2); }
+  select { margin-bottom:8px; }
+  #materies { display:flex; flex-direction:column; gap:3px; }
+  #materies .xip { text-align:left; display:flex; justify-content:space-between; width:100%; border:0; background:none; padding:8px 12px; border-radius:9px; font:inherit; color:var(--ink); cursor:pointer; }
+  #materies .xip:hover { background:#f1f5f9; }
+  #materies .xip[aria-pressed=true] { background:var(--a2); color:var(--a); font-weight:700; }
+  #materies .xip small { color:var(--muted); }
+  #nivells { display:flex; flex-wrap:wrap; gap:6px; }
+  #nivells .xip { font:inherit; font-size:.85rem; padding:4px 11px; border-radius:8px; border:1.5px solid var(--line); background:#fff; color:var(--ink); cursor:pointer; }
+  #nivells .xip:hover { border-color:var(--a); }
+  #nivells .xip[aria-pressed=true] { background:var(--a); border-color:var(--a); color:#fff; }
+  #nivells .xip small { display:none; }
+  .neteja { margin-top:14px; font:inherit; background:none; border:0; color:var(--a); text-decoration:underline; cursor:pointer; padding:0; }
+  .nota { margin-top:22px; font-size:.78rem; color:var(--muted); }
+  main { padding:26px 30px 50px; max-width:980px; }
+  .resum { margin:0 0 14px; color:var(--muted); font-weight:600; }
+  .llista { display:grid; gap:12px; }
+  .f { display:grid; grid-template-columns:150px 1fr auto; gap:16px; align-items:center; background:var(--surf); border:1px solid var(--line); border-radius:14px; padding:12px; transition:box-shadow .15s, border-color .15s; }
+  .f:hover { border-color:var(--a); box-shadow:0 6px 18px rgba(47,95,208,.14); }
+  .f .mini { width:150px; aspect-ratio:4/3; border-radius:10px; background:var(--a2); overflow:hidden; display:grid; place-items:center; color:var(--a); font-size:2.2rem; text-decoration:none; }
+  .f .mini img { width:100%; height:100%; object-fit:cover; object-position:top; background:#fff; }
+  .f h2 { margin:0 0 3px; font-size:1.08rem; }
+  .f p { margin:0 0 8px; color:var(--muted); font-size:.9rem; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .ins { display:inline-block; font-size:.72rem; font-weight:700; padding:2px 9px; border-radius:6px; margin:0 5px 4px 0; background:#f1f5f9; color:#334155; }
+  .ins.m { background:var(--a2); color:var(--a); }
+  .ins.e { background:#fef3c7; color:#92400e; }
+  .accions { display:flex; flex-direction:column; gap:6px; align-items:stretch; min-width:96px; }
+  .accions a { text-align:center; text-decoration:none; font-size:.85rem; color:var(--a); font-weight:600; }
+  .accions a.btn { background:var(--a); color:#fff; padding:9px 16px; border-radius:10px; font-weight:800; }
+  .accions a.btn:hover { background:var(--fosc); }
+  .buit { text-align:center; color:var(--muted); padding:50px 0; }
+  @media (max-width:880px) {
+    .cap { padding:0 14px; } .cap .dreta { display:none; } .cap h1 { font-size:1.3rem; }
+    .app { grid-template-columns:1fr; } aside { position:static; height:auto; border-right:0; border-bottom:1px solid var(--line); }
+    main { padding:20px 14px 40px; }
+    .f { grid-template-columns:100px 1fr; } .f .mini { width:100px; } .accions { grid-column:1/-1; flex-direction:row; }
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #14171f; --surf: #1d212c; --text: #e8ebf2; --muted: #9aa3b5; --line: #2f3545;
-      --accent: #7ea2ff; --accent-bg: #26324f; --accent-text: #0f1420;
-      --propi: #6fd39b; --propi-bg: #1d3a2b; --extern: #f0b95f; --extern-bg: #3d2f14;
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #14171f; --surf: #1d212c; --text: #e8ebf2; --muted: #9aa3b5; --line: #2f3545;
-    --accent: #7ea2ff; --accent-bg: #26324f; --accent-text: #0f1420;
-    --propi: #6fd39b; --propi-bg: #1d3a2b; --extern: #f0b95f; --extern-bg: #3d2f14;
-    color-scheme: dark;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text);
-         font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  header, main { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
-  header { padding-top: 24px; }
-  h1 { margin: 0; font-size: 1.6rem; display: flex; align-items: center; gap: 10px; }
-  .logo { width: 36px; height: 36px; flex: none; }
-  .sub { color: var(--muted); margin: 2px 0 16px; }
-  .panell { background: var(--surf); border: 1px solid var(--line); border-radius: 12px;
-            padding: 14px; display: grid; gap: 12px; }
-  .fila { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-  .etiqueta { font-size: .8rem; font-weight: 600; color: var(--muted); min-width: 64px; }
-  input[type=search], select { font: inherit; color: var(--text); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
-  input[type=search] { flex: 1 1 260px; }
-  select { flex: 1 1 220px; max-width: 100%; }
-  .xip { font: inherit; font-size: .9rem; color: var(--text); background: var(--bg);
-         border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
-  .xip[aria-pressed=true] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
-  .xip small { opacity: .7; margin-left: 4px; }
-  .neteja { font: inherit; font-size: .9rem; color: var(--accent); background: none; border: 0;
-            cursor: pointer; text-decoration: underline; margin-left: auto; }
-  .resum { margin: 16px 0 8px; color: var(--muted); font-size: .9rem; }
-  .graella { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-             padding-bottom: 40px; }
-  .targeta { background: var(--surf); border: 1px solid var(--line); border-radius: 12px; padding: 14px;
-             display: flex; flex-direction: column; gap: 8px; }
-  .targeta h2 { margin: 0; font-size: 1.05rem; }
-  .targeta p { margin: 0; color: var(--muted); font-size: .92rem; }
-  .insignies { display: flex; flex-wrap: wrap; gap: 5px; }
-  .ins { font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: var(--accent-bg); color: var(--accent); }
-  .ins.propi { background: var(--propi-bg); color: var(--propi); }
-  .ins.extern { background: var(--extern-bg); color: var(--extern); }
-  .ins.neutra { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
-  .ins.proposta { background: transparent; color: var(--muted); border: 1px dashed var(--muted); font-style: italic; }
-  .miniatura { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #fff;
-               border: 1px solid var(--line); border-radius: 8px; }
-  .peu { margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: .85rem; }
-  .peu a { color: var(--accent); }
-  .boto { background: var(--accent); color: var(--accent-text) !important; text-decoration: none;
-          padding: 6px 14px; border-radius: 8px; font-weight: 600; }
-  .font { color: var(--muted); font-size: .8rem; }
-  .buit { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 40px 0; }
 </style>
 </head>
 <body>
-<header>
-  <h1><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#2f5fd0"/><g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11h16"/><path d="M13 11l-1 12"/><path d="M20 11v9q0 3 3 3"/></g></svg>Repositori matemàtiques</h1>
-  <p class="sub">Material didàctic de secundària · <span id="total"></span></p>
-  <div class="panell">
-    <div class="fila"><input type="search" id="q" placeholder="Cerca per títol, descripció, etiqueta…" aria-label="Cerca"></div>
-    <div class="fila"><span class="etiqueta">Matèria</span><span class="fila" id="materies"></span></div>
-    <div class="fila"><span class="etiqueta">Tema</span><select id="tema" aria-label="Tema"></select>
-      <button class="neteja" id="neteja" type="button">Neteja filtres</button></div>
-    <div class="fila"><span class="etiqueta">Nivell</span><span class="fila" id="nivells"></span></div>
-    <div class="fila"><span class="etiqueta">Tipus</span><select id="tipus" aria-label="Tipus"></select>
-      <select id="origen" aria-label="Origen">
-        <option value="">Qualsevol origen</option><option value="propi">Material propi</option><option value="extern">Material extern</option>
-      </select></div>
-  </div>
+<header class="cap">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#fff"/><g fill="none" stroke="#2f5fd0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11h16"/><path d="M13 11l-1 12"/><path d="M20 11v9q0 3 3 3"/></g></svg>
+  <div><h1>Mates ESO</h1><p class="lema">Repositori de material de matemàtiques</p></div>
+  <div class="dreta"><span id="total"></span></div>
 </header>
+<div class="app">
+<aside>
+  <input type="search" id="q" placeholder="Cerca…" aria-label="Cerca">
+  <div class="bloc">Matèria</div><div id="materies"></div>
+  <div class="bloc">Nivell</div><div id="nivells"></div>
+  <div class="bloc">Tema</div><select id="tema" aria-label="Tema"></select>
+  <select id="tipus" aria-label="Tipus"></select>
+  <button class="neteja" id="neteja" type="button">Neteja filtres</button>
+  <p class="nota">Tot funciona sense instal·lar res: només cal obrir l'aplicatiu.</p>
+</aside>
 <main>
   <p class="resum" id="resum"></p>
-  <div class="graella" id="graella"></div>
+  <div class="llista" id="graella"></div>
 </main>
-
+</div>
 <script>
+function pintaTargeta(r) {
+  const href = url(r.obrir);
+  const extres = r.extres.map(e => `<a href="${esc(url(e.href))}"${nova(e.href)}>${esc(e.nom)}</a>`).join("");
+  return `<article class="f">
+    <a class="mini" href="${esc(href)}"${nova(href)} aria-label="Obre ${esc(r.titol)}">${r.imatge ? `<img loading="lazy" src="${esc(url(r.imatge))}" alt="">` : matIco(r.materia)}</a>
+    <div>
+      <h2>${esc(r.titol)}</h2>
+      ${r.descripcio ? `<p>${esc(r.descripcio)}</p>` : ""}
+      <span class="ins m">${esc(matNom[r.materia])}</span>${r.origen === "extern" ? `<span class="ins e">Recomanat</span>` : ""}<span class="ins">${esc(r.tipus)}</span>${r.nivells.map(n => `<span class="ins">${esc(n)}</span>`).join("")}
+    </div>
+    <div class="accions"><a class="btn" href="${esc(href)}"${nova(href)}>Obrir</a>${extres}</div>
+  </article>`;
+}
+/* Lògica comuna dels models de disseny: filtres, cerca i estat a l'adreça.
+   Cada model defineix abans `pintaTargeta(r)` i els elements amb aquests id:
+   q, materies, tema, nivells, tipus, origen, neteja, resum, graella, total. */
 const D = {"nivells": ["1ESO", "2ESO", "3ESO", "4ESO", "1BAT", "2BAT"], "tipus": ["fitxa", "teoria", "presentació", "activitat", "joc", "interactiu", "eina", "projecte", "avaluació", "vídeo", "altres"], "materies": [{"id": "matematiques", "nom": "Matemàtiques", "blocs": [{"nom": "Numeració i càlcul", "temes": [{"id": "nombres-naturals", "nom": "Nombres naturals"}, {"id": "divisibilitat", "nom": "Divisibilitat (múltiples, divisors, mcd i mcm)"}, {"id": "enters", "nom": "Càlcul amb nombres enters"}, {"id": "fraccions", "nom": "Càlcul amb fraccions"}, {"id": "decimals", "nom": "Nombres decimals"}, {"id": "potencies", "nom": "Potències"}, {"id": "arrels", "nom": "Arrels"}, {"id": "notacio-cientifica", "nom": "Notació científica"}, {"id": "proporcionalitat", "nom": "Proporcionalitat"}, {"id": "percentatges", "nom": "Percentatges"}, {"id": "conjunts-numerics", "nom": "Conjunts numèrics (ℕ, ℤ, ℚ, ℝ, ℂ)"}, {"id": "nombres-reals", "nom": "Nombres reals i radicals"}]}, {"nom": "Àlgebra", "temes": [{"id": "llenguatge-algebraic", "nom": "Llenguatge algebraic"}, {"id": "polinomis", "nom": "Polinomis"}, {"id": "identitats-notables", "nom": "Identitats notables"}, {"id": "factoritzacio", "nom": "Factorització"}, {"id": "equacions-1r-grau", "nom": "Equacions de 1r grau"}, {"id": "equacions-2n-grau", "nom": "Equacions de 2n grau"}, {"id": "sistemes-equacions", "nom": "Sistemes d'equacions"}, {"id": "inequacions", "nom": "Inequacions"}, {"id": "successions", "nom": "Successions i progressions"}]}, {"nom": "Funcions", "temes": [{"id": "funcions-concepte", "nom": "Concepte de funció i gràfiques"}, {"id": "funcio-lineal", "nom": "Funció lineal i afí"}, {"id": "funcio-quadratica", "nom": "Funció quadràtica"}, {"id": "funcions-exp-log", "nom": "Funcions exponencials i logarítmiques"}]}, {"nom": "Geometria", "temes": [{"id": "figures-planes", "nom": "Figures planes i angles"}, {"id": "perimetres-arees", "nom": "Perímetres i àrees"}, {"id": "pitagores", "nom": "Teorema de Pitàgores"}, {"id": "tales-semblanca", "nom": "Tales i semblança"}, {"id": "cossos-geometrics", "nom": "Cossos geomètrics"}, {"id": "volums", "nom": "Àrees i volums de cossos"}, {"id": "transformacions", "nom": "Moviments i transformacions"}, {"id": "trigonometria", "nom": "Trigonometria"}, {"id": "geometria-analitica", "nom": "Geometria analítica i vectors"}]}, {"nom": "Estadística i probabilitat", "temes": [{"id": "estadistica", "nom": "Estadística descriptiva"}, {"id": "probabilitat", "nom": "Probabilitat"}, {"id": "combinatoria", "nom": "Combinatòria"}, {"id": "conjunts-venn", "nom": "Conjunts i diagrames de Venn"}]}, {"nom": "Transversal", "temes": [{"id": "resolucio-problemes", "nom": "Resolució de problemes"}, {"id": "jocs-recreacions", "nom": "Jocs i recreacions matemàtiques"}, {"id": "estudiar-mates", "nom": "Com estudiar matemàtiques"}, {"id": "mates-altres", "nom": "Altres (matemàtiques)"}]}]}, {"id": "fisica", "nom": "Física", "blocs": [{"nom": "Mesura i matèria", "temes": [{"id": "magnituds-unitats", "nom": "Magnituds, unitats i mesura"}, {"id": "estats-materia", "nom": "Estats de la matèria"}]}, {"nom": "Moviment i forces", "temes": [{"id": "cinematica", "nom": "Cinemàtica (MRU, MRUA)"}, {"id": "forces", "nom": "Forces i dinàmica"}, {"id": "energia", "nom": "Energia i treball"}]}, {"nom": "Electricitat, ones i calor", "temes": [{"id": "electricitat", "nom": "Electricitat i circuits"}, {"id": "ones-so-llum", "nom": "Ones, so i llum"}, {"id": "calor-temperatura", "nom": "Calor i temperatura"}]}, {"nom": "Transversal", "temes": [{"id": "fisica-altres", "nom": "Altres (física)"}]}]}, {"id": "quimica", "nom": "Química", "blocs": [{"nom": "Estructura de la matèria", "temes": [{"id": "estructura-atomica", "nom": "Àtoms i estructura atòmica"}, {"id": "taula-periodica", "nom": "Taula periòdica"}, {"id": "enllac-quimic", "nom": "Enllaç químic"}, {"id": "formulacio", "nom": "Formulació i nomenclatura"}]}, {"nom": "Reaccions i mescles", "temes": [{"id": "reaccions-quimiques", "nom": "Reaccions químiques i estequiometria"}, {"id": "dissolucions", "nom": "Dissolucions"}]}, {"nom": "Transversal", "temes": [{"id": "quimica-altres", "nom": "Altres (química)"}]}]}, {"id": "biologia-geologia", "nom": "Biologia i geologia", "blocs": [{"nom": "Biologia", "temes": [{"id": "cellula", "nom": "La cèl·lula"}, {"id": "genetica", "nom": "Genètica"}, {"id": "cos-huma", "nom": "El cos humà i la salut"}, {"id": "ecologia", "nom": "Ecologia i medi ambient"}]}, {"nom": "Geologia", "temes": [{"id": "roques-minerals", "nom": "Roques i minerals"}, {"id": "dinamica-terra", "nom": "Dinàmica de la Terra"}]}, {"nom": "Transversal", "temes": [{"id": "biologia-altres", "nom": "Altres (biologia i geologia)"}]}]}, {"id": "tutoria", "nom": "Tutoria", "blocs": [{"nom": "Hàbits i convivència", "temes": [{"id": "xarxes-socials", "nom": "Xarxes socials i privacitat"}, {"id": "tutoria-altres", "nom": "Altres (tutoria)"}]}]}], "recursos": [{"id": "materials/fisica/cinematica/phet-simulacions-interactives", "titol": "PhET: simulacions interactives", "descripcio": "Simulacions de física, química, biologia i matemàtiques de la Universitat de Colorado, disponibles en català.", "materia": "fisica", "temes": ["cinematica", "forces", "energia", "electricitat"], "nivells": ["3ESO", "4ESO", "1BAT"], "tipus": "interactiu", "origen": "extern", "autor": "PhET Interactive Simulations", "urlFont": "https://phet.colorado.edu/ca/", "llicencia": "CC-BY", "etiquetes": ["simulació", "proposta"], "data": "2026-10-22", "obrir": "https://phet.colorado.edu/ca/", "imatge": "materials/fisica/cinematica/phet-simulacions-interactives/captura.png", "extres": [], "carpeta": "materials/fisica/cinematica/phet-simulacions-interactives"}, {"id": "materials/fisica/fisica-altres/physics-figures", "titol": "Physics Figures: generadors de figures de física", "descripcio": "Generadors de diagrames de forces, vectors, pla inclinat, politges, moviment d'un projectil, gràfiques de moviment, circuits, ones i raigs òptics. Web en anglès.", "materia": "fisica", "temes": ["fisica-altres", "forces", "cinematica", "electricitat", "ones-so-llum"], "nivells": ["3ESO", "4ESO", "1BAT", "2BAT"], "tipus": "eina", "origen": "extern", "autor": "teacher.dev", "urlFont": "https://physicsfigures.com/", "llicencia": "Vegeu la pàgina «Reuse» del web", "etiquetes": ["generador", "fitxes", "exàmens"], "data": "2026-10-22", "obrir": "https://physicsfigures.com/", "imatge": "materials/fisica/fisica-altres/physics-figures/captura.png", "extres": [], "carpeta": "materials/fisica/fisica-altres/physics-figures"}, {"id": "materials/matematiques/conjunts-numerics/conjunts-numerics", "titol": "Conjunts numèrics: arrossega i classifica", "descripcio": "Minijoc en un sol fitxer per repartir nombres en ℕ, ℤ, ℚ, 𝕀, ℝ i ℂ: mode arrossega (diagrama de caixes imbricades), mode classifica (marcar tots els conjunts) i teoria amb dibuix. Es poden desactivar els conjunts que encara no s'han donat. Funciona sense internet.", "materia": "matematiques", "temes": ["conjunts-numerics", "nombres-reals"], "nivells": ["1ESO", "2ESO"], "tipus": "joc", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["naturals", "enters", "racionals", "irracionals", "reals", "complexos", "arrossegar"], "data": "2026-10-23", "obrir": "materials/matematiques/conjunts-numerics/conjunts-numerics/index.html", "imatge": "materials/matematiques/conjunts-numerics/conjunts-numerics/captura.png", "extres": [], "carpeta": "materials/matematiques/conjunts-numerics/conjunts-numerics"}, {"id": "materials/matematiques/conjunts-venn/transum-venn-paint", "titol": "Transum: Venn Paint (nivell 1)", "descripcio": "Activitat interactiva: omple amb pintura les regions de diagrames de Venn segons la condició indicada. Té tres nivells de dificultat; aquest enllaç porta al nivell 1.", "materia": "matematiques", "temes": ["conjunts-venn"], "nivells": ["1ESO", "2ESO", "3ESO"], "tipus": "interactiu", "origen": "extern", "autor": "Transum Mathematics", "urlFont": "https://www.transum.org/maths/activity/venn/?Level=1", "llicencia": "© Transum; adaptat de wPaint (MIT)", "etiquetes": ["Venn", "conjunts"], "data": "2026-10-22", "obrir": "https://www.transum.org/maths/activity/venn/?Level=1", "imatge": "materials/matematiques/conjunts-venn/transum-venn-paint/captura.png", "extres": [], "carpeta": "materials/matematiques/conjunts-venn/transum-venn-paint"}, {"id": "materials/matematiques/equacions-1r-grau/equacions-1r-grau", "titol": "Equacions de primer grau: balança, pas a pas i gràfic", "descripcio": "Aplicatiu en un sol fitxer per visualitzar equacions de 1r grau: balança amb caixes x, boles i globus negatius (amb parelles que s'eliminen), resolució pas a pas (automàtica o triant les operacions) i gràfic de les dues rectes amb el punt de tall. Admet parèntesis, fraccions i decimals, i té botó d'equació aleatòria. Funciona sense internet.", "materia": "matematiques", "temes": ["equacions-1r-grau", "llenguatge-algebraic"], "nivells": ["2ESO", "3ESO"], "tipus": "interactiu", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["balança", "pas a pas", "gràfic", "globus", "aleatori"], "data": "2026-11-13", "obrir": "materials/matematiques/equacions-1r-grau/equacions-1r-grau/index.html", "imatge": "materials/matematiques/equacions-1r-grau/equacions-1r-grau/captura.png", "extres": [], "carpeta": "materials/matematiques/equacions-1r-grau/equacions-1r-grau"}, {"id": "materials/matematiques/estudiar-mates/infografia-estudiar-mates", "titol": "Com estudiar matemàtiques? Les quatre infografies", "descripcio": "Quatre infografies amb consells per estudiar matemàtiques, una per etapa (1r–2n d'ESO, 3r–4t d'ESO, Batxillerat i una per a tots els cursos). Es veuen totes en una sola pàgina; cada una s'obre a mida real i es pot descarregar en PDF (A3) per imprimir.", "materia": "matematiques", "temes": ["estudiar-mates"], "nivells": ["1ESO", "2ESO", "3ESO", "4ESO", "1BAT", "2BAT"], "tipus": "altres", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["infografia", "tècniques d'estudi"], "data": "2026-10-22", "obrir": "materials/matematiques/estudiar-mates/infografia-estudiar-mates/index.html", "imatge": "materials/matematiques/estudiar-mates/infografia-estudiar-mates/captura.png", "extres": [], "carpeta": "materials/matematiques/estudiar-mates/infografia-estudiar-mates"}, {"id": "materials/matematiques/jocs-recreacions/puzzles-mates", "titol": "Puzles matemàtics: galeria i generador", "descripcio": "Galeria de 12 puzles de peces i 3 fantasmes d'equacions (per imprimir o per a tall làser), amb el generador per crear-ne de nous.", "materia": "matematiques", "temes": ["jocs-recreacions", "fraccions", "divisibilitat", "percentatges", "potencies", "notacio-cientifica", "nombres-reals", "arrels", "llenguatge-algebraic", "polinomis", "equacions-1r-grau", "equacions-2n-grau", "funcions-exp-log"], "nivells": ["1ESO", "2ESO", "3ESO", "4ESO", "1BAT"], "tipus": "joc", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["puzle", "làser"], "data": "2026-10-22", "obrir": "materials/matematiques/jocs-recreacions/puzzles-mates/index.html", "imatge": "materials/matematiques/jocs-recreacions/puzzles-mates/captura.png", "extres": [], "carpeta": "materials/matematiques/jocs-recreacions/puzzles-mates"}, {"id": "materials/matematiques/pitagores/geometria-trigonometria#0", "titol": "Teorema de Pitàgores: aplicatiu visual", "descripcio": "Triangle rectangle arrossegable amb els tres quadrats (a² + b² = c²), triangles perfectes de costats enters, demostració per recol·locació, calculadora pas a pas, ternes d'Euclides, aplicacions i exercicis aleatoris amb autocorrecció. Mode Projecció i mode Amaga resultats. Funciona sense internet.", "materia": "matematiques", "temes": ["pitagores"], "nivells": ["2ESO", "3ESO"], "tipus": "interactiu", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["visual", "arrossegar", "practica", "projecció", "pitàgores", "ternes pitagòriques"], "data": "2026-10-28", "obrir": "materials/matematiques/pitagores/geometria-trigonometria/pitagores.html", "imatge": "materials/matematiques/pitagores/geometria-trigonometria/captura_1.png", "extres": [], "carpeta": ""}, {"id": "materials/matematiques/pitagores/geometria-trigonometria#1", "titol": "Teorema de Tales i semblança: aplicatiu visual", "descripcio": "Triangles semblants amb una paral·lela que es mou, paral·leles tallades per secants, mesurar alçades amb ombres, escales de figures i de mapes (longituds, perímetres i àrees) i exercicis aleatoris amb autocorrecció. Mode Projecció i mode Amaga resultats.", "materia": "matematiques", "temes": ["tales-semblanca"], "nivells": ["2ESO", "3ESO"], "tipus": "interactiu", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["visual", "arrossegar", "practica", "projecció", "tales", "semblança", "escales"], "data": "2026-10-28", "obrir": "materials/matematiques/pitagores/geometria-trigonometria/tales.html", "imatge": "materials/matematiques/pitagores/geometria-trigonometria/captura_2.png", "extres": [], "carpeta": ""}, {"id": "materials/matematiques/pitagores/geometria-trigonometria#2", "titol": "Trigonometria: raons, cercle goniomètric i regla fonamental", "descripcio": "Raons trigonomètriques en el triangle rectangle, cercle goniomètric interactiu (graus, radians, valors exactes), sin²α + cos²α = 1, gràfiques de sinus i cosinus, resolució de triangles rectangles, aplicacions i exercicis aleatoris amb autocorrecció.", "materia": "matematiques", "temes": ["trigonometria"], "nivells": ["3ESO", "4ESO"], "tipus": "interactiu", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["visual", "arrossegar", "practica", "projecció", "sinus", "cosinus", "tangent", "cercle goniomètric", "radians"], "data": "2026-10-28", "obrir": "materials/matematiques/pitagores/geometria-trigonometria/trigonometria.html", "imatge": "materials/matematiques/pitagores/geometria-trigonometria/captura_3.png", "extres": [], "carpeta": ""}, {"id": "materials/matematiques/pitagores/geometria-trigonometria#3", "titol": "Teoremes del sinus i del cosinus: aplicatiu visual", "descripcio": "Triangle qualsevol amb vèrtexs arrossegables: teorema del sinus (amb la circumferència circumscrita) i teorema del cosinus (amb els quadrats dels costats), amb exercicis aleatoris i autocorrecció.", "materia": "matematiques", "temes": ["trigonometria"], "nivells": ["1BAT"], "tipus": "interactiu", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["visual", "arrossegar", "practica", "projecció", "teorema del sinus", "teorema del cosinus"], "data": "2026-10-28", "obrir": "materials/matematiques/pitagores/geometria-trigonometria/sinus-cosinus.html", "imatge": "materials/matematiques/pitagores/geometria-trigonometria/captura_4.png", "extres": [], "carpeta": ""}, {"id": "materials/matematiques/probabilitat/probabilitat-grans-nombres", "titol": "Simulador de la llei dels grans nombres", "descripcio": "Simulador en un sol fitxer: moneda, daus, bossa de boles i dau trucat, fins a 1.000.000 de tirades, amb taula de freqüències i gràfics. Funciona sense internet.", "materia": "matematiques", "temes": ["probabilitat", "estadistica"], "nivells": ["4ESO"], "tipus": "interactiu", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["simulador", "grans nombres"], "data": "2026-10-22", "obrir": "materials/matematiques/probabilitat/probabilitat-grans-nombres/index.html", "imatge": "materials/matematiques/probabilitat/probabilitat-grans-nombres/captura.png", "extres": [], "carpeta": "materials/matematiques/probabilitat/probabilitat-grans-nombres"}, {"id": "materials/tutoria/xarxes-socials/xarxes-socials-institut", "titol": "Instaxat: tutoria sobre xarxes socials", "descripcio": "Sessió de tutoria de 45 min per projectar: calcula el temps que dediquem a les xarxes i «detectius de privacitat» amb perfils fictius. Català, castellà i anglès.", "materia": "tutoria", "temes": ["xarxes-socials"], "nivells": ["2ESO"], "tipus": "activitat", "origen": "propi", "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV", "urlFont": "", "llicencia": "", "etiquetes": ["tutoria", "privacitat", "pissarra digital"], "data": "2026-10-22", "obrir": "materials/tutoria/xarxes-socials/xarxes-socials-institut/index.html", "imatge": "materials/tutoria/xarxes-socials/xarxes-socials-institut/captura.png", "extres": [], "carpeta": "materials/tutoria/xarxes-socials/xarxes-socials-institut"}]};
 const R = D.recursos;
-// Els recursos propis s'obren en una pestanya nova, excepte a la pàgina publicada (prepara_artifact.py ho posa a false):
-// allà una pestanya nova queda bloquejada i s'han d'obrir dins del mateix marc.
-const NOVA_PESTANYA = true;
-const destinacio = h => (NOVA_PESTANYA || /^https?:/.test(h)) ? ' target="_blank" rel="noopener"' : "";
+const MAT = { matematiques: { c: "#2f5fd0", i: "∑" }, fisica: { c: "#e07a1f", i: "⚛" }, quimica: { c: "#17a06a", i: "⚗" },
+  "biologia-geologia": { c: "#0e8f8f", i: "✿" }, tutoria: { c: "#d6457b", i: "☺" } };
+const matCol = id => (MAT[id] || { c: "#2f5fd0" }).c, matIco = id => (MAT[id] || { i: "•" }).i;
 const estat = { q: "", mat: "", tema: "", niv: [], tipus: "", origen: "" };
 
 const temaInfo = {};
@@ -111,12 +118,13 @@ const ordreTema = {}; Object.keys(temaInfo).forEach((id, i) => ordreTema[id] = i
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const norm = s => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const url = h => /^https?:/.test(h) ? h : encodeURI(h);
+const nova = h => /^https?:/.test(h) ? ' target="_blank" rel="noopener"' : ' target="_blank" rel="noopener"';
 
 const textCerca = Object.fromEntries(R.map(r => [r.id, norm([
   r.titol, r.descripcio, r.autor, r.etiquetes.join(" "), r.temes.map(t => temaInfo[t].nom).join(" ")
 ].join(" "))]));
 
-// `salta` permet comptar les facetes ignorant el filtre que s'està comptant
 function coincideix(r, salta) {
   if (salta !== "q" && estat.q && !textCerca[r.id].includes(norm(estat.q))) return false;
   if (salta !== "mat" && estat.mat && r.materia !== estat.mat) return false;
@@ -127,11 +135,14 @@ function coincideix(r, salta) {
   return true;
 }
 
+function ordena(llista) {
+  return llista.slice().sort((a, b) =>
+    ordreMat[a.materia] - ordreMat[b.materia] || ordreTema[a.temes[0]] - ordreTema[b.temes[0]] ||
+    D.nivells.indexOf(a.nivells[0]) - D.nivells.indexOf(b.nivells[0]) || a.titol.localeCompare(b.titol, "ca"));
+}
+
 function llegeixHash() {
-  let text = location.hash.slice(1);
-  // si l'adreça no porta filtres (pàgina publicada), recupera els de l'última visita en tornar d'un recurs
-  if (!text) { try { text = sessionStorage.getItem("filtres") || ""; } catch (e) { /* sense emmagatzematge */ } }
-  const p = new URLSearchParams(text);
+  const p = new URLSearchParams(location.hash.slice(1));
   estat.q = p.get("q") || ""; estat.mat = p.get("mat") || ""; estat.tema = p.get("tema") || "";
   estat.niv = (p.get("niv") || "").split(",").filter(Boolean);
   estat.tipus = p.get("tipus") || ""; estat.origen = p.get("origen") || "";
@@ -139,97 +150,72 @@ function llegeixHash() {
 function escriuHash() {
   const p = new URLSearchParams();
   Object.entries({ ...estat, niv: estat.niv.join(",") }).forEach(([k, v]) => v && p.set(k, v));
-  try { sessionStorage.setItem("filtres", p.toString()); } catch (e) { /* sense emmagatzematge */ }
-  try { history.replaceState(null, "", p.toString() ? "#" + p : location.pathname + location.search); }
-  catch (e) { /* en un marc restringit (pàgina publicada) l'adreça no es pot canviar */ }
+  try { history.replaceState(null, "", p.toString() ? "#" + p : location.pathname + location.search); } catch (e) { /* marc restringit */ }
+}
+
+/* xip(text, n, premut, attr): cada model pot canviar l'aspecte amb la classe CSS «xip» */
+function xip(text, n, premut, attr) {
+  return `<button type="button" class="xip" aria-pressed="${premut}" ${attr}>${esc(text)}${n === null ? "" : `<small>${n}</small>`}</button>`;
 }
 
 function pintaFiltres() {
-  const xip = (text, n, premut, attr) =>
-    `<button type="button" class="xip" aria-pressed="${premut}" ${attr}>${esc(text)}${n === null ? "" : `<small>${n}</small>`}</button>`;
-
-  $("materies").innerHTML =
+  if ($("materies")) $("materies").innerHTML =
     xip("Totes", R.filter(r => coincideix(r, "mat")).length, !estat.mat, 'data-mat=""') +
-    D.materies.map(m => xip(m.nom, R.filter(r => r.materia === m.id && coincideix(r, "mat")).length,
+    D.materies.filter(m => R.some(r => r.materia === m.id)).map(m => xip(m.nom, R.filter(r => r.materia === m.id && coincideix(r, "mat")).length,
       estat.mat === m.id, `data-mat="${m.id}"`)).join("");
-
-  $("nivells").innerHTML = D.nivells.map(n => xip(n, R.filter(r => r.nivells.includes(n) && coincideix(r, "niv")).length,
+  if ($("nivells")) $("nivells").innerHTML = D.nivells.map(n => xip(n, R.filter(r => r.nivells.includes(n) && coincideix(r, "niv")).length,
     estat.niv.includes(n), `data-niv="${n}"`)).join("");
-
-  const compta = {}; R.filter(r => coincideix(r, "tema")).forEach(r => r.temes.forEach(t => compta[t] = (compta[t] || 0) + 1));
-  const materies = D.materies.filter(m => !estat.mat || m.id === estat.mat);
-  $("tema").innerHTML = `<option value="">Tots els temes</option>` + materies.map(m => m.blocs.map(b =>
-    `<optgroup label="${esc(estat.mat ? b.nom : m.nom + " · " + b.nom)}">` + b.temes.map(t =>
-      `<option value="${t.id}" ${compta[t.id] || estat.tema === t.id ? "" : "disabled"}>${esc(t.nom)} (${compta[t.id] || 0})</option>`
-    ).join("") + `</optgroup>`).join("")).join("");
-  $("tema").value = estat.tema;
-
-  $("tipus").innerHTML = `<option value="">Qualsevol tipus</option>` + D.tipus.map(t =>
-    `<option value="${esc(t)}">${esc(t)} (${R.filter(r => r.tipus === t && coincideix(r, "tipus")).length})</option>`).join("");
-  $("tipus").value = estat.tipus;
-  $("origen").value = estat.origen;
-  if (document.activeElement !== $("q")) $("q").value = estat.q;
-}
-
-function pintaTargeta(r) {
-  const temes = r.temes.map(t => `<span class="ins">${esc(temaInfo[t].nom)}</span>`).join("");
-  const nivells = r.nivells.map(n => `<span class="ins neutra">${esc(n)}</span>`).join("");
-  const href = /^https?:/.test(r.obrir) ? r.obrir : encodeURI(r.obrir);
-  const font = [r.autor, r.llicencia].filter(Boolean).join(" · ");
-  const extres = r.extres.map(e => { const h = /^https?:/.test(e.href) ? e.href : encodeURI(e.href);
-    return `<a href="${esc(h)}"${destinacio(h)}>${esc(e.nom)}</a>`; }).join("");
-  const etiq = r.etiquetes.includes("proposta") ? `<span class="ins proposta">proposta</span>` : "";
-  return `<article class="targeta">
-    ${r.imatge ? `<img class="miniatura" loading="lazy" src="${esc(encodeURI(r.imatge))}" alt="">` : ""}
-    <div class="insignies"><span class="ins ${r.origen}">${r.origen === "propi" ? "Propi" : "Extern"}</span>${etiq}
-      <span class="ins neutra">${esc(r.tipus)}</span>${nivells}</div>
-    <h2>${esc(r.titol)}</h2>
-    ${r.descripcio ? `<p>${esc(r.descripcio)}</p>` : ""}
-    <div class="insignies">${temes}</div>
-    ${font ? `<div class="font">${esc(font)}</div>` : ""}
-    <div class="peu"><a class="boto" href="${esc(href)}"${destinacio(href)}>Obrir</a>
-      ${r.carpeta ? `<a href="${esc(encodeURI(r.carpeta))}/"${destinacio("")}>Carpeta</a>` : ""}
-      ${extres}
-      ${r.urlFont && r.urlFont !== r.obrir ? `<a href="${esc(r.urlFont)}" target="_blank" rel="noopener">Font</a>` : ""}</div>
-  </article>`;
+  if ($("tema")) {
+    const compta = {}; R.filter(r => coincideix(r, "tema")).forEach(r => r.temes.forEach(t => compta[t] = (compta[t] || 0) + 1));
+    const hiHa = new Set(); R.forEach(r => r.temes.forEach(t => hiHa.add(t)));  /* només temes que tenen algun recurs */
+    const materies = D.materies.filter(m => (!estat.mat || m.id === estat.mat) && R.some(r => r.materia === m.id));
+    $("tema").innerHTML = `<option value="">Tots els temes</option>` + materies.map(m => m.blocs.filter(b => b.temes.some(t => hiHa.has(t.id))).map(b =>
+      `<optgroup label="${esc(estat.mat ? b.nom : m.nom + " · " + b.nom)}">` + b.temes.filter(t => hiHa.has(t.id)).map(t =>
+        `<option value="${t.id}" ${compta[t.id] || estat.tema === t.id ? "" : "disabled"}>${esc(t.nom)} (${compta[t.id] || 0})</option>`
+      ).join("") + `</optgroup>`).join("")).join("");
+    $("tema").value = estat.tema;
+  }
+  if ($("tipus")) {
+    $("tipus").innerHTML = `<option value="">Qualsevol tipus</option>` + D.tipus.map(t =>
+      `<option value="${esc(t)}">${esc(t)} (${R.filter(r => r.tipus === t && coincideix(r, "tipus")).length})</option>`).join("");
+    $("tipus").value = estat.tipus;
+  }
+  if ($("origen")) $("origen").value = estat.origen;
+  if ($("q") && document.activeElement !== $("q")) $("q").value = estat.q;
 }
 
 function pinta() {
   pintaFiltres();
-  const trobats = R.filter(r => coincideix(r)).sort((a, b) =>
-    ordreMat[a.materia] - ordreMat[b.materia] || ordreTema[a.temes[0]] - ordreTema[b.temes[0]] ||
-    D.nivells.indexOf(a.nivells[0]) - D.nivells.indexOf(b.nivells[0]) || a.titol.localeCompare(b.titol, "ca"));
-  $("resum").textContent = `${trobats.length} de ${R.length} recursos`;
-  $("graella").innerHTML = trobats.length ? trobats.map(pintaTargeta).join("") :
-    `<div class="buit">${R.length ? "Cap recurs amb aquests filtres." :
-      "Encara no hi ha cap recurs. Crea'n un amb eines/nou.py i executa actualitza.bat."}</div>`;
+  const trobats = ordena(R.filter(r => coincideix(r)));
+  if ($("resum")) $("resum").textContent = `${trobats.length} de ${R.length} recursos`;
+  if (typeof pintaLlista === "function") pintaLlista(trobats);
+  else $("graella").innerHTML = trobats.length ? trobats.map(pintaTargeta).join("") :
+    `<div class="buit">Cap recurs amb aquests filtres.</div>`;
   escriuHash();
 }
 
-$("total").textContent = `${R.length} recursos`;
-$("q").addEventListener("input", e => { estat.q = e.target.value; pinta(); });
-$("tema").addEventListener("change", e => { estat.tema = e.target.value; pinta(); });
-$("tipus").addEventListener("change", e => { estat.tipus = e.target.value; pinta(); });
-$("origen").addEventListener("change", e => { estat.origen = e.target.value; pinta(); });
-$("materies").addEventListener("click", e => {
+if ($("total")) $("total").textContent = `${R.length} recursos`;
+if ($("q")) $("q").addEventListener("input", e => { estat.q = e.target.value; pinta(); });
+["tema", "tipus", "origen"].forEach(id => { if ($(id)) $(id).addEventListener("change", e => { estat[id] = e.target.value; pinta(); }); });
+if ($("materies")) $("materies").addEventListener("click", e => {
   const b = e.target.closest("[data-mat]"); if (!b) return;
   estat.mat = b.dataset.mat;
-  if (estat.tema && temaInfo[estat.tema].materia !== estat.mat && estat.mat) estat.tema = "";
+  if (estat.tema && estat.mat && temaInfo[estat.tema].materia !== estat.mat) estat.tema = "";
   pinta();
 });
-$("nivells").addEventListener("click", e => {
+if ($("nivells")) $("nivells").addEventListener("click", e => {
   const b = e.target.closest("[data-niv]"); if (!b) return;
   const n = b.dataset.niv;
   estat.niv = estat.niv.includes(n) ? estat.niv.filter(x => x !== n) : [...estat.niv, n];
   pinta();
 });
-$("neteja").addEventListener("click", () => {
+if ($("neteja")) $("neteja").addEventListener("click", () => {
   Object.assign(estat, { q: "", mat: "", tema: "", niv: [], tipus: "", origen: "" }); pinta();
 });
 window.addEventListener("hashchange", () => { llegeixHash(); pinta(); });
-
 llegeixHash();
 pinta();
+
 </script>
 </body>
 </html>
