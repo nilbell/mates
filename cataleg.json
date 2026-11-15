@@ -538,34 +538,6 @@
       "carpeta": "materials/matematiques/conjunts-venn/diagrames-venn"
     },
     {
-      "id": "materials/matematiques/conjunts-venn/transum-venn-paint",
-      "titol": "Transum: Venn Paint (nivell 1)",
-      "descripcio": "Activitat interactiva: omple amb pintura les regions de diagrames de Venn segons la condició indicada. Té tres nivells de dificultat; aquest enllaç porta al nivell 1.",
-      "materia": "matematiques",
-      "temes": [
-        "conjunts-venn"
-      ],
-      "nivells": [
-        "1ESO",
-        "2ESO",
-        "3ESO"
-      ],
-      "tipus": "interactiu",
-      "origen": "extern",
-      "autor": "Transum Mathematics",
-      "urlFont": "https://www.transum.org/maths/activity/venn/?Level=1",
-      "llicencia": "© Transum; adaptat de wPaint (MIT)",
-      "etiquetes": [
-        "Venn",
-        "conjunts"
-      ],
-      "data": "2026-10-22",
-      "obrir": "https://www.transum.org/maths/activity/venn/?Level=1",
-      "imatge": "materials/matematiques/conjunts-venn/transum-venn-paint/captura.png",
-      "extres": [],
-      "carpeta": "materials/matematiques/conjunts-venn/transum-venn-paint"
-    },
-    {
       "id": "materials/matematiques/equacions-1r-grau/equacions-1r-grau",
       "titol": "Equacions de primer grau: balança, pas a pas i gràfic",
       "descripcio": "Aplicatiu en un sol fitxer per visualitzar equacions de 1r grau: balança amb caixes x, boles i globus negatius (amb parelles que s'eliminen), resolució pas a pas (automàtica o triant les operacions) i gràfic de les dues rectes amb el punt de tall. Admet parèntesis, fraccions i decimals, i té botó d'equació aleatòria. Funciona sense internet.",
