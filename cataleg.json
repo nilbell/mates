@@ -505,6 +505,39 @@
       "carpeta": "materials/matematiques/conjunts-numerics/conjunts-numerics"
     },
     {
+      "id": "materials/matematiques/conjunts-venn/diagrames-venn",
+      "titol": "Diagrames de Venn: pinta, col·loca nombres i preguntes d'examen",
+      "descripcio": "Aplicatiu en un sol fitxer, en català, inspirat en el Venn Paint de Transum. Venn inicial (arrossega els nombres a tres cercles amb propietats), tres nivells per pintar regions segons una expressió (A barra, ∪, ∩; amb comprovació diagrama a diagrama) i 8 problemes tipus examen amb correcció automàtica i solució. Funciona sense internet.",
+      "materia": "matematiques",
+      "temes": [
+        "conjunts-venn"
+      ],
+      "nivells": [
+        "2ESO",
+        "3ESO",
+        "4ESO"
+      ],
+      "tipus": "interactiu",
+      "origen": "propi",
+      "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+      "urlFont": "https://www.transum.org/maths/activity/venn/?Level=1",
+      "llicencia": "Idea de l'activitat: Transum Mathematics; codi i preguntes propis",
+      "etiquetes": [
+        "Venn",
+        "conjunts",
+        "unió",
+        "intersecció",
+        "complementari",
+        "pintar",
+        "preguntes d'examen"
+      ],
+      "data": "2026-11-15",
+      "obrir": "materials/matematiques/conjunts-venn/diagrames-venn/index.html",
+      "imatge": "materials/matematiques/conjunts-venn/diagrames-venn/captura.png",
+      "extres": [],
+      "carpeta": "materials/matematiques/conjunts-venn/diagrames-venn"
+    },
+    {
       "id": "materials/matematiques/conjunts-venn/transum-venn-paint",
       "titol": "Transum: Venn Paint (nivell 1)",
       "descripcio": "Activitat interactiva: omple amb pintura les regions de diagrames de Venn segons la condició indicada. Té tres nivells de dificultat; aquest enllaç porta al nivell 1.",

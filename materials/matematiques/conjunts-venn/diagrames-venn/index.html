@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagrames de Venn</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:,">
+<style>
+:root{
+  --bg:#f6f4ee; --ink:#1f2933; --muted:#5b6770; --card:#fff; --line:#d9d4c8;
+  --blue:#2f7fd0; --blue-bg:#d3e6fa; --green:#2fa84f; --green-bg:#d4f1dc;
+  --red:#d9435a; --red-bg:#fbdadf; --orange:#ee8a22; --orange-bg:#fde3c4;
+  --purple:#7b4bb7; --purple-bg:#e8dcf6; --yel:#ffe680; --fs:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(16px * var(--fs))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,sans-serif;line-height:1.35}
+body.proj{--fs:1.3}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.mx{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",serif;white-space:nowrap}
+.mx .v{font-style:italic}
+.ov{display:inline-block;border-top:.09em solid currentColor;padding-top:.05em;line-height:1.05}
+
+/* capçalera */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.1rem;padding:.55rem 1rem;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand h1{font-size:1.2rem;margin:0}
+.logo{width:2.3rem;height:2.3rem;flex:none;display:block}
+.logo svg{width:100%;height:100%;display:block}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.tabs button,.tools button{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tools{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap}
+.tools button.on{background:var(--orange-bg);border-color:var(--orange)}
+.tools a.lnk{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--blue);text-decoration:none}
+.tools a.lnk:hover{border-color:var(--blue)}
+.grp{display:flex;align-items:center;gap:.3rem;border:2px solid var(--line);border-radius:.9rem;padding:.15rem .3rem .15rem .7rem;background:#faf8f2}
+.grp .gl{font-weight:700;color:var(--muted)}
+
+main{max-width:1280px;margin:0 auto;padding:.8rem 1rem 3rem}
+body.proj main{max-width:1700px}
+section[hidden]{display:none}
+.teo{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.5rem .9rem;margin-bottom:.8rem}
+.teo details{margin-top:.3rem}
+.teo summary{cursor:pointer;font-weight:600;color:var(--blue)}
+.teo ul{margin:.3rem 0 .2rem;padding-left:1.3rem}
+.teo li{margin:.2rem 0}
+.panel{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem .9rem}
+.panel h3{margin:.1rem 0 .4rem;font-size:1.05rem}
+.panel hr{border:0;border-top:1px solid var(--line);margin:.7rem 0}
+.note{color:var(--muted);font-size:.9rem}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.4rem 0}
+.btn{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.primary{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:.7rem;padding:.4rem 1rem;font-weight:700}
+.btn.on{background:var(--orange-bg);border-color:var(--orange)}
+.pill{display:inline-block;border-radius:2rem;padding:.1rem .7rem;font-weight:700;font-size:.92rem}
+.pill.ok{background:var(--green-bg);color:#17612e}
+.pill.no{background:var(--red-bg);color:#8f1d30}
+.pill.in{background:var(--blue-bg);color:#174f8a}
+.concl{border-radius:1rem;padding:.55rem .9rem;margin-top:.7rem}
+.concl.ok{background:var(--green-bg);border:2px solid var(--green)}
+.concl.no{background:var(--red-bg);border:2px solid var(--red)}
+.concl.in{background:var(--blue-bg);border:2px solid var(--blue)}
+.concl.warn{background:var(--orange-bg);border:2px solid var(--orange)}
+select{border:2px solid var(--line);border-radius:.7rem;padding:.35rem .5rem;background:#fff;color:var(--ink)}
+
+/* Venn inicial */
+.view{display:grid;grid-template-columns:minmax(0,3fr) minmax(17rem,1fr);gap:1rem;align-items:start}
+@media(max-width:900px){.view{grid-template-columns:1fr}}
+.stage{background:linear-gradient(#fbfaf5,#f1eee3);border:3px solid var(--line);border-radius:1.2rem;padding:.3rem}
+.stage svg{display:block;width:100%;height:auto;max-height:84vh;touch-action:none;user-select:none;-webkit-user-select:none}
+.tok{cursor:grab}
+.tok.drag{cursor:grabbing}
+.tok circle{fill:var(--yel);stroke:#8a6d00;stroke-width:2.5}
+.tok.ok circle{fill:#9be3ae;stroke:#17612e}
+.tok.no circle{fill:#f7a4b0;stroke:#8f1d30}
+.tok text{font-weight:700;font-size:17px;text-anchor:middle;dominant-baseline:central;pointer-events:none;font-family:system-ui,sans-serif;fill:#1f2933}
+.sel{display:flex;align-items:center;gap:.5rem;margin:.35rem 0}
+.sel i{width:1rem;height:1rem;border-radius:50%;flex:none}
+.sel select{flex:1}
+
+/* pintar */
+.bar2{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.5rem .8rem;margin-bottom:.8rem;position:sticky;top:3.6rem;z-index:20}
+.sws{display:flex;gap:.3rem;align-items:center}
+.sw{width:1.8rem;height:1.8rem;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px var(--line);padding:0;font-weight:800;color:#8a8a8a;line-height:1}
+.sw.on{box-shadow:0 0 0 3px var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.8rem}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:850px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:#fff;border:3px solid var(--line);border-radius:.9rem;padding:.35rem;position:relative}
+.tile.ok{border-color:var(--green);background:#f3fbf5}
+.tile.no{border-color:var(--red);background:#fff6f7}
+.tile svg{display:block;width:100%;height:auto;cursor:crosshair;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.tile .bar{background:var(--yel);border:2px solid #b89b00;border-radius:.4rem;text-align:center;font-size:1.2rem;padding:.1rem .3rem;margin-top:.3rem}
+.tile .th{display:flex;justify-content:space-between;align-items:center;gap:.3rem;min-height:1.6rem;padding:0 .25rem .15rem}
+.tile .tb{display:flex;gap:.25rem;flex-wrap:wrap;justify-content:flex-end}
+.tile .mini{font-size:.72rem;padding:.05rem .5rem;border-radius:1rem;border:2px solid var(--line);background:#fff;font-weight:600;color:var(--muted)}
+.tile .mini:hover{border-color:var(--ink);color:var(--ink)}
+.tile .mini.one{color:var(--ink)}
+.tile .mini.sol.on{background:var(--blue-bg);border-color:var(--blue);color:#174f8a}
+.tile .badge{font-weight:800;font-size:1.1rem}
+.tile.ok .badge{color:var(--green)}
+.tile.no .badge{color:var(--red)}
+
+/* preguntes d'examen */
+.qcard{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.8rem 1.1rem;margin-bottom:1rem}
+.qcard header{display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem}
+.qn{display:inline-block;min-width:1.9rem;height:1.9rem;line-height:1.9rem;text-align:center;border-radius:50%;background:var(--ink);color:#fff;font-weight:700}
+.stars{color:var(--orange);letter-spacing:.1em}
+.qres{margin-left:auto}
+.enun{font-size:1.05rem;margin:.2rem 0 .4rem}
+.part{margin:.55rem 0;padding-left:.2rem}
+.part .pt{margin-bottom:.25rem}
+.res{margin-left:.5rem;font-weight:700}
+.res.ok{color:var(--green)}
+.res.no{color:var(--red)}
+.inp,input.num{border:2px solid var(--line);border-radius:.6rem;padding:.3rem .5rem;background:#fff;color:var(--ink);font-size:1.05rem}
+input.num{width:8rem;text-align:center}
+.inp.wide{width:min(100%,22rem)}
+.inp.ok,input.num.ok,.rin.ok{border-color:var(--green);background:#f1fbf4}
+.inp.no,input.num.no,.rin.no{border-color:var(--red);background:#fff4f6}
+.unit{margin-left:.4rem;color:var(--muted)}
+.fig{position:relative;width:min(100%,440px);margin:.3rem 0}
+.fig svg{display:block;width:100%;height:auto}
+.fig .cnt,.fig .rin{position:absolute;transform:translate(-50%,-50%)}
+.fig .cnt{font-weight:700;font-size:1.15rem;font-family:"Cambria Math",Cambria,serif}
+.rin{width:2.8rem;border:2px solid var(--line);border-radius:.5rem;padding:.12rem .1rem;text-align:center;font-size:1rem;background:#fff}
+.opts{display:grid;gap:.3rem;margin:.2rem 0}
+.opt{display:flex;align-items:center;gap:.5rem;border:2px solid var(--line);border-radius:.6rem;padding:.25rem .6rem;cursor:pointer;width:fit-content;min-width:12rem;font-size:1.15rem}
+.opt.ok{border-color:var(--green);background:#f1fbf4}
+.opt.no{border-color:var(--red);background:#fff4f6}
+.qact{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+.solbox{background:#fffbe6;border:2px solid #e9d97a;border-radius:.8rem;padding:.4rem .9rem;margin-top:.6rem}
+.solbox p{margin:.3rem 0}
+
+@media print{
+  body{background:#fff}
+  .top,.bar2,.tools,.qact,.tile .tb{display:none!important}
+  main{max-width:none;padding:0}
+  .tile,.qcard{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" id="logo"></span><h1>Diagrames de Venn</h1></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="tools">
+    <a class="lnk" href="https://www.transum.org/maths/activity/venn/?Level=1" target="_blank" rel="noopener" title="Obre l'activitat original de Transum en una pestanya nova">Web original ↗</a>
+    <button id="bProj" title="Lletra més gran per a la pissarra">Projecció</button>
+    <button id="bPrint">Imprimir</button>
+  </div>
+</header>
+<main>
+  <section id="sStart"></section>
+  <section id="sPaint" hidden></section>
+  <section id="sExam" hidden></section>
+</main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+    <rect width="7" height="7" fill="rgba(47,127,208,.14)"/><line x1="0" y1="0" x2="0" y2="7" stroke="#2f7fd0" stroke-width="2.4"/>
+  </pattern>
+</defs></svg>
+
+<script>
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const rng=(a,b)=>Array.from({length:b-a+1},(_,i)=>a+i);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+let uid=0;
+
+/* ---------- logo i favicon ---------- */
+const LOGO='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><clipPath id="lgc"><circle cx="40" cy="32" r="19"/></clipPath></defs>'+
+ '<rect width="64" height="64" rx="14" fill="#fff"/>'+
+ '<circle cx="24" cy="32" r="19" fill="#d3e6fa"/><circle cx="40" cy="32" r="19" fill="#fde3c4"/>'+
+ '<circle cx="24" cy="32" r="19" fill="#2fa84f" clip-path="url(#lgc)"/>'+
+ '<circle cx="24" cy="32" r="19" fill="none" stroke="#2f7fd0" stroke-width="3.5"/><circle cx="40" cy="32" r="19" fill="none" stroke="#ee8a22" stroke-width="3.5"/></svg>';
+$('#logo').innerHTML=LOGO;
+$('#fav').href='data:image/svg+xml,'+encodeURIComponent(LOGO);
+
+/* ---------- expressions de conjunts ---------- */
+// A ∪ B, A ∩ B, A' (= A barra). Tot es dibuixa amb ratlla a sobre per al complementari.
+function parse(src){
+  const t=[...src.replace(/\s+/g,'')]; let p=0; const peek=()=>t[p];
+  function expr(){let l=term(); while(peek()==='∪'){p++; l={t:'u',l,r:term()};} return l;}
+  function term(){let l=fac(); while(peek()==='∩'){p++; l={t:'i',l,r:fac()};} return l;}
+  function fac(){let a=atom(); while(peek()==="'"){p++; a={t:'n',x:a};} return a;}
+  function atom(){const c=t[p++]; if(c==='('){const e=expr(); p++; return {t:'g',x:e};} return {t:'v',n:c};}
+  return expr();
+}
+function ev(n,m){
+  switch(n.t){
+    case 'v':return !!((m>>('ABC'.indexOf(n.n)))&1);
+    case 'u':return ev(n.l,m)||ev(n.r,m);
+    case 'i':return ev(n.l,m)&&ev(n.r,m);
+    case 'n':return !ev(n.x,m);
+    case 'g':return ev(n.x,m);
+  }
+}
+function rn(n){
+  switch(n.t){
+    case 'v':return `<i class="v">${n.n}</i>`;
+    case 'u':return rn(n.l)+'∪'+rn(n.r);
+    case 'i':return rn(n.l)+'∩'+rn(n.r);
+    case 'n':return `<span class="ov">${rn(n.x.t==='g'?n.x.x:n.x)}</span>`;
+    case 'g':return '('+rn(n.x)+')';
+  }
+}
+const ex=s=>rn(parse(s));
+const fmt=s=>s.replace(/\{\{(.+?)\}\}/g,(_,e)=>`<span class="mx">${ex(e)}</span>`);
+
+/* ---------- geometria dels diagrames ---------- */
+const BOX=[4,4,212,142];
+const LAYS={
+  v2:{box:BOX,out:[198,134],c:[{x:88,y:76,r:46},{x:132,y:76,r:46}],lab:[[14,26,'start'],[206,26,'end']]},
+  v3:{box:BOX,out:[198,100],c:[{x:86,y:56,r:40},{x:134,y:56,r:40},{x:110,y:97,r:40}],lab:[[14,26,'start'],[206,26,'end'],[168,140,'start']]},
+  dis2:{box:BOX,out:[110,136],c:[{x:62,y:76,r:40},{x:158,y:76,r:40}],lab:[[14,26,'start'],[206,26,'end']]},
+  sub2:{box:BOX,out:[198,134],c:[{x:98,y:86,r:28},{x:110,y:76,r:58}],lab:[[74,60,'middle'],[14,26,'start']]},
+  subC:{box:BOX,out:[110,136],c:[{x:70,y:84,r:26},{x:80,y:76,r:48},{x:170,y:76,r:30}],lab:[[44,62,'middle'],[20,24,'start'],[196,36,'end']]},
+  ov2dis:{box:BOX,out:[110,136],c:[{x:60,y:72,r:34},{x:98,y:72,r:34},{x:170,y:78,r:28}],lab:[[16,30,'start'],[118,30,'start'],[196,40,'end']]},
+  nest3:{box:BOX,out:[198,134],c:[{x:111,y:80,r:16},{x:94,y:80,r:42},{x:128,y:80,r:42}],lab:[[111,81,'middle'],[16,34,'start'],[204,34,'end']]},
+  sub3:{box:BOX,out:[110,136],c:[{x:82,y:78,r:36},{x:62,y:82,r:12},{x:140,y:76,r:56}],lab:[[54,66,'middle'],[40,44,'end'],[196,30,'end']]}
+};
+// sub3: l'ordre de les etiquetes és A (gran esquerre), B (petit), C — ajustem les etiquetes A i B
+LAYS.sub3.lab=[[40,44,'end'],[54,66,'middle'],[196,30,'end']];
+
+const circlePath=c=>`M${c.x-c.r} ${c.y}a${c.r} ${c.r} 0 1 0 ${2*c.r} 0a${c.r} ${c.r} 0 1 0 ${-2*c.r} 0z`;
+function maskAt(L,x,y){let m=0;L.c.forEach((c,k)=>{if((x-c.x)**2+(y-c.y)**2<=c.r*c.r)m|=1<<k;});return m;}
+// regions existents (mostrejant) amb el punt «més còmode» de cadascuna
+function regions(L){
+  if(L._r)return L._r;
+  const [bx,by,bw,bh]=L.box, step=Math.max(bw,bh)/150, R={};
+  for(let y=by+step/2;y<by+bh;y+=step)for(let x=bx+step/2;x<bx+bw;x+=step){
+    let m=0,cl=Math.min(x-bx,bx+bw-x,y-by,by+bh-y);
+    L.c.forEach((c,k)=>{const d=Math.hypot(x-c.x,y-c.y);if(d<=c.r)m|=1<<k;cl=Math.min(cl,Math.abs(d-c.r));});
+    (R[m]=R[m]||{n:0,pts:[]}).n++; R[m].pts.push([x,y,cl]);
+  }
+  const tot=(bw/step)*(bh/step);
+  for(const m in R){
+    if(R[m].n<tot*0.0015){delete R[m];continue;}
+    const b=R[m].pts.reduce((a,c)=>c[2]>a[2]?c:a);
+    R[m].px=b[0];R[m].py=b[1];
+  }
+  if(R[0]&&L.out){R[0].px=L.out[0];R[0].py=L.out[1];}
+  L._r=R;return R;
+}
+function svgPt(svg,e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+
+// dibuixa un diagrama (contingut de l'SVG). o: {paint:{mask:color}, hatch:[masks], names, u}
+function vennSVG(L,o={}){
+  const id='v'+(uid++)+'_', [bx,by,bw,bh]=L.box;
+  let defs='';
+  L.c.forEach((c,k)=>{
+    defs+=`<clipPath id="${id}i${k}"><circle cx="${c.x}" cy="${c.y}" r="${c.r}"/></clipPath>`+
+          `<clipPath id="${id}o${k}"><path clip-rule="evenodd" d="M${bx} ${by}h${bw}v${bh}h${-bw}z ${circlePath(c)}"/></clipPath>`;
+  });
+  const fill=(m,f)=>{let a='',b='';L.c.forEach((c,k)=>{a+=`<g clip-path="url(#${id}${(m>>k)&1?'i':'o'}${k})">`;b+='</g>';});
+    return a+`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="${f}"/>`+b;};
+  let s=`<defs>${defs}</defs><rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="#fff"/>`;
+  for(const m in (o.paint||{}))s+=fill(+m,o.paint[m]);
+  for(const m of (o.hatch||[]))s+=fill(m,'url(#hatch)');
+  s+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="none" stroke="#1f2933" stroke-width="2"/>`;
+  L.c.forEach(c=>{s+=`<circle cx="${c.x}" cy="${c.y}" r="${c.r}" fill="none" stroke="#1f2933" stroke-width="2"/>`;});
+  L.c.forEach((c,k)=>{
+    const lb=L.lab[k], t=o.names?o.names[k]:'ABC'[k], one=t.length===1;
+    s+=`<text x="${lb[0]}" y="${lb[1]}" text-anchor="${lb[2]}" font-size="${one?17:11.5}" ${one?'font-style="italic" font-family="Cambria,\'Times New Roman\',serif"':'font-weight="700" font-family="system-ui,sans-serif"'} fill="#1f2933" style="pointer-events:none">${t}</text>`;
+  });
+  if(o.u)s+=`<text x="${bx+6}" y="${by+bh-6}" font-size="13" font-style="italic" font-family="Cambria,serif" fill="#5b6770">U</text>`;
+  return s;
+}
+
+/* ============================================================
+   PINTAR (nivells 1, 2 i 3)
+   ============================================================ */
+const mk=list=>list.map(([exp,lay])=>{
+  const ast=parse(exp),L=LAYS[lay],R=regions(L);
+  return {exp,html:rn(ast),L,E:Object.keys(R).map(Number).filter(m=>ev(ast,m))};
+});
+const LV={
+  1:mk([["A","v2"],["B","v2"],["A∪B","v2"],["A∩B","v2"],["A'","v2"],
+        ["B'","v2"],["(A∪B)'","v2"],["(A∩B)'","v2"],["A∩B'","v2"],["A'∩B","v2"],
+        ["A∪B'","v2"],["A'∪B","v2"],["A'∩B'","v2"],["(A∩B')∪(A'∩B)","v2"],["(A∩B)∪(A'∩B')","v2"]]),
+  2:mk([["A","v3"],["B∪C","v3"],["A∩B","v3"],["A∪B∪C","v3"],["A∩B∩C","v3"],
+        ["(A∩B)∪C","v3"],["A∩(B∪C)","v3"],["(A∩B)∪(B∩C)","v3"],["(A∪B)∩(B∪C)","v3"],["(C∪A)∩B","v3"],
+        ["C'","v3"],["B'∪C","v3"],["A∩B'","v3"],["A∪B'∪C","v3"],["A∩B'∩C'","v3"],
+        ["(A'∩B')∪C","v3"],["A∩(B'∪C')","v3"],["(A'∩B)∪(B∩C')","v3"],["(A∪B)∩(B'∪C')","v3"],["(C∪A')∩B","v3"]]),
+  3:mk([["A∪B","dis2"],["(A∪B)'","dis2"],["A∪B'","dis2"],["A'∩B","dis2"],["(A∪B)∪(A'∩B')","dis2"],
+        ["A∪B'","sub2"],["(A∩B)'","sub2"],["A'∩B","sub2"],["A∩B","sub2"],["(A∪B)∩(A'∪B')","sub2"],
+        ["A'∩B∩C'","subC"],["(A∪B)'∩C","ov2dis"],["(A∩B)∪C","ov2dis"],["(A∩B)'∩C","nest3"],["(A∪C)∩(A'∪B')","sub3"]])
+};
+const TIT={1:'Nivell 1 · Dos conjunts',2:'Nivell 2 · Tres conjunts',3:'Nivell 3 · Conjunts amb formes diferents'};
+const DESC={
+  1:'Pinta cada diagrama de manera que la zona acolorida sigui exactament la que descriu l\'expressió de sota.',
+  2:'Ara amb tres conjunts. Pensa en cada expressió per parts: primer el que hi ha entre parèntesis.',
+  3:'Aquí els conjunts no sempre es creuen: n\'hi ha de separats i d\'inclosos dins d\'altres. Mira bé el diagrama abans de pintar!'
+};
+const COLORS=['#2fa84f','#2f7fd0','#d9435a','#ee8a22','#7b4bb7','#f2c200','#ffffff'];
+let color=COLORS[0], curLv=1;
+const PS={};
+[1,2,3].forEach(n=>PS[n]={paint:LV[n].map(()=>({})),mark:LV[n].map(()=>null),sol:LV[n].map(()=>false),all:false,undo:[],redo:[]});
+
+function drawTile(n,i){
+  const it=LV[n][i],P=PS[n],tile=$('#tile'+i); if(!tile)return;
+  const hatch=(P.sol[i]||P.all)?it.E:[];
+  $('.sv',tile).innerHTML=`<svg viewBox="0 0 220 150">${vennSVG(it.L,{paint:P.paint[i],hatch})}</svg>`;
+  tile.classList.toggle('ok',P.mark[i]===true);
+  tile.classList.toggle('no',P.mark[i]===false);
+  $('.badge',tile).textContent=P.mark[i]===true?'✓':P.mark[i]===false?'✗':'';
+  $('.sol',tile).classList.toggle('on',P.sol[i]||P.all);
+}
+function updScore(n){
+  const P=PS[n],N=LV[n].length,k=P.mark.filter(x=>x===true).length,done=P.mark.filter(x=>x!==null).length,el=$('#score');
+  if(!el)return;
+  if(!done){el.textContent='';el.className='pill';return;}
+  if(k===N)el.textContent=`Tot correcte! ${k} de ${N}`;
+  else if(done===N)el.textContent=`${k} de ${N} correctes`;
+  else el.textContent=`${k} ben fets · ${done-k} per revisar · ${N-done} per comprovar`;
+  el.className='pill '+(k===N?'ok':'in');
+}
+function chkOne(n,i){
+  const P=PS[n],it=LV[n][i];
+  const got=Object.keys(P.paint[i]).map(Number).sort((a,b)=>a-b),exp=[...it.E].sort((a,b)=>a-b);
+  P.mark[i]=got.length===exp.length&&got.every((v,k)=>v===exp[k]);
+  drawTile(n,i);
+}
+function setCell(n,i,m,val){
+  const P=PS[n],c=P.paint[i];
+  if(val===undefined)delete c[m];else c[m]=val;
+}
+function showLevel(n){
+  curLv=n;
+  const sec=$('#sPaint'),P=PS[n],items=LV[n];
+  sec.innerHTML=`<div class="teo"><b>${TIT[n]}</b> — ${DESC[n]}
+    <details><summary>Com es llegeixen les expressions?</summary><ul>
+      <li><span class="mx">∪</span> és la <b>unió</b> («o»): tot el que és d'un conjunt o de l'altre.</li>
+      <li><span class="mx">∩</span> és la <b>intersecció</b> («i»): només el que és dels dos conjunts alhora.</li>
+      <li><span class="mx"><span class="ov"><i class="v">A</i></span></span> es llegeix <b>«A barra»</b> i és el <b>complementari</b>: tot el que <b>no</b> és d'<i>A</i>, també la part de fora dels cercles (dins del rectangle).</li>
+      <li>El rectangle és l'univers: s'hi pot pintar també la zona de fora dels cercles.</li></ul></details></div>
+    <div class="bar2">
+      <span class="sws" id="sws">${COLORS.map(c=>`<button class="sw${c===color?' on':''}" data-c="${c}" style="background:${c}" title="${c==='#ffffff'?'Goma d\'esborrar (blanc)':'Color'}">${c==='#ffffff'?'×':''}</button>`).join('')}</span>
+      <button class="btn" id="bUndo">Desfés</button><button class="btn" id="bRedo">Refés</button>
+      <button class="primary" id="bChk">Comprova</button>
+      <button class="btn" id="bSolAll">Mostra solucions</button>
+      <button class="btn" id="bClr">Esborra-ho tot</button>
+      <span id="score" class="pill"></span>
+    </div>
+    <div class="grid" id="grid">${items.map((it,i)=>`<div class="tile" id="tile${i}"><div class="th"><span class="badge"></span><span class="tb"><button class="mini one" data-i="${i}" title="Comprova només aquest diagrama">Comprova</button><button class="mini sol" data-i="${i}" title="Mostra o amaga la solució d'aquest diagrama">Solució</button></span></div><div class="sv"></div><div class="bar"><span class="mx">${it.html}</span></div></div>`).join('')}</div>`;
+  items.forEach((_,i)=>drawTile(n,i));
+  $('#bSolAll').classList.toggle('on',P.all);
+  updScore(n);
+  $('#sws').onclick=e=>{const b=e.target.closest('.sw');if(!b)return;color=b.dataset.c;$$('.sw').forEach(x=>x.classList.toggle('on',x===b));};
+  $('#grid').onclick=e=>{
+    const mini=e.target.closest('.mini');
+    if(mini){const i=+mini.dataset.i;
+      if(mini.classList.contains('one')){chkOne(n,i);updScore(n);}
+      else{P.sol[i]=!P.sol[i];drawTile(n,i);}
+      return;}
+    const sv=e.target.closest('svg'); if(!sv)return;
+    const i=+sv.closest('.tile').id.slice(4),it=items[i],p=svgPt(sv,e),m=maskAt(it.L,p.x,p.y);
+    if(!(m in regions(it.L)))return;
+    const prev=P.paint[i][m],next=color==='#ffffff'?undefined:color;
+    if(prev===next)return;
+    P.undo.push({i,m,prev,next});P.redo.length=0;setCell(n,i,m,next);P.mark[i]=null;drawTile(n,i);updScore(n);
+  };
+  $('#bUndo').onclick=()=>{const a=P.undo.pop();if(!a)return;P.redo.push(a);setCell(n,a.i,a.m,a.prev);P.mark[a.i]=null;drawTile(n,a.i);updScore(n);};
+  $('#bRedo').onclick=()=>{const a=P.redo.pop();if(!a)return;P.undo.push(a);setCell(n,a.i,a.m,a.next);P.mark[a.i]=null;drawTile(n,a.i);updScore(n);};
+  $('#bChk').onclick=()=>{
+    items.forEach((_,i)=>chkOne(n,i));
+    updScore(n);
+  };
+  $('#bSolAll').onclick=()=>{P.all=!P.all;items.forEach((_,i)=>drawTile(n,i));$('#bSolAll').classList.toggle('on',P.all);$('#bSolAll').textContent=P.all?'Amaga solucions':'Mostra solucions';};
+  $('#bSolAll').textContent=P.all?'Amaga solucions':'Mostra solucions';
+  $('#bClr').onclick=()=>{if(P.paint.every(c=>!Object.keys(c).length))return;if(!confirm('Vols esborrar tot el que has pintat en aquest nivell?'))return;
+    P.paint=items.map(()=>({}));P.mark=items.map(()=>null);P.sol=items.map(()=>false);P.undo=[];P.redo=[];items.forEach((_,i)=>drawTile(n,i));updScore(n);};
+}
+
+/* ============================================================
+   VENN INICIAL (col·locar els nombres)
+   ============================================================ */
+const isPrime=n=>{if(n<2)return false;for(let i=2;i*i<=n;i++)if(n%i===0)return false;return true;};
+const PROPS=[
+  {id:'par',t:'Parell',f:n=>n%2===0},
+  {id:'imp',t:'Imparell',f:n=>n%2===1},
+  {id:'pri',t:'Primer',f:isPrime},
+  {id:'qua',t:'Quadrat perfecte',f:n=>Number.isInteger(Math.sqrt(n))},
+  {id:'cub',t:'Cub perfecte',f:n=>Math.round(Math.cbrt(n))**3===n},
+  {id:'tri',t:'Triangular',f:n=>Number.isInteger(Math.sqrt(8*n+1))},
+  {id:'m3',t:'Múltiple de 3',f:n=>n%3===0},
+  {id:'m4',t:'Múltiple de 4',f:n=>n%4===0},
+  {id:'m5',t:'Múltiple de 5',f:n=>n%5===0},
+  {id:'d12',t:'Divisor de 12',f:n=>12%n===0},
+  {id:'d24',t:'Divisor de 24',f:n=>24%n===0},
+  {id:'g8',t:'Més gran que 8',f:n=>n>8},
+  {id:'l7',t:'Més petit que 7',f:n=>n<7}
+];
+const SL={box:[170,20,770,560],c:[{x:555,y:215,r:165},{x:455,y:395,r:165},{x:655,y:395,r:165}],
+  lab:[[555,40,'middle'],[182,558,'start'],[930,558,'end']]};
+const SCOL=['#d9435a','#2fa84f','#2f7fd0'];
+const ST={p:['par','pri','qua'],N:16,tok:[],drag:null};
+const prop=id=>PROPS.find(p=>p.id===id);
+const trueMask=n=>ST.p.reduce((m,id,k)=>m|(prop(id).f(n)?1<<k:0),0);
+function slot(i){const cols=ST.N>16?3:2,x0=cols===2?58:34,dx=cols===2?58:50,dy=ST.N>16?44:58;return {x:x0+(i%cols)*dx,y:42+Math.floor(i/cols)*dy};}
+function resetTok(){ST.tok=rng(1,ST.N).map((n,i)=>{const s=slot(i);return {n,x:s.x,y:s.y,mark:null,placed:false};});}
+const inBox=t=>t.x>=SL.box[0]&&t.x<=SL.box[0]+SL.box[2]&&t.y>=SL.box[1]&&t.y<=SL.box[1]+SL.box[3];
+
+function startSvg(){
+  const [bx,by,bw,bh]=SL.box;
+  let s=`<rect x="4" y="4" width="156" height="592" rx="14" fill="#fff6cf" stroke="#e3d37a" stroke-width="2"/>`+
+        `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="8" fill="#fff" stroke="#1f2933" stroke-width="3"/>`;
+  SL.c.forEach((c,k)=>{s+=`<circle cx="${c.x}" cy="${c.y}" r="${c.r}" fill="${SCOL[k]}" fill-opacity=".1" stroke="${SCOL[k]}" stroke-width="3.5"/>`;});
+  SL.c.forEach((c,k)=>{const l=SL.lab[k];s+=`<text x="${l[0]}" y="${l[1]}" text-anchor="${l[2]}" font-size="21" font-weight="700" font-family="system-ui,sans-serif" fill="${SCOL[k]}">${prop(ST.p[k]).t}</text>`;});
+  s+=`<text x="${bx+bw-10}" y="${by+22}" text-anchor="end" font-size="15" font-style="italic" font-family="Cambria,serif" fill="#5b6770">univers</text>`;
+  ST.tok.forEach((t,i)=>{s+=`<g class="tok${t.mark?' '+t.mark:''}" data-i="${i}" transform="translate(${t.x} ${t.y})"><circle r="17"/><text>${t.n}</text></g>`;});
+  return s;
+}
+function drawStart(){$('#vs').innerHTML=startSvg();}
+function startMsg(html,cls){const m=$('#smsg');m.className='concl '+cls;m.innerHTML=html;m.hidden=!html;}
+function randomTriple(){
+  for(let tries=0;tries<400;tries++){
+    const ids=[];while(ids.length<3){const p=PROPS[Math.floor(Math.random()*PROPS.length)].id;if(!ids.includes(p))ids.push(p);}
+    const masks=new Set(rng(1,ST.N).map(n=>ids.reduce((m,id,k)=>m|(prop(id).f(n)?1<<k:0),0)));
+    if(masks.size>=6)return ids;
+  }
+  return ['par','pri','qua'];
+}
+function setProps(ids){ST.p=ids;[0,1,2].forEach(k=>{$('#sel'+k).value=ids[k];$('#dot'+k).style.background=SCOL[k];});resetTok();drawStart();startMsg('','in');}
+function checkStart(){
+  const un=ST.tok.filter(t=>!inBox(t)).length;
+  let ok=0,bad=0;
+  ST.tok.forEach(t=>{
+    if(!inBox(t)){t.mark=null;return;}
+    if(maskAt(SL,t.x,t.y)===trueMask(t.n)){t.mark='ok';ok++;}else{t.mark='no';bad++;}
+  });
+  drawStart();
+  if(un)startMsg(`Encara et falten <b>${un}</b> nombres per col·locar al diagrama. Ben col·locats: <b>${ok}</b> de ${ST.N-un}.`,'warn');
+  else if(!bad)startMsg(`<b>Perfecte!</b> Els ${ST.N} nombres són a la regió correcta.`,'ok');
+  else startMsg(`Hi ha <b>${ok}</b> nombres ben col·locats i <b>${bad}</b> per revisar (els vermells). Pensa en cada nombre: compleix la propietat de cada cercle?`,'no');
+}
+function solveStart(){
+  const R=regions(SL),groups={};
+  ST.tok.forEach(t=>{(groups[trueMask(t.n)]=groups[trueMask(t.n)]||[]).push(t);});
+  const taken=[];
+  for(const m in groups){
+    const cand=R[m].pts.filter(p=>p[2]>=22).sort((a,b)=>b[2]-a[2]);
+    groups[m].forEach(t=>{
+      let pick=null;
+      for(const sp of [44,36,28,20]){pick=cand.find(p=>taken.every(q=>Math.hypot(p[0]-q[0],p[1]-q[1])>=sp));if(pick)break;}
+      pick=pick||cand[0];taken.push(pick);t.x=pick[0];t.y=pick[1];t.mark=null;
+    });
+  }
+  drawStart();startMsg('Aquesta és una manera correcta de col·locar-los. Prem «Reinicia» per tornar-ho a provar.','in');
+}
+function buildStart(){
+  const sec=$('#sStart');
+  sec.innerHTML=`<div class="teo"><b>Venn inicial</b> — Arrossega cada nombre a la regió correcta del diagrama. Un nombre pot anar a la zona on es creuen dos o tres cercles si compleix les propietats de tots, o a fora si no en compleix cap.</div>
+  <div class="view">
+    <div class="stage"><svg id="vs" viewBox="0 0 960 600"></svg></div>
+    <div class="panel">
+      <h3>Propietats dels cercles</h3>
+      ${[0,1,2].map(k=>`<div class="sel"><i id="dot${k}"></i><select id="sel${k}">${PROPS.map(p=>`<option value="${p.id}">${p.t}</option>`).join('')}</select></div>`).join('')}
+      <div class="row"><label for="selN">Nombres:</label><select id="selN"><option value="16">de l'1 al 16</option><option value="24">de l'1 al 24</option></select></div>
+      <div class="row"><button class="btn" id="bRand">Repte aleatori</button></div>
+      <hr>
+      <div class="row"><button class="primary" id="bCheck">Comprova</button><button class="btn" id="bSolve">Mostra solució</button><button class="btn" id="bReset">Reinicia</button></div>
+      <div class="concl in" id="smsg" hidden></div>
+      <p class="note">Consell: busca primer els nombres que compleixen més d'una propietat.</p>
+    </div></div>`;
+  [0,1,2].forEach(k=>{
+    $('#sel'+k).onchange=e=>{const ids=[...ST.p];ids[k]=e.target.value;
+      if(new Set(ids).size<3){startMsg('Cada cercle ha de tenir una propietat diferent.','warn');e.target.value=ST.p[k];return;}
+      setProps(ids);};
+  });
+  $('#selN').onchange=e=>{ST.N=+e.target.value;setProps(ST.p);};
+  $('#bRand').onclick=()=>setProps(randomTriple());
+  $('#bCheck').onclick=checkStart;
+  $('#bSolve').onclick=solveStart;
+  $('#bReset').onclick=()=>{resetTok();drawStart();startMsg('','in');};
+  const svg=$('#vs');
+  svg.onpointerdown=e=>{
+    const g=e.target.closest('.tok');if(!g)return;
+    const t=ST.tok[+g.dataset.i],p=svgPt(svg,e);
+    ST.drag={t,g,dx:t.x-p.x,dy:t.y-p.y};t.mark=null;g.classList.remove('ok','no');g.classList.add('drag');
+    g.setPointerCapture(e.pointerId);svg.appendChild(g);e.preventDefault();
+  };
+  svg.onpointermove=e=>{
+    const d=ST.drag;if(!d)return;const p=svgPt(svg,e);
+    d.t.x=clamp(p.x+d.dx,17,943);d.t.y=clamp(p.y+d.dy,17,583);
+    d.g.setAttribute('transform',`translate(${d.t.x} ${d.t.y})`);
+  };
+  const end=()=>{
+    const d=ST.drag;if(!d)return;ST.drag=null;
+    const t=d.t;
+    if(!inBox(t)){const i=ST.tok.indexOf(t),s=slot(i);t.x=s.x;t.y=s.y;}
+    drawStart();
+  };
+  svg.onpointerup=end;svg.onpointercancel=end;
+  setProps(ST.p);
+}
+
+/* ============================================================
+   PREGUNTES D'EXAMEN
+   ============================================================ */
+const lst=a=>'{'+a.join(', ')+'}';
+const sub=(a,b)=>a.filter(x=>!b.includes(x)), cap=(a,b)=>a.filter(x=>b.includes(x)), cup=(U,a,b)=>U.filter(x=>a.includes(x)||b.includes(x));
+
+// Q1: llistes amb dos conjunts
+const U1=rng(1,15),A1=U1.filter(x=>x%2===0),B1=U1.filter(x=>x%3===0);
+const AB1=cap(A1,B1),O1=U1.filter(x=>!A1.includes(x)&&!B1.includes(x)),A1B=sub(B1,A1);
+// Q7: llistes amb tres conjunts
+const U7=rng(1,12),A7=U7.filter(x=>x%2===0),B7=U7.filter(x=>x%3===0),C7=U7.filter(x=>12%x===0);
+const ABC7=cap(cap(A7,B7),C7),AuB7=cup(U7,A7,B7),X7=sub(AuB7,C7),Cc7=sub(U7,C7);
+const N7=U7.filter(x=>!A7.includes(x)&&!B7.includes(x)&&!C7.includes(x));
+
+const Q=[
+ {stars:1,
+  enun:`Considera l'univers U = {1, 2, 3, …, 15} i els conjunts <i>A</i> = {nombres parells} i <i>B</i> = {múltiples de 3}.`,
+  parts:[
+   {q:`Escriu els elements de {{A∩B}}.`,ty:'set',ans:AB1},
+   {q:`Escriu els elements de {{(A∪B)'}}.`,ty:'set',ans:O1},
+   {q:`Calcula n({{A'∩B}}).`,ty:'num',kind:'int',ans:A1B.length},
+   {q:`Triem un nombre de U a l'atzar. Quina és la probabilitat que sigui de {{A∩B}}?`,ty:'num',kind:'prob',ans:AB1.length/15}],
+  sol:`<p><i>A</i> = ${lst(A1)} i <i>B</i> = ${lst(B1)}.</p>
+   <p>(a) Els que són de <i>A</i> i de <i>B</i> alhora: ${lst(AB1)}.</p>
+   <p>(b) Primer {{A∪B}} = ${lst(cup(U1,A1,B1))}. El complementari són els que no hi són: ${lst(O1)}.</p>
+   <p>(c) {{A'∩B}} són els de <i>B</i> que no són parells: ${lst(A1B)}, per tant n = ${A1B.length}.</p>
+   <p>(d) Casos favorables ${AB1.length} entre ${U1.length} casos possibles: ${AB1.length}/15.</p>`},
+ {stars:1,
+  enun:`En una classe de 30 alumnes, 18 juguen a futbol, 14 juguen a bàsquet i 5 no practiquen cap dels dos esports.`,
+  parts:[
+   {q:`Quants alumnes practiquen els dos esports?`,ty:'num',kind:'int',ans:7},
+   {q:`Completa el diagrama amb el nombre d'alumnes de cada zona.`,ty:'reg',lay:'v2',names:['Futbol','Bàsquet'],ans:{0:5,1:11,2:7,3:7}},
+   {q:`Triem un alumne a l'atzar. Quina és la probabilitat que només jugui a bàsquet?`,ty:'num',kind:'prob',ans:7/30},
+   {q:`Si triem un alumne que juga a futbol, quina és la probabilitat que també jugui a bàsquet?`,ty:'num',kind:'prob',ans:7/18}],
+  sol:`<p>(a) Practiquen algun esport 30 − 5 = 25 alumnes. Si sumem futbol i bàsquet comptem dues vegades els que fan tots dos: 18 + 14 = 32. Per tant en fan els dos 32 − 25 = <b>7</b>.</p>
+   <p>(b) Només futbol: 18 − 7 = 11. Només bàsquet: 14 − 7 = 7. Tots dos: 7. Cap: 5. (11 + 7 + 7 + 5 = 30 ✓)</p>
+   <p>(c) 7/30.</p>
+   <p>(d) Dels 18 que juguen a futbol, 7 també juguen a bàsquet: 7/18.</p>`},
+ {stars:2,
+  enun:`A un grup de 40 alumnes se'ls pregunta quines activitats extraescolars fan: escacs, teatre i música. Resultats: 20 fan escacs, 18 fan teatre i 16 fan música; 8 fan escacs i teatre, 7 fan escacs i música, 6 fan teatre i música; i 3 fan les tres activitats.`,
+  parts:[
+   {q:`Completa el diagrama (comença per la zona del mig).`,ty:'reg',lay:'v3',names:['Escacs','Teatre','Música'],ans:{0:4,1:8,2:7,3:5,4:6,5:4,6:3,7:3}},
+   {q:`Quants alumnes fan exactament una sola activitat?`,ty:'num',kind:'int',ans:21},
+   {q:`Quants fan escacs o teatre, però no música?`,ty:'num',kind:'int',ans:20},
+   {q:`Quina és la probabilitat que un alumne triat a l'atzar no faci cap de les tres activitats?`,ty:'num',kind:'prob',ans:4/40}],
+  sol:`<p>(a) Zona del mig (les tres): 3. Només escacs i teatre: 8 − 3 = 5. Només escacs i música: 7 − 3 = 4. Només teatre i música: 6 − 3 = 3.</p>
+   <p>Només escacs: 20 − (5 + 4 + 3) = 8. Només teatre: 18 − (5 + 3 + 3) = 7. Només música: 16 − (4 + 3 + 3) = 6.</p>
+   <p>En total, 3 + 5 + 4 + 3 + 8 + 7 + 6 = 36 alumnes fan alguna activitat, així que 40 − 36 = <b>4</b> no en fan cap.</p>
+   <p>(b) 8 + 7 + 6 = 21. (c) Només escacs, només teatre i escacs-teatre: 8 + 7 + 5 = 20. (d) 4/40 = 1/10.</p>`},
+ {stars:2,
+  enun:`El diagrama mostra quants alumnes d'un grup tenen les característiques <i>A</i> i <i>B</i>.`,
+  fig:{lay:'v2',u:true,counts:{0:4,1:12,2:9,3:5}},
+  parts:[
+   {q:`Calcula n(<i>A</i>).`,ty:'num',kind:'int',ans:17},
+   {q:`Calcula n({{B'}}).`,ty:'num',kind:'int',ans:16},
+   {q:`Calcula n({{(A∪B)'}}).`,ty:'num',kind:'int',ans:4},
+   {q:`Si triem un alumne a l'atzar, quina és la probabilitat que sigui de {{A∩B}}?`,ty:'num',kind:'prob',ans:5/30},
+   {q:`Si triem un alumne de <i>B</i>, quina és la probabilitat que també sigui d'<i>A</i>?`,ty:'num',kind:'prob',ans:5/14}],
+  sol:`<p>Total d'alumnes: 12 + 5 + 9 + 4 = 30.</p>
+   <p>(a) <i>A</i> inclou la part només d'<i>A</i> i la de la intersecció: 12 + 5 = 17.</p>
+   <p>(b) {{B'}} és tot el que no és de <i>B</i>: 12 + 4 = 16.</p>
+   <p>(c) {{(A∪B)'}} és la part de fora dels dos cercles: 4.</p>
+   <p>(d) 5/30 = 1/6. (e) <i>B</i> té 5 + 9 = 14 alumnes i 5 són també d'<i>A</i>: 5/14.</p>`},
+ {stars:2,
+  enun:`En una ciutat, el 60 % dels habitants llegeix el diari <i>A</i>, el 45 % llegeix el diari <i>B</i> i el 15 % llegeix tots dos.`,
+  parts:[
+   {q:`Quin percentatge llegeix almenys un dels dos diaris?`,ty:'num',kind:'pct',ans:90,unit:'%'},
+   {q:`Quin percentatge no en llegeix cap?`,ty:'num',kind:'pct',ans:10,unit:'%'},
+   {q:`Quin percentatge llegeix exactament un diari?`,ty:'num',kind:'pct',ans:75,unit:'%'},
+   {q:`Si la ciutat té 20 000 habitants, quants no llegeixen cap dels dos diaris?`,ty:'num',kind:'int',ans:2000,unit:'persones'}],
+  sol:`<p>Només <i>A</i>: 60 − 15 = 45 %. Només <i>B</i>: 45 − 15 = 30 %. Tots dos: 15 %.</p>
+   <p>(a) 45 + 15 + 30 = 90 %. (b) 100 − 90 = 10 %. (c) 45 + 30 = 75 %.</p>
+   <p>(d) El 10 % de 20 000 és 2 000 persones.</p>`},
+ {stars:1,
+  enun:`De dos conjunts <i>A</i> i <i>B</i> sabem que n(<i>A</i>) = 25, n(<i>B</i>) = 18 i n({{A∩B}}) = 7.`,
+  parts:[
+   {q:`Calcula n({{A∪B}}).`,ty:'num',kind:'int',ans:36},
+   {q:`Si l'univers té 50 elements, calcula n({{(A∪B)'}}).`,ty:'num',kind:'int',ans:14},
+   {q:`Calcula n({{A∩B'}}).`,ty:'num',kind:'int',ans:18},
+   {q:`Calcula n({{A'∩B}}).`,ty:'num',kind:'int',ans:11}],
+  sol:`<p>(a) n(<i>A</i>∪<i>B</i>) = n(<i>A</i>) + n(<i>B</i>) − n(<i>A</i>∩<i>B</i>) = 25 + 18 − 7 = <b>36</b>.</p>
+   <p>(b) 50 − 36 = 14.</p>
+   <p>(c) Els d'<i>A</i> que no són de <i>B</i>: 25 − 7 = 18. (d) Els de <i>B</i> que no són d'<i>A</i>: 18 − 7 = 11.</p>`},
+ {stars:3,
+  enun:`Considera l'univers U = {1, 2, 3, …, 12} i els conjunts <i>A</i> = {nombres parells}, <i>B</i> = {múltiples de 3} i <i>C</i> = {divisors de 12}.`,
+  parts:[
+   {q:`Escriu els elements de {{A∩B∩C}}.`,ty:'set',ans:ABC7},
+   {q:`Escriu els elements de {{(A∪B)∩C'}}.`,ty:'set',ans:X7},
+   {q:`Calcula n({{C'}}).`,ty:'num',kind:'int',ans:Cc7.length},
+   {q:`Triem un nombre de U a l'atzar. Probabilitat que no sigui parell, ni múltiple de 3, ni divisor de 12: {{A'∩B'∩C'}}.`,ty:'num',kind:'prob',ans:N7.length/12}],
+  sol:`<p><i>A</i> = ${lst(A7)}, <i>B</i> = ${lst(B7)}, <i>C</i> = ${lst(C7)}.</p>
+   <p>(a) Els que són als tres conjunts: ${lst(ABC7)}.</p>
+   <p>(b) {{A∪B}} = ${lst(AuB7)}; traiem-ne els que són de <i>C</i>: ${lst(X7)}.</p>
+   <p>(c) {{C'}} = ${lst(Cc7)}, per tant n = ${Cc7.length}.</p>
+   <p>(d) No són de cap conjunt: ${lst(N7)}. Probabilitat ${N7.length}/12 = 1/4.</p>`},
+ {stars:2,
+  enun:`Escull l'expressió que descriu la zona acolorida de cada diagrama.`,
+  parts:[
+   {q:`Diagrama de dos conjunts.`,ty:'choice',lay:'v2',shade:"A∩B'",
+    opts:["A'∩B","(A∩B)'","A∩B'","A∪B'"],ans:2},
+   {q:`Diagrama de tres conjunts.`,ty:'choice',lay:'v3',shade:"(A∪B)∩C'",
+    opts:["(A∩B)∪C'","(A∪B)'∩C","A∩B∩C'","(A∪B)∩C'"],ans:3}],
+  sol:`<p>(a) La zona pintada és la part d'<i>A</i> que no és de <i>B</i>: {{A∩B'}}.</p>
+   <p>(b) Hi ha tres zones pintades: les que són d'<i>A</i> o de <i>B</i> però no de <i>C</i>. Primer {{A∪B}} i després treiem <i>C</i> amb {{C'}}: {{(A∪B)∩C'}}.</p>`}
+];
+
+function figHTML(o){
+  const L=LAYS[o.lay],R=regions(L),paint={};
+  (o.shade||[]).forEach(m=>paint[m]=o.col||'#8fc4f0');
+  let h=`<div class="fig"><svg viewBox="0 0 220 150">${vennSVG(L,{paint,names:o.names,u:o.u})}</svg>`;
+  for(const m in R){
+    const lf=(R[m].px/220*100).toFixed(2),tp=(R[m].py/150*100).toFixed(2);
+    if(o.counts)h+=`<span class="cnt" style="left:${lf}%;top:${tp}%">${o.counts[m]}</span>`;
+    if(o.inputs)h+=`<input class="rin" inputmode="numeric" data-m="${m}" style="left:${lf}%;top:${tp}%" aria-label="Zona ${m}">`;
+  }
+  return h+'</div>';
+}
+function shadeOf(lay,expr){const R=regions(LAYS[lay]),a=parse(expr);return Object.keys(R).map(Number).filter(m=>ev(a,m));}
+
+function renderQ(q,qi){
+  let h=`<article class="qcard" id="q${qi}"><header><span class="qn">${qi+1}</span><span class="stars" title="Dificultat">${'★'.repeat(q.stars)+'☆'.repeat(3-q.stars)}</span><span class="qres pill" hidden></span></header><div class="enun">${fmt(q.enun)}</div>`;
+  if(q.fig)h+=figHTML(q.fig);
+  q.parts.forEach((p,pi)=>{
+    h+=`<div class="part" data-p="${pi}"><div class="pt"><b>(${'abcdefgh'[pi]})</b> ${fmt(p.q)}</div>`;
+    if(p.ty==='num')h+=`<input class="num" inputmode="decimal" autocomplete="off" placeholder="${p.kind==='prob'?'3/10 o 0,3':'resposta'}">${p.unit?`<span class="unit">${p.unit}</span>`:''}`;
+    else if(p.ty==='set')h+=`<input class="inp wide" autocomplete="off" placeholder="Ex.: 2, 4, 6">`;
+    else if(p.ty==='reg')h+=figHTML({lay:p.lay,names:p.names,inputs:true,u:true});
+    else if(p.ty==='choice'){
+      h+=figHTML({lay:p.lay,shade:shadeOf(p.lay,p.shade)})+`<div class="opts">`+
+         p.opts.map((o,k)=>`<label class="opt"><input type="radio" name="q${qi}p${pi}" value="${k}"><span class="mx">${ex(o)}</span></label>`).join('')+`</div>`;
+    }
+    h+=`<span class="res"></span></div>`;
+  });
+  h+=`<div class="qact"><button class="btn chk">Comprova</button><button class="btn sol">Veure la solució</button></div><div class="solbox" hidden>${fmt(q.sol)}</div></article>`;
+  return h;
+}
+function parseNum(s,kind){
+  s=s.trim().replace(/\s+/g,'');if(!s)return null;
+  if(kind==='int'&&/^\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
+  s=s.replace(/,/g,'.');
+  let pct=false;if(s.endsWith('%')){pct=true;s=s.slice(0,-1);}
+  let v;const f=s.match(/^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+  if(f)v=parseFloat(f[1])/parseFloat(f[2]);
+  else if(/^-?\d+(\.\d+)?$/.test(s))v=parseFloat(s);
+  else return null;
+  if(pct&&kind==='prob')v/=100;
+  return v;
+}
+function mark(el,ok){el.classList.toggle('ok',ok);el.classList.toggle('no',!ok);}
+function checkPart(p,box){
+  const res=$('.res',box);let ok=false,msg='';
+  if(p.ty==='num'){
+    const inp=$('input.num',box),v=parseNum(inp.value,p.kind);
+    if(v===null){mark(inp,false);inp.classList.remove('ok','no');res.className='res';res.textContent=inp.value.trim()?'No ho entenc: escriu un nombre':'';return inp.value.trim()?false:null;}
+    ok=Math.abs(v-p.ans)<=(p.kind==='prob'?0.006:1e-9);mark(inp,ok);
+    msg=ok?'✓':(p.kind==='prob'?'✗ (pots escriure una fracció, un decimal o un %)':'✗');
+  }else if(p.ty==='set'){
+    const inp=$('input.inp',box),raw=inp.value.trim();
+    if(!raw){inp.classList.remove('ok','no');res.className='res';res.textContent='';return null;}
+    const got=[...new Set((raw.match(/-?\d+/g)||[]).map(Number))].sort((a,b)=>a-b),exp=[...p.ans].sort((a,b)=>a-b);
+    ok=got.length===exp.length&&got.every((x,k)=>x===exp[k]);mark(inp,ok);msg=ok?'✓':'✗';
+  }else if(p.ty==='reg'){
+    const ins=$$('.rin',box);let all=true,any=false;
+    ins.forEach(i=>{
+      const v=i.value.trim();if(v==='')return;any=true;
+      const good=/^\d+$/.test(v)&&+v===p.ans[i.dataset.m];mark(i,good);if(!good)all=false;
+    });
+    const filled=ins.every(i=>i.value.trim()!=='');
+    if(!any){res.className='res';res.textContent='';return null;}
+    ok=all&&filled;msg=ok?'✓':(all?'(falta omplir alguna zona)':'✗ (revisa les zones en vermell)');
+    if(all&&!filled){res.className='res';res.textContent=msg;return false;}
+  }else if(p.ty==='choice'){
+    const sel=$('input:checked',box);
+    $$('.opt',box).forEach(o=>o.classList.remove('ok','no'));
+    if(!sel){res.className='res';res.textContent='';return null;}
+    ok=+sel.value===p.ans;mark(sel.closest('.opt'),ok);msg=ok?'✓':'✗';
+  }
+  res.className='res '+(ok?'ok':'no');res.textContent=msg;return ok;
+}
+function checkQ(qi){
+  const q=Q[qi],card=$('#q'+qi);let ok=0,ans=0;
+  q.parts.forEach((p,pi)=>{const r=checkPart(p,$(`.part[data-p="${pi}"]`,card));if(r!==null)ans++;if(r)ok++;});
+  const pill=$('.qres',card);pill.hidden=!ans;
+  pill.textContent=`${ok} de ${q.parts.length}`;pill.className='qres pill '+(ok===q.parts.length?'ok':'in');
+  return ok;
+}
+function buildExam(){
+  const sec=$('#sExam');
+  sec.innerHTML=`<div class="teo"><b>Preguntes d'examen</b> — Problemes de conjunts i diagrames de Venn. Respon cada apartat i prem <b>Comprova</b>. Les probabilitats es poden escriure com a fracció (<span class="mx">3/10</span>), com a decimal (<span class="mx">0,3</span>) o com a percentatge.
+    <div class="row"><button class="primary" id="bAll">Comprova-ho tot</button><button class="btn" id="bClrQ">Esborra les respostes</button><span class="pill" id="eScore"></span></div></div>`+
+    Q.map(renderQ).join('');
+  Q.forEach((q,qi)=>{
+    const card=$('#q'+qi);
+    $('.chk',card).onclick=()=>{checkQ(qi);updEx();};
+    $('.sol',card).onclick=e=>{const b=$('.solbox',card);b.hidden=!b.hidden;e.target.textContent=b.hidden?'Veure la solució':'Amaga la solució';};
+    card.addEventListener('input',e=>{ // en tocar una resposta s'esborra la marca
+      const part=e.target.closest('.part');if(!part)return;
+      $$('.ok,.no',part).forEach(x=>x.classList.remove('ok','no'));$('.res',part).textContent='';
+    });
+  });
+  $('#bAll').onclick=()=>{Q.forEach((_,qi)=>checkQ(qi));updEx();};
+  $('#bClrQ').onclick=()=>{$$('#sExam input').forEach(i=>{if(i.type==='radio')i.checked=false;else i.value='';i.classList.remove('ok','no');});
+    $$('#sExam .opt').forEach(o=>o.classList.remove('ok','no'));$$('#sExam .res').forEach(r=>r.textContent='');$$('#sExam .qres').forEach(r=>r.hidden=true);updEx(true);};
+}
+function updEx(clear){
+  const el=$('#eScore');if(!el)return;
+  if(clear){el.textContent='';el.className='pill';return;}
+  let ok=0,tot=0;Q.forEach(q=>{tot+=q.parts.length;});
+  $$('#sExam .res.ok').forEach(()=>ok++);
+  el.textContent=`${ok} de ${tot} apartats correctes`;el.className='pill '+(ok===tot?'ok':'in');
+}
+// comprovació interna de les opcions de tipus «tria»
+Q.forEach(q=>q.parts.forEach(p=>{
+  if(p.ty!=='choice')return;
+  const S=shadeOf(p.lay,p.shade).sort().join(),ms=p.opts.map(o=>shadeOf(p.lay,o).sort().join());
+  console.assert(ms.filter(x=>x===S).length===1&&ms[p.ans]===S,'Opcions mal definides',p);
+}));
+
+/* ============================================================
+   NAVEGACIÓ
+   ============================================================ */
+const TABS=[['start','Venn inicial'],['l1','Pinta · Nivell 1'],['l2','Pinta · Nivell 2'],['l3','Pinta · Nivell 3'],['exam','Preguntes d\'examen']];
+const tb=id=>{const t=TABS.find(x=>x[0]===id);return `<button data-id="${id}">${t[1]}</button>`;};
+$('#tabs').innerHTML=tb('start')+`<span class="grp"><span class="gl">Pinta</span>${['l1','l2','l3'].map(id=>tb(id).replace('Pinta · ','')).join('')}</span>`+tb('exam');
+function go(id){
+  if(!TABS.some(t=>t[0]===id))id='start';
+  $$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.id===id));
+  $('#sStart').hidden=id!=='start';
+  $('#sPaint').hidden=!/^l\d$/.test(id);
+  $('#sExam').hidden=id!=='exam';
+  if(/^l\d$/.test(id))showLevel(+id[1]);
+  try{localStorage.setItem('venn-tab',id);}catch(e){}
+}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.id);};
+$('#bProj').onclick=e=>{document.body.classList.toggle('proj');e.target.classList.toggle('on');};
+$('#bPrint').onclick=()=>window.print();
+buildStart();buildExam();
+let first='start';try{first=localStorage.getItem('venn-tab')||'start';}catch(e){}
+go(first);
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "titol": "Diagrames de Venn: pinta, col·loca nombres i preguntes d'examen",
+  "descripcio": "Aplicatiu en un sol fitxer, en català, inspirat en el Venn Paint de Transum. Venn inicial (arrossega els nombres a tres cercles amb propietats), tres nivells per pintar regions segons una expressió (A barra, ∪, ∩; amb comprovació diagrama a diagrama) i 8 problemes tipus examen amb correcció automàtica i solució. Funciona sense internet.",
+  "materia": "matematiques",
+  "temes": [
+    "conjunts-venn"
+  ],
+  "nivells": [
+    "2ESO",
+    "3ESO",
+    "4ESO"
+  ],
+  "tipus": "interactiu",
+  "origen": "propi",
+  "obrir": "index.html",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+    "url": "https://www.transum.org/maths/activity/venn/?Level=1",
+    "llicencia": "Idea de l'activitat: Transum Mathematics; codi i preguntes propis"
+  },
+  "etiquetes": [
+    "Venn",
+    "conjunts",
+    "unió",
+    "intersecció",
+    "complementari",
+    "pintar",
+    "preguntes d'examen"
+  ],
+  "data": "2026-11-15"
+}
