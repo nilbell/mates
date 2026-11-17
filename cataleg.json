@@ -769,6 +769,36 @@
       "carpeta": ""
     },
     {
+      "id": "materials/matematiques/potencies/potencies",
+      "titol": "Potències: definició, propietats i minijocs",
+      "descripcio": "Aplicatiu en un sol fitxer per visualitzar les potències: la definició com a producte de la base n cops (incloent zero cops), les propietats amb fitxes i comprovació numèrica, potències de 10 i notació científica, i quatre minijocs (Caça l'error, Parelles, Duel amb daus i Creixement). Té un interruptor 2n / 3r (a 3r s'afegeixen els exponents negatius i les fraccions). Funciona sense internet.",
+      "materia": "matematiques",
+      "temes": [
+        "potencies",
+        "notacio-cientifica"
+      ],
+      "nivells": [
+        "2ESO",
+        "3ESO"
+      ],
+      "tipus": "interactiu",
+      "origen": "propi",
+      "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+      "urlFont": "",
+      "llicencia": "",
+      "etiquetes": [
+        "potències",
+        "propietats",
+        "joc",
+        "exponent negatiu"
+      ],
+      "data": "2026-11-17",
+      "obrir": "materials/matematiques/potencies/potencies/index.html",
+      "imatge": "materials/matematiques/potencies/potencies/captura.png",
+      "extres": [],
+      "carpeta": "materials/matematiques/potencies/potencies"
+    },
+    {
       "id": "materials/matematiques/probabilitat/probabilitat-grans-nombres",
       "titol": "Simulador de la llei dels grans nombres",
       "descripcio": "Simulador en un sol fitxer: moneda, daus, bossa de boles i dau trucat, fins a 1.000.000 de tirades, amb taula de freqüències i gràfics. Funciona sense internet.",

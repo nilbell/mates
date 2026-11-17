@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Potències</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:,">
+<style>
+:root{
+  --bg:#f6f4ee; --ink:#1f2933; --muted:#5b6770; --card:#fff; --line:#d9d4c8;
+  --blue:#2f7fd0; --blue-bg:#d3e6fa; --green:#2fa84f; --green-bg:#d4f1dc;
+  --red:#d9435a; --red-bg:#fbdadf; --orange:#ee8a22; --orange-bg:#fde3c4;
+  --purple:#7b4bb7; --purple-bg:#e8dcf6; --fs:1;
+}
+*{box-sizing:border-box}
+html{font-size:calc(16px * var(--fs))}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,sans-serif;line-height:1.35}
+body.proj{--fs:1.3}
+button,select,input{font:inherit}
+button{cursor:pointer}
+.fml,.eq,.pw,.big{font-family:"Cambria Math",Cambria,"STIX Two Math","Times New Roman",serif}
+sup{font-size:.68em;line-height:0}
+
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.1rem;padding:.55rem 1rem;background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand h1{font-size:1.2rem;margin:0}
+.logo{width:2.3rem;height:2.3rem;flex:none;display:block}
+.logo svg{width:100%;height:100%;display:block}
+.tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.tabs button,.tools button{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tools{margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.tools button.on{background:var(--orange-bg);border-color:var(--orange)}
+.niv{display:inline-flex;border:2px solid var(--purple);border-radius:.7rem;overflow:hidden}
+.niv button{border:0!important;border-radius:0!important;background:#fff;color:var(--purple)!important;font-weight:800}
+.niv button.on{background:var(--purple)!important;color:#fff!important}
+
+main{max-width:1180px;margin:0 auto;padding:.8rem 1rem 3rem}
+body.proj main{max-width:1600px}
+[hidden]{display:none!important}
+.teo{background:#fffbe6;border:2px solid #e9d97a;border-radius:1rem;padding:.5rem .9rem;margin-bottom:.8rem}
+.teo b{color:#6d5600}
+.sub{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 .8rem}
+.sub button{border:2px solid var(--line);background:#fff;border-radius:2rem;padding:.25rem .9rem;font-weight:600;color:var(--ink)}
+.sub button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.view{display:grid;grid-template-columns:minmax(0,3fr) minmax(16rem,2fr);gap:1rem;align-items:start}
+@media(max-width:900px){.view{grid-template-columns:1fr}}
+.stage{background:#fff;border:3px solid var(--line);border-radius:1.2rem;padding:.9rem 1rem;min-height:12rem}
+.panel{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem .9rem}
+.panel h3,.card h3{margin:.1rem 0 .4rem;font-size:1.05rem}
+.panel hr{border:0;border-top:1px solid var(--line);margin:.7rem 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(22rem,1fr));gap:1rem;margin-top:1rem}
+.card{background:#fff;border:2px solid var(--line);border-radius:1rem;padding:.7rem .9rem}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:.4rem 0}
+.note{color:var(--muted);font-size:.9rem}
+.sl{display:block;margin:.4rem 0;font-weight:600}
+.sl b.v{float:right;font-family:"Cambria Math",Cambria,serif;font-size:1.1rem}
+.sl input[type=range]{width:100%;margin:.15rem 0}
+.chk{display:flex;gap:.45rem;align-items:center;margin:.3rem 0;cursor:pointer}
+.chk input{width:1.15rem;height:1.15rem}
+.btn{border:2px solid var(--line);background:#fff;border-radius:.7rem;padding:.35rem .8rem;font-weight:600;color:var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.primary{background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:.7rem;padding:.4rem 1rem;font-weight:700}
+.pill{display:inline-block;border-radius:2rem;padding:.1rem .7rem;font-weight:700;font-size:.92rem}
+.pill.ok{background:var(--green-bg);color:#17612e}
+.pill.no{background:var(--red-bg);color:#8f1d30}
+.pill.in{background:var(--blue-bg);color:#174f8a}
+select.sel,input.num{border:2px solid var(--line);border-radius:.6rem;padding:.3rem .5rem;background:#fff;color:var(--ink)}
+input.num{width:7rem}
+
+/* potències i fitxes */
+.big{font-size:2rem;margin:.1rem 0 .6rem;font-weight:700}
+.eq{font-size:1.2rem;line-height:1.8}
+.fxs{display:flex;flex-wrap:wrap;align-items:flex-start;gap:.35rem .3rem;margin:.4rem 0}
+.fxw{display:flex;flex-direction:column;align-items:center;gap:.1rem}
+.fxw small{font-family:"Cambria Math",Cambria,serif;color:var(--muted);font-size:.85rem}
+.fx{display:inline-flex;align-items:center;justify-content:center;min-width:2.6rem;height:2.6rem;padding:0 .5rem;border-radius:.7rem;background:var(--blue-bg);border:2px solid var(--blue);color:#174f8a;font-family:"Cambria Math",Cambria,serif;font-size:1.2rem;font-weight:700}
+.fx.c2{background:var(--orange-bg);border-color:var(--orange);color:#8a4b05}
+.fx.c3{background:var(--purple-bg);border-color:var(--purple);color:#4b2b78}
+.fx.vuit{background:var(--green-bg);border-color:var(--green);color:#17612e}
+.fx.tall{opacity:.35;text-decoration:line-through;text-decoration-thickness:3px}
+.fx.dv{background:var(--red-bg);border-color:var(--red);color:#8f1d30}
+.op{align-self:center;font-family:"Cambria Math",Cambria,serif;font-size:1.3rem;color:var(--muted);padding:0 .1rem}
+.grup{display:inline-flex;flex-wrap:wrap;gap:.25rem;padding:.3rem .45rem;border:2px dashed var(--line);border-radius:.9rem;align-items:center}
+.fraccio{display:inline-flex;flex-direction:column;align-items:center;gap:.25rem}
+.fraccio>.lin{width:100%;height:3px;background:var(--ink);border-radius:2px}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.1;margin:0 .15em;font-size:.9em}
+.fr i{font-style:normal;padding:0 .2em}
+.fr i:first-child{border-bottom:.08em solid currentColor}
+.avis{border-radius:.9rem;padding:.5rem .8rem;margin:.5rem 0}
+.avis.y{background:#fff3c4;border:2px solid #e9c93c}
+.avis.g{background:var(--green-bg);border:2px solid var(--green)}
+.avis.r{background:var(--red-bg);border:2px solid var(--red)}
+.avis.b{background:var(--blue-bg);border:2px solid var(--blue)}
+.check{margin-top:.6rem;font-family:"Cambria Math",Cambria,serif;font-size:1.1rem}
+.esg{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem;font-family:"Cambria Math",Cambria,serif;font-size:1.1rem}
+.esg .fila{padding:.2rem .7rem;border:2px solid var(--line);border-radius:.6rem;background:#fff}
+.esg .fila.hot{background:var(--orange-bg);border-color:var(--orange);font-weight:700}
+.esg .fila.zero{background:var(--green-bg);border-color:var(--green)}
+.esg .arr{color:var(--muted);font-size:.9rem;margin-left:1rem}
+.punts{display:flex;flex-wrap:wrap;gap:3px;max-width:100%}
+.punts i{width:7px;height:7px;border-radius:50%;background:var(--blue);display:inline-block}
+.nivell{display:flex;align-items:center;gap:.5rem;margin:.15rem 0;flex-wrap:wrap}
+.nivell b{min-width:6.5rem;font-family:"Cambria Math",Cambria,serif}
+table.tb{border-collapse:collapse;width:100%;font-family:"Cambria Math",Cambria,serif}
+table.tb th,table.tb td{border-bottom:1px solid var(--line);padding:.2rem .4rem;text-align:left}
+table.tb tr.hot td{background:var(--orange-bg);font-weight:700}
+
+/* minijocs */
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.6rem}
+.targ{border:3px solid var(--line);background:#fff;border-radius:1rem;padding:.7rem .6rem;text-align:center;font-size:1.25rem;font-family:"Cambria Math",Cambria,serif;cursor:pointer;user-select:none;min-height:3.8rem;display:flex;align-items:center;justify-content:center;transition:.12s}
+.targ:hover{border-color:var(--ink)}
+.targ.mark{background:var(--red-bg);border-color:var(--red)}
+.targ.ok{background:var(--green-bg);border-color:var(--green)}
+.targ.bad{background:var(--red-bg);border-color:var(--red)}
+.targ.miss{background:var(--orange-bg);border-color:var(--orange)}
+.targ .why{display:block;font-family:system-ui,sans-serif;font-size:.8rem;font-weight:500;color:var(--muted);margin-top:.3rem}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;max-width:44rem}
+@media(max-width:560px){.mem{grid-template-columns:repeat(3,1fr)}}
+.mc{aspect-ratio:4/3;border-radius:1rem;border:3px solid var(--line);background:var(--ink);color:#fff;font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;font-family:"Cambria Math",Cambria,serif;text-align:center;padding:.2rem}
+.mc.up{background:#fff;color:var(--ink)}
+.mc.up.val{background:var(--blue-bg);border-color:var(--blue)}
+.mc.done{background:var(--green-bg);border-color:var(--green);color:#17612e;cursor:default}
+.dau{width:4.2rem;height:4.2rem;border-radius:1rem;border:3px solid var(--ink);background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;font-family:"Cambria Math",Cambria,serif}
+.dau.e{border-color:var(--orange);background:var(--orange-bg)}
+.dau.rodant{animation:rodar .25s linear infinite}
+@keyframes rodar{to{transform:rotate(90deg)}}
+.equip{border:3px solid var(--line);background:#fff;border-radius:1.1rem;padding:.7rem .9rem;text-align:center}
+.equip.guanya{border-color:var(--green);background:var(--green-bg)}
+.equip input{font-size:1.1rem;font-weight:800;text-align:center;border:0;border-bottom:2px dashed var(--line);background:transparent;width:100%;color:var(--ink)}
+.equip .pt{font-size:2.4rem;font-weight:800;font-family:"Cambria Math",Cambria,serif}
+.duel{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:700px){.duel{grid-template-columns:1fr}}
+svg.dish{width:100%;height:auto;max-height:18rem;background:#f2fbf4;border:3px solid var(--line);border-radius:50%/40%}
+
+body.hide-res .res:not(.shown){filter:blur(7px);cursor:pointer;user-select:none}
+@media print{.top,.panel,.sub,.teo,.btn,.primary{display:none!important}.view{display:block}body{background:#fff}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo" id="logo"></span><h1>Potències</h1></div>
+  <nav class="tabs" id="tabs">
+    <button data-t="def" class="on">Definició</button>
+    <button data-t="prop">Propietats</button>
+    <button data-t="jocs">Minijocs</button>
+  </nav>
+  <div class="tools">
+    <span class="niv" id="niv" title="Nivell"><button data-n="2" class="on">2n</button><button data-n="3">3r</button></span>
+    <button id="bHide" title="Difumina els resultats perquè els alumnes els predeguin">Amaga resultats</button>
+    <button id="bProj" title="Lletra més gran per a la pissarra">Projecció</button>
+    <button id="bPrint">Imprimir</button>
+  </div>
+</header>
+<main>
+
+<!-- ============ DEFINICIÓ ============ -->
+<section id="s-def">
+  <div class="teo"><b>Definició:</b> una potència <i>aⁿ</i> és el producte de la base <i>a</i> per ella mateixa <i>n</i> cops: <span class="fml">aⁿ = a · a · … · a</span> (<i>n</i> factors).
+    Si <i>n</i> = 0 no hi ha cap factor: el producte no ha començat i només queda el punt de partida, el <b>1</b>.</div>
+  <div class="view">
+    <div class="stage">
+      <div class="big" id="defTit"></div>
+      <div id="defStrip"></div>
+      <div id="defNota"></div>
+      <div id="defModel"></div>
+    </div>
+    <div class="panel">
+      <h3>Tria la potència</h3>
+      <label class="sl">Base (numerador) <b class="v" id="dBv"></b><input type="range" id="dB" min="-9" max="9" value="2" step="1"></label>
+      <label class="sl" id="dDw" hidden>Base (denominador) <b class="v" id="dDv"></b><input type="range" id="dD" min="1" max="6" value="1" step="1"></label>
+      <label class="sl">Exponent <b class="v" id="dEv"></b><input type="range" id="dE" min="0" max="10" value="4" step="1"></label>
+      <hr>
+      <h3>Dibuix</h3>
+      <div class="row" id="dMod">
+        <button class="btn on" data-m="">Fitxes</button>
+        <button class="btn" data-m="area">Àrea (n = 2)</button>
+        <button class="btn" data-m="vol">Volum (n = 3)</button>
+        <button class="btn" data-m="arbre">Arbre</button>
+      </div>
+      <div class="note">Cada dibuix només funciona amb algunes potències; si no encaixa, t'ho diu.</div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card"><h3>El patró que ho explica tot</h3><div class="note" style="margin-bottom:.4rem">Cada esglaó cap avall divideix entre la base. Així el 1 del exponent 0 surt sol.</div><div class="esg" id="defEsg"></div></div>
+    <div class="card"><h3>Compte amb el signe i el parèntesi</h3><div id="defSigne"></div></div>
+  </div>
+</section>
+
+<!-- ============ PROPIETATS ============ -->
+<section id="s-prop" hidden>
+  <div class="sub" id="pTabs"></div>
+  <div class="view">
+    <div class="stage">
+      <div class="avis b" id="pRegla" style="font-size:1.4rem;text-align:center;font-family:'Cambria Math',Cambria,serif"></div>
+      <div id="pCos"></div>
+    </div>
+    <div class="panel">
+      <h3>Canvia els valors</h3>
+      <label class="sl" data-s="a">Base <i>a</i> <b class="v" id="pAv"></b><input type="range" id="pA" min="-9" max="9" value="2"></label>
+      <label class="sl" data-s="b">Base <i>b</i> <b class="v" id="pBv"></b><input type="range" id="pB" min="-9" max="9" value="3"></label>
+      <label class="sl" data-s="m">Exponent <i>m</i> <b class="v" id="pMv"></b><input type="range" id="pM" min="0" max="6" value="3"></label>
+      <label class="sl" data-s="n">Exponent <i>n</i> <b class="v" id="pNv"></b><input type="range" id="pN" min="0" max="6" value="2"></label>
+      <div class="note" id="pAj"></div>
+    </div>
+  </div>
+  <div class="cards" id="pErrors"></div>
+</section>
+
+<!-- ============ MINIJOCS ============ -->
+<section id="s-jocs" hidden>
+  <div class="sub" id="jTabs">
+    <button data-j="err" class="on">Caça l'error</button>
+    <button data-j="mem">Parelles</button>
+    <button data-j="duel">Duel amb daus</button>
+    <button data-j="gro">Creixement</button>
+  </div>
+
+  <div class="subv" id="j-err">
+    <div class="teo"><b>Caça l'error:</b> en cada ronda hi ha igualtats veritables i falses. Marca (clica) les <b>falses</b> i prem <b>Comprova</b>. Pots jugar contra rellotge.</div>
+    <div class="row">
+      <button class="primary" id="eNova">Nova ronda</button>
+      <button class="btn" id="eCheck">Comprova</button>
+      <label class="chk"><input type="checkbox" id="eTemps"> Contra rellotge (90 s)</label>
+      <b class="fml" id="eRell"></b>
+      <span class="pill in" id="ePunts">Punts: 0</span>
+    </div>
+    <div class="tg" id="eGrid"></div>
+    <div id="eRes" style="margin-top:.6rem"></div>
+  </div>
+
+  <div class="subv" id="j-mem" hidden>
+    <div class="teo"><b>Parelles:</b> gira dues cartes i troba cada potència amb el seu valor. Com menys moviments i temps, millor.</div>
+    <div class="row">
+      <select class="sel" id="mDif"></select>
+      <button class="primary" id="mNova">Nova partida</button>
+      <span class="pill in" id="mInfo"></span>
+    </div>
+    <div class="mem" id="mGrid"></div>
+    <div id="mRes"></div>
+  </div>
+
+  <div class="subv" id="j-duel" hidden>
+    <div class="teo"><b>Duel amb daus:</b> cada equip tira un dau de base (el blanc) i un d'exponent (el taronja). Abans de revelar-ho, cada equip calcula el valor de la seva potència. Guanya el punt qui té la potència més gran.</div>
+    <div class="row">
+      <button class="primary" id="uTira">Llança els daus</button>
+      <button class="btn" id="uMostra">Mostra el resultat</button>
+      <button class="btn" id="uReset">Reinicia</button>
+      <label>Fins a <select class="sel" id="uMeta"><option>3</option><option selected>5</option><option>7</option><option>10</option></select> punts</label>
+      <label class="chk"><input type="checkbox" id="uNeg"> Bases negatives</label>
+      <label class="chk"><input type="checkbox" id="uZero" checked> Pot sortir exponent 0</label>
+      <label class="chk" id="uNegEw"><input type="checkbox" id="uNegE"> Exponents negatius</label>
+    </div>
+    <div class="duel" id="uEquips"></div>
+    <div id="uMsg" style="margin-top:.7rem"></div>
+  </div>
+
+  <div class="subv" id="j-gro" hidden>
+    <div class="teo"><b>Creixement:</b> amb potències, una cosa petita pot arribar a ser gegant molt ràpid. Mou les hores, prediu el resultat i compara-ho amb un creixement «normal».</div>
+    <div class="view">
+      <div class="stage">
+        <div class="big" id="gTit"></div>
+        <svg class="dish" id="gDish" viewBox="0 0 400 220" role="img" aria-label="Placa de Petri"></svg>
+        <div class="note" id="gLleg"></div>
+        <div id="gSci"></div>
+        <svg id="gChart" viewBox="0 0 420 200" style="width:100%;height:auto;margin-top:.7rem" role="img" aria-label="Gràfic"></svg>
+        <div class="note">Blau: creixement amb potències. Taronja: creix sempre el mateix cada hora.</div>
+      </div>
+      <div class="panel">
+        <h3>Escenari</h3>
+        <div class="row" id="gPre">
+          <button class="btn on" data-g="bac">Bactèries ×2</button>
+          <button class="btn" data-g="rum">Rumor ×3</button>
+          <button class="btn" data-g="esc">Tauler d'escacs</button>
+        </div>
+        <label class="sl"><span id="gHl">Hores</span> <b class="v" id="gHv"></b><input type="range" id="gH" min="0" max="20" value="6" step="1"></label>
+        <hr>
+        <h3>Prediu</h3>
+        <div class="row"><span id="gQ1"></span></div>
+        <div class="row"><input class="num" id="gA1" inputmode="numeric" placeholder="Quantes?"><button class="btn" id="gC1">Comprova</button></div>
+        <div id="gR1"></div>
+        <div class="row"><span id="gQ2"></span></div>
+        <div class="row"><input class="num" id="gA2" inputmode="numeric" placeholder="Hora"><button class="btn" id="gC2">Comprova</button></div>
+        <div id="gR2"></div>
+        <button class="btn" id="gNou" style="margin-top:.4rem">Altres preguntes</button>
+      </div>
+    </div>
+    <div class="cards"><div class="card"><h3>Taula</h3><div id="gTab" style="max-height:15rem;overflow:auto"></div></div></div>
+  </div>
+</section>
+
+</main>
+<script>
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const MINUS='−';
+const LOGO=`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="14" fill="#7b4bb7"/><text x="10" y="46" font-size="40" font-style="italic" font-family="Georgia,serif" fill="#fff">a</text><text x="34" y="30" font-size="26" font-weight="bold" font-family="Georgia,serif" fill="#fde3c4">n</text></svg>`;
+$('#logo').innerHTML=LOGO;$('#fav').href='data:image/svg+xml,'+encodeURIComponent(LOGO);
+let NIV=2;
+
+/* ---------- racionals exactes (BigInt) ---------- */
+const bgcd=(a,b)=>{a=a<0n?-a:a;b=b<0n?-b:b;while(b){const t=a%b;a=b;b=t}return a};
+const Q=(n,d=1n)=>{n=BigInt(n);d=BigInt(d);if(d<0n){n=-n;d=-d}const g=bgcd(n,d)||1n;return{n:n/g,d:d/g}};
+const qmul=(x,y)=>Q(x.n*y.n,x.d*y.d), qdiv=(x,y)=>Q(x.n*y.d,x.d*y.n), qeq=(x,y)=>x.n===y.n&&x.d===y.d;
+const qcmp=(x,y)=>{const l=x.n*y.d,r=y.n*x.d;return l<r?-1:l>r?1:0};
+function pw(b,e){ /* b: Q, e: enter; null si 0 elevat a negatiu */
+  if(e>=0)return Q(b.n**BigInt(e),b.d**BigInt(e));
+  if(b.n===0n)return null;
+  return Q(b.d**BigInt(-e),b.n**BigInt(-e));
+}
+const fmtI=n=>{const neg=n<0n;const s=(neg?-n:n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');return(neg?MINUS:'')+s};
+const frH=(n,d)=>`<span class="fr"><i>${n}</i><i>${d}</i></span>`;
+function qH(x){if(x===null)return'no existeix';if(x.d===1n)return fmtI(x.n);return(x.n<0n?MINUS:'')+frH(fmtI(x.n<0n?-x.n:x.n),fmtI(x.d))}
+function sci(x){ /* nombre enter gran en notació científica */
+  if(!x||x.d!==1n)return'';const neg=x.n<0n,s=(neg?-x.n:x.n).toString();if(s.length<8)return'';
+  let m=s[0]+','+s.slice(1,4).replace(/0+$/,'');if(m.endsWith(','))m=m.slice(0,-1);
+  return`${neg?MINUS:''}${m} · 10<sup>${s.length-1}</sup>`;
+}
+const baseH=b=>b.d===1n?fmtI(b.n):(b.n<0n?MINUS:'')+frH(fmtI(b.n<0n?-b.n:b.n),fmtI(b.d));
+const needPar=b=>b.n<0n||b.d!==1n;
+const expT=e=>typeof e==='string'?e:(e<0?MINUS+(-e):''+e);
+const P=(b,e)=>`<span class="pw">${needPar(b)?'(':''}${baseH(b)}${needPar(b)?')':''}<sup>${expT(e)}</sup></span>`;
+const chip=(h,c='')=>`<span class="fx ${c}">${h}</span>`;
+const rep=(n,f)=>Array.from({length:Math.max(0,n)},(_,i)=>f(i)).join('');
+const dot=`<span class="op">·</span>`;
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const bi=(n,d=1)=>Q(n,d);
+
+/* =====================================================================
+   DEFINICIÓ
+   ===================================================================== */
+const DEF={model:''};
+function defRender(){
+  const n=+$('#dB').value,d=NIV===3?+$('#dD').value:1,e=+$('#dE').value;
+  const b=bi(n,d);
+  $('#dBv').textContent=n;$('#dDv').textContent=d;$('#dEv').textContent=e;$('#dDw').hidden=NIV!==3;
+  const v=pw(b,e);
+  let tit=`${P(b,e)} = `;
+  if(b.n===0n&&e===0)tit+=`<span class="res">? (0<sup>0</sup> no es defineix)</span>`;
+  else if(v===null)tit+='<span class="res">no existeix (no es pot dividir entre 0)</span>';
+  else tit+=`<span class="res">${qH(v)}</span>`+(v.d===1n&&sci(v)&&(v.n>9999999n||v.n<-9999999n)?` <span class="note" style="font-size:.95rem">= ${sci(v)}</span>`:'');
+  $('#defTit').innerHTML=tit;
+  /* tira de fitxes */
+  let h='',nota='';
+  if(e===0){
+    h=`<div class="fxs">${chip('1','vuit')}</div>`;
+    nota=`<div class="avis y"><b>Exponent 0:</b> la base apareix <b>0 cops</b>. No hi ha cap factor, així que només queda el punt de partida del producte: el <b>1</b>. Per això <span class="pw">a<sup>0</sup> = 1</span> (si a ≠ 0).</div>`;
+  }else if(e>0){
+    let acc=Q(1);const cel=[];
+    for(let i=1;i<=e;i++){acc=qmul(acc,b);cel.push(`<div class="fxw">${chip(baseH(b))}<small class="res">${qH(acc)}</small></div>`)}
+    h=`<div class="fxs">${cel.join(dot)}</div><div class="note">Sota cada fitxa, el resultat que portes multiplicat fins aquí.</div>`;
+    nota=`<div class="avis b">La base es multiplica <b>${e}</b> ${e===1?'cop':'cops'}${e===1?' (només ella mateixa)':''}.</div>`;
+  }else{
+    if(b.n===0n){h='';nota=`<div class="avis r">No es pot dividir entre 0: ${P(b,e)} no existeix.</div>`}
+    else{
+      const k=-e;let acc=Q(1);const cel=[`<div class="fxw">${chip('1','vuit')}<small class="res">1</small></div>`];
+      for(let i=1;i<=k;i++){acc=qdiv(acc,b);cel.push(`<span class="op">÷</span><div class="fxw">${chip(baseH(b),'dv')}<small class="res">${qH(acc)}</small></div>`)}
+      h=`<div class="fxs">${cel.join('')}</div>`;
+      nota=`<div class="avis b"><b>Exponent negatiu:</b> en lloc de multiplicar, <b>dividim</b> ${k} ${k===1?'cop':'cops'} el 1 entre la base. Així ${P(b,e)} = 1 ÷ ${P(b,k)}.</div>`;
+    }
+  }
+  $('#defStrip').innerHTML=h;$('#defNota').innerHTML=nota;
+  defModel(b,e);defEsg(b,e);defSigne(n,e);
+  $$('#dMod button').forEach(x=>x.classList.toggle('on',x.dataset.m===DEF.model));
+}
+function defModel(b,e){
+  const M=DEF.model,out=$('#defModel');if(!M){out.innerHTML='';return}
+  const ab=b.n<0n?-b.n:b.n;let h='';
+  if(M==='area'){
+    if(e!==2||b.d!==1n||ab>12n||ab===0n)h=`<div class="avis y">L'àrea d'un quadrat només la tenim per a <b>exponent 2</b> i bases enteres entre 1 i 12 (o −12 i −1). Posa exponent 2.</div>`;
+    else{const k=Number(ab),c=22;h=`<div class="note">Un quadrat de costat ${k} té ${k}·${k} quadradets.${b.n<0n?` Amb base negativa l'àrea (${k*k}) segueix sent positiva: (${MINUS}${k})² = ${k*k}.`:''}</div>
+      <svg viewBox="0 0 ${k*c+4} ${k*c+4}" style="width:min(100%,${k*c+4}px);margin:.4rem 0">${rep(k,i=>rep(k,j=>`<rect x="${j*c+2}" y="${i*c+2}" width="${c-2}" height="${c-2}" rx="3" fill="${(i+j)%2?'#d3e6fa':'#9cc8f0'}" stroke="#2f7fd0"/>`))}</svg>`}
+  }else if(M==='vol'){
+    if(e!==3||b.d!==1n||ab>6n||ab===0n)h=`<div class="avis y">El volum d'un cub el dibuixem per a <b>exponent 3</b> i bases enteres de 1 a 6 (o −6 a −1). Posa exponent 3.</div>`;
+    else{const k=Number(ab),c=16,off=9,W=k*c+k*off+8;h=`<div class="note">Un cub d'aresta ${k}: ${k} capes de ${k}·${k} cubets = ${k*k*k}.${b.n<0n?` Amb base negativa el signe del resultat és negatiu: (${MINUS}${k})³ = ${MINUS}${k*k*k}.`:''}</div>
+      <svg viewBox="0 0 ${W} ${W}" style="width:min(100%,${W*1.4}px);margin:.4rem 0">${rep(k,l=>{const li=k-1-l;return`<g transform="translate(${li*off+4},${(k-1-li)*off+4})">`+rep(k,i=>rep(k,j=>`<rect x="${j*c}" y="${i*c}" width="${c-1.5}" height="${c-1.5}" rx="2" fill="${['#d3e6fa','#fde3c4','#e8dcf6','#d4f1dc','#fbdadf','#fff3c4'][li%6]}" stroke="#555" stroke-width=".6"/>`))+`</g>`})}</svg>`}
+  }else{
+    if(b.d!==1n||ab<2n||ab>4n||e<1||Number(ab)**e>256)h=`<div class="avis y">L'arbre es dibuixa per a bases 2, 3 o 4 (positives), exponent 1 o més i fins a 256 punts en total a l'últim nivell (per exemple 2<sup>8</sup>, 3<sup>5</sup>, 4<sup>4</sup>).</div>`;
+    else{const k=Number(ab);h=`<div class="note">Cada punt es ramifica en ${k}. Al nivell <i>n</i> hi ha ${k}<sup><i>n</i></sup> punts.</div>`+rep(e+1,l=>{const c=k**l;return`<div class="nivell"><b>nivell ${l}: ${P(b,l)} = ${c}</b><span class="punts">${rep(c,()=>'<i></i>')}</span></div>`})}
+  }
+  out.innerHTML=h;
+}
+function defEsg(b,e){
+  const out=$('#defEsg');
+  if(b.n===0n||b.n*b.n===b.d*b.d&&false){out.innerHTML='<span class="note">Amb base 0 no es pot dividir: tria una altra base.</span>';return}
+  const hi=Math.max(5,e),lo=Math.min(NIV===3?-3:0,e);let h='';
+  for(let k=hi;k>=lo;k--){
+    const v=pw(b,k);
+    h+=`<div class="fila ${k===e?'hot':''} ${k===0?'zero':''}">${P(b,k)} = <span class="res">${qH(v)}</span></div>`;
+    if(k>lo)h+=`<div class="arr">↓ ÷ ${needPar(b)?'(':''}${baseH(b)}${needPar(b)?')':''}</div>`;
+  }
+  out.innerHTML=h;
+}
+function defSigne(n,e){
+  const out=$('#defSigne');
+  const m=Math.abs(n);if(m===0){out.innerHTML='<span class="note">Posa una base diferent de 0.</span>';return}
+  const bm=bi(m),bn=bi(-m);
+  const a=pw(bn,e),b=pw(bm,e),c=b===null?null:Q(-b.n,b.d);
+  out.innerHTML=`<div class="eq">${P(bn,e)} = <span class="res">${qH(a)}</span> <span class="note">(el parèntesi inclou el signe)</span></div>
+    <div class="eq">${MINUS}${P(bm,e)} = <span class="res">${qH(c)}</span> <span class="note">(primer la potència, després el signe)</span></div>
+    <div class="note">${e%2===0?'Amb exponent <b>parell</b>, (−a)ⁿ és positiu.':'Amb exponent <b>senar</b>, (−a)ⁿ és negatiu.'} En canvi, −aⁿ és sempre negatiu (si a > 0).</div>`;
+}
+$('#dB').oninput=$('#dD').oninput=$('#dE').oninput=defRender;
+$$('#dMod button').forEach(b=>b.onclick=()=>{DEF.model=b.dataset.m;defRender()});
+
+/* =====================================================================
+   PROPIETATS
+   ===================================================================== */
+const PT=[
+  {id:'prod',nom:'Producte',regla:'aᵐ · aⁿ = aᵐ⁺ⁿ',use:'amn'},
+  {id:'quot',nom:'Quocient',regla:'aᵐ ÷ aⁿ = aᵐ⁻ⁿ',use:'amn'},
+  {id:'pot',nom:'Potència de potència',regla:'(aᵐ)ⁿ = aᵐ·ⁿ',use:'amn'},
+  {id:'pb',nom:'Potència d’un producte',regla:'(a · b)ⁿ = aⁿ · bⁿ',use:'abn'},
+  {id:'qb',nom:'Potència d’un quocient',regla:'(a ÷ b)ⁿ = aⁿ ÷ bⁿ',use:'abn'},
+  {id:'neg',nom:'Exponent negatiu',regla:'a⁻ⁿ = 1 ÷ aⁿ',use:'an',niv:3},
+  {id:'p10',nom:'Potències de 10',regla:'10ⁿ i notació científica',use:''}
+];
+let PCUR='prod';
+function pTabs(){
+  const l=PT.filter(t=>!t.niv||t.niv<=NIV);
+  if(!l.some(t=>t.id===PCUR))PCUR=l[0].id;
+  $('#pTabs').innerHTML=l.map(t=>`<button data-p="${t.id}" class="${t.id===PCUR?'on':''}">${t.nom}</button>`).join('');
+  $$('#pTabs button').forEach(b=>b.onclick=()=>{PCUR=b.dataset.p;pTabs();propRender()});
+}
+const chk=(l,r)=>`<div class="check res">Esquerra = <b>${qH(l)}</b> &nbsp;·&nbsp; Dreta = <b>${qH(r)}</b> &nbsp;<span class="pill ${l&&r&&qeq(l,r)?'ok':'no'}">${l&&r&&qeq(l,r)?'✔ són iguals':'diferents'}</span></div>`;
+const grp=(n,c,t)=>n===0?`<span class="grup">${chip('1','vuit')}</span>`:`<span class="grup">${rep(n,()=>chip(t,c)).split('</span><span').join('</span><span')}</span>`;
+function propRender(){
+  const T=PT.find(t=>t.id===PCUR);
+  const lo=NIV===3?-4:0;
+  $('#pM').min=$('#pN').min=lo;
+  let a=+$('#pA').value,bb=+$('#pB').value,m=+$('#pM').value,n=+$('#pN').value;
+  $$('#s-prop [data-s]').forEach(s=>s.hidden=!T.use.includes(s.dataset.s));
+  let aj='';
+  if(T.id==='quot'&&NIV===2&&n>m){n=m;$('#pN').value=n;aj='A 2n, perquè no surti un exponent negatiu, l’exponent n no pot passar de m.'}
+  if((T.id==='qb')&&bb===0){bb=1;$('#pB').value=1;aj='La base b no pot ser 0 (no es pot dividir entre 0).'}
+  $('#pAj').textContent=aj;
+  $('#pAv').textContent=a;$('#pBv').textContent=bb;$('#pMv').textContent=m;$('#pNv').textContent=n;
+  $('#pRegla').textContent=T.regla;
+  const A=bi(a),B=bi(bb);
+  let h='';
+  const dos=(t)=>`<div class="eq">${t}</div>`;
+  if(T.id==='prod'){
+    const ok=pw(A,m)&&pw(A,n)&&pw(A,m+n);
+    if(!ok)h='<div class="avis r">Amb base 0 no hi ha exponents negatius.</div>';
+    else{
+      h=dos(`${P(A,m)} · ${P(A,n)} = <span class="res">${P(A,m+n)}</span>`);
+      if(m>=0&&n>=0&&m+n<=16){
+        h+=`<div class="note">Escrivim els factors:</div><div class="fxs">${grp(m,'',baseH(A))}${dot}${grp(n,'c2',baseH(A))}</div>
+        <div class="note">Els ajuntem: ${m} + ${n} = <b>${m+n}</b> factors iguals.</div>
+        <div class="fxs"><span class="grup">${rep(m,()=>chip(baseH(A)))}${rep(n,()=>chip(baseH(A),'c2'))||''}${m+n===0?chip('1','vuit'):''}</span></div>`;
+      }else h+=`<div class="note">Amb exponents negatius no dibuixem fitxes: ${P(A,m)} = 1 ÷ ${P(A,-m)} i el mateix amb n.</div>`;
+      h+=dos(`${P(A,m)} · ${P(A,n)} = ${P(A,`${expT(m)} + ${m<0||n<0&&false?'':''}${n<0?'('+expT(n)+')':expT(n)}`)} = ${P(A,m+n)}`)+chk(qmul(pw(A,m),pw(A,n)),pw(A,m+n));
+    }
+  }else if(T.id==='quot'){
+    if(a===0)h='<div class="avis r">No es pot dividir entre 0: tria una base diferent de 0.</div>';
+    else{
+      h=dos(`${P(A,m)} ÷ ${P(A,n)} = <span class="res">${P(A,m-n)}</span>`);
+      if(m>=0&&n>=0&&m<=10&&n<=10){
+        const k=Math.min(m,n);
+        const f=(cnt,cls)=>cnt===0?chip('1','vuit'):rep(cnt,i=>chip(baseH(A),i<k?'tall':cls)).replace(/<\/span><span/g,'</span><span');
+        h+=`<div class="note">Escrivim el quocient com una fracció i ratllem factors iguals de dalt i de baix:</div>
+        <div class="fraccio"><div class="fxs">${f(m,'')}</div><div class="lin"></div><div class="fxs">${f(n,'c2')}</div></div>
+        <div class="note">En queden <b>${Math.abs(m-n)}</b> ${m>=n?'a dalt':'a baix'}${m<n?': el resultat és 1 ÷ '+P(A,n-m)+' = '+P(A,m-n):''}.</div>`;
+      }
+      h+=dos(`${P(A,m)} ÷ ${P(A,n)} = ${P(A,`${expT(m)} ${MINUS} ${n<0?'('+expT(n)+')':expT(n)}`)} = ${P(A,m-n)}`)+chk(qdiv(pw(A,m),pw(A,n)),pw(A,m-n));
+    }
+  }else if(T.id==='pot'){
+    if(!pw(A,m)||!pw(pw(A,m)||A,n)&&a===0)h='<div class="avis r">Amb base 0 no hi ha exponents negatius.</div>';
+    else{
+      h=dos(`(${P(A,m)})<sup>${expT(n)}</sup> = <span class="res">${P(A,m*n)}</span>`);
+      if(m>=0&&n>=0&&m*n<=24){
+        h+=`<div class="note">Tenim ${n} ${n===1?'grup':'grups'} de ${m} factors, tots iguals:</div>`+
+          (n===0?`<div class="fxs">${grp(0)}</div>`:rep(n,()=>`<div class="fxs">${grp(m,'',baseH(A))}${n>1?'':''}</div>`));
+        h+=`<div class="note">En total: ${n} · ${m} = <b>${m*n}</b> factors.</div>`;
+      }
+      h+=dos(`(${P(A,m)})<sup>${expT(n)}</sup> = ${P(A,`${m<0?'('+expT(m)+')':expT(m)} · ${n<0?'('+expT(n)+')':expT(n)}`)} = ${P(A,m*n)}`)+chk(pw(pw(A,m),n),pw(A,m*n));
+    }
+  }else if(T.id==='pb'){
+    if(a===0&&n<0||bb===0&&n<0)h='<div class="avis r">Amb base 0 no hi ha exponents negatius.</div>';
+    else{
+      const AB=qmul(A,B);
+      h=dos(`(${baseH(A)} · ${baseH(B)})<sup>${expT(n)}</sup> = <span class="res">${P(A,n)} · ${P(B,n)}</span>`);
+      if(n>=0&&n<=6){
+        h+=`<div class="note">${n} copies del producte, una a sota de l'altra:</div>`+
+          (n===0?`<div class="fxs">${grp(0)}</div>`:rep(n,()=>`<div class="fxs"><span class="grup">${chip(baseH(A))}${dot}${chip(baseH(B),'c2')}</span></div>`))+
+          `<div class="note">Reagrupem: totes les <i>a</i> per un costat i totes les <i>b</i> per l'altre:</div>
+          <div class="fxs">${grp(n,'',baseH(A))}${dot}${grp(n,'c2',baseH(B))}</div>`;
+      }
+      h+=dos(`(${baseH(A)}·${baseH(B)})<sup>${expT(n)}</sup> = ${P(A,n)} · ${P(B,n)}`)+chk(pw(AB,n),qmul(pw(A,n),pw(B,n)));
+    }
+  }else if(T.id==='qb'){
+    const AB=qdiv(A,B);
+    h=dos(`(${baseH(A)} ÷ ${baseH(B)})<sup>${expT(n)}</sup> = <span class="res">${P(A,n)} ÷ ${P(B,n)}</span>`);
+    if(a===0&&n<0)h='<div class="avis r">Amb base 0 no hi ha exponents negatius.</div>';
+    else{
+      if(n>=0&&n<=5){
+        h+=`<div class="note">${n} fraccions multiplicades:</div><div class="fxs">${n===0?chip('1','vuit'):rep(n,i=>(i?dot:'')+chip(frH(baseH(A),baseH(B))))}</div>
+        <div class="note">Dalt multipliquem ${n} cops <i>a</i> i baix ${n} cops <i>b</i>.</div>`;
+      }
+      h+=dos(`(${baseH(A)}÷${baseH(B)})<sup>${expT(n)}</sup> = ${frH(P(A,n),P(B,n))}`)+chk(pw(AB,n),qdiv(pw(A,n),pw(B,n)));
+    }
+  }else if(T.id==='neg'){
+    if(a===0)h='<div class="avis r">0 elevat a un exponent negatiu no existeix.</div>';
+    else{
+      const k=Math.abs(n);
+      h=dos(`${P(A,-k)} = <span class="res">1 ÷ ${P(A,k)}</span>`)+
+        `<div class="note">Un exponent negatiu vol dir «dividir» en lloc de multiplicar: partim de 1 i dividim ${k} cops entre la base.</div>
+        <div class="fxs">${chip('1','vuit')}${rep(k,()=>`<span class="op">÷</span>${chip(baseH(A),'dv')}`)}</div>`+
+        dos(`${P(A,-k)} = ${frH('1',P(A,k))} = ${qH(pw(A,-k))}`)+chk(pw(A,-k),qdiv(Q(1),pw(A,k)))+
+        `<div class="note" style="margin-top:.6rem">Amb fraccions: ${P(bi(2,3),-2)} = ${P(bi(3,2),2)} = ${qH(pw(bi(2,3),-2))}. «Inverteix la fracció i canvia el signe de l'exponent».</div>`;
+    }
+  }else{ h=''; p10(); return; }
+  $('#pCos').innerHTML=h;
+}
+/* potències de 10 i notació científica */
+function decShift(s,e){ /* s: "3,7" com a text amb coma/punt; retorna text decimal català de s·10^e */
+  let [ip,fp='']=s.replace(',','.').split('.');
+  let dig=(ip+fp).replace(/^0+(?=\d)/,''),exp=e-fp.length;
+  if(/^0*$/.test(dig))return'0';
+  let out;
+  if(exp>=0)out=dig+'0'.repeat(exp);
+  else{const k=-exp;if(dig.length>k)out=dig.slice(0,dig.length-k)+','+dig.slice(dig.length-k);else out='0,'+'0'.repeat(k-dig.length)+dig}
+  const [a,b]=out.split(',');const g=a.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  return b!==undefined?g+','+b.replace(/0+$/,'').replace(/^$/,'0'):g;
+}
+function toSci(txt){
+  let t=txt.trim().replace(/\./g,'').replace(',','.');if(!/^\d*\.?\d+$|^\d+\.?$/.test(t))return null;
+  let [ip,fp='']=t.split('.');ip=ip.replace(/^0+/,'');
+  let dig=ip+fp,exp=ip.length-1;
+  if(!ip){const z=fp.match(/^0*/)[0].length;dig=fp.slice(z);exp=-(z+1)}
+  dig=dig.replace(/^0+/,'').replace(/0+$/,'');if(!dig)return{m:'0',e:0};
+  return{m:dig[0]+(dig.length>1?','+dig.slice(1):''),e:exp};
+}
+function p10(){
+  const lo=NIV===3?-9:0;
+  const cos=$('#pCos');
+  cos.innerHTML=`<div class="row"><label class="sl" style="flex:1;min-width:14rem">Exponent <i>n</i> <b class="v" id="tEv"></b><input type="range" id="tE" min="${lo}" max="12" value="${Math.max(lo,6)}"></label>
+    <label class="sl" style="flex:1;min-width:14rem">Nombre <i>c</i> (entre 1 i 9,9) <b class="v" id="tCv"></b><input type="range" id="tC" min="10" max="99" value="37"></label></div><div id="tOut"></div>
+    <hr style="border:0;border-top:1px solid var(--line);margin:.7rem 0"><b>Converteix un nombre a notació científica:</b>
+    <div class="row"><input class="num" id="tIn" style="width:14rem" placeholder="Ex.: 45000000 o 0,00032"><button class="btn" id="tGo">Converteix</button></div><div id="tRes"></div>`;
+  const draw=()=>{
+    const e=+$('#tE').value,c=(+$('#tC').value/10).toFixed(1).replace('.',',');
+    $('#tEv').textContent=e;$('#tCv').textContent=c;
+    const p=e>=0?'1'+'0'.repeat(e):'0,'+'0'.repeat(-e-1)+'1';
+    const pr=e>=0?decShift('1',e):p;
+    $('#tOut').innerHTML=`<div class="eq">10<sup>${expT(e)}</sup> = <span class="res"><b>${pr}</b></span> <span class="note">${e>=0?(e===0?'(1, cap zero)':`(un 1 seguit de ${e} zero${e===1?'':'s'})`):`(el 1 a la posició ${-e} darrere la coma)`}</span></div>
+      <div class="eq">${c} · 10<sup>${expT(e)}</sup> = <span class="res"><b>${decShift(c,e)}</b></span></div>
+      <div class="note">${e>=0?'Multiplicar per 10<sup>n</sup> mou la coma <b>'+e+'</b> posicions cap a la <b>dreta</b>.':'Multiplicar per 10<sup>'+e+'</sup> mou la coma <b>'+(-e)+'</b> posicions cap a l’<b>esquerra</b>.'}</div>`;
+  };
+  $('#tE').oninput=$('#tC').oninput=draw;draw();
+  const go=()=>{const r=toSci($('#tIn').value);$('#tRes').innerHTML=r?`<div class="eq res">${r.m} · 10<sup>${expT(r.e)}</sup></div><div class="note">El primer nombre ha de tenir una sola xifra davant la coma.</div>`:'<span class="note">Escriu un nombre positiu (amb coma o punt).</span>'};
+  $('#tGo').onclick=go;$('#tIn').onkeydown=e=>{if(e.key==='Enter')go()};
+}
+/* errors típics */
+function errorsTipics(){
+  const L=[
+    ['2³ · 2⁴ = 2¹²','2³ · 2⁴ = 2⁷','Producte de la mateixa base: se sumen els exponents (3 + 4 = 7), no es multipliquen.'],
+    ['(2 + 3)² = 2² + 3²','(2 + 3)² = 5² = 25 (però 2² + 3² = 13)','La potència no es reparteix sobre una suma.'],
+    ['2³ · 3³ = 6⁶','2³ · 3³ = 6³','Amb bases diferents i el mateix exponent: es multipliquen les bases i l’exponent es manté.'],
+    ['−3² = 9','−3² = −9, però (−3)² = 9','El signe menys sense parèntesi no queda elevat.'],
+    ['5⁰ = 0','5⁰ = 1','Un nombre (diferent de 0) elevat a 0 val 1.'],
+    ['2⁴ = 2 · 4 = 8','2⁴ = 2·2·2·2 = 16','La potència és un producte repetit, no la base multiplicada per l’exponent.']
+  ];
+  $('#pErrors').innerHTML=`<div class="card" style="grid-column:1/-1"><h3>Errors típics (i com evitar-los)</h3><div class="tg">${L.map(x=>`<div class="targ" style="cursor:default;display:block;text-align:left;font-size:1rem"><div style="color:#8f1d30;font-weight:700">✘ ${x[0]}</div><div class="res" style="color:#17612e;font-weight:700">✔ ${x[1]}</div><span class="why">${x[2]}</span></div>`).join('')}</div></div>`;
+}
+['#pA','#pB','#pM','#pN'].forEach(s=>$(s).oninput=propRender);
+
+/* =====================================================================
+   MINIJOC 1: CAÇA L'ERROR
+   ===================================================================== */
+const ERR={cards:[],marcat:new Set(),punts:0,temps:0,timer:0,fet:false};
+function genBase(){return bi(pick([2,3,4,5,6]))}
+function stmt(l,r,lv,rv,why){return{l,r,lv,rv,why}}
+const BONS=[
+  ()=>{const a=genBase(),m=rnd(2,5),n=rnd(2,5);return stmt(`${P(a,m)} · ${P(a,n)}`,P(a,m+n),qmul(pw(a,m),pw(a,n)),pw(a,m+n),'')},
+  ()=>{const a=genBase(),n=rnd(2,4),m=n+rnd(1,4);return stmt(`${P(a,m)} ÷ ${P(a,n)}`,P(a,m-n),qdiv(pw(a,m),pw(a,n)),pw(a,m-n),'')},
+  ()=>{const a=genBase(),m=rnd(2,4),n=rnd(2,3);return stmt(`(${P(a,m)})<sup>${n}</sup>`,P(a,m*n),pw(pw(a,m),n),pw(a,m*n),'')},
+  ()=>{const a=bi(rnd(2,4)),b=bi(rnd(2,4)),n=rnd(2,4);return stmt(`(${baseH(a)} · ${baseH(b)})<sup>${n}</sup>`,`${P(a,n)} · ${P(b,n)}`,pw(qmul(a,b),n),qmul(pw(a,n),pw(b,n)),'')},
+  ()=>{const a=genBase();return stmt(P(a,0),'1',pw(a,0),Q(1),'')},
+  ()=>{const a=genBase();return stmt(P(a,1),baseH(a),pw(a,1),a,'')},
+  ()=>{const a=bi(-rnd(2,5)),n=2*rnd(1,2);return stmt(P(a,n),baseH(bi(-a.n))+`<sup>${n}</sup>`,pw(a,n),pw(bi(-a.n),n),'')},
+  ()=>{const a=bi(rnd(2,9));return stmt(`${P(bi(10),rnd(2,3))}`,'',Q(1),Q(1),'')}
+];
+const DOLENTS=[
+  ()=>{const a=genBase(),m=rnd(2,5),n=rnd(2,5);return stmt(`${P(a,m)} · ${P(a,n)}`,P(a,m*n),qmul(pw(a,m),pw(a,n)),pw(a,m*n),'Producte de la mateixa base: se SUMEN els exponents.')},
+  ()=>{const a=genBase(),n=rnd(2,4),m=n+rnd(1,4);return stmt(`${P(a,m)} ÷ ${P(a,n)}`,P(a,m+n),qdiv(pw(a,m),pw(a,n)),pw(a,m+n),'En dividir potències de la mateixa base, es RESTEN els exponents.')},
+  ()=>{const a=genBase(),m=rnd(2,4),n=rnd(2,3);return stmt(`(${P(a,m)})<sup>${n}</sup>`,P(a,m+n),pw(pw(a,m),n),pw(a,m+n),'Potència d’una potència: es MULTIPLIQUEN els exponents.')},
+  ()=>{const a=bi(rnd(2,4)),b=bi(rnd(2,4)),n=rnd(2,3);return stmt(`(${baseH(a)} + ${baseH(b)})<sup>${n}</sup>`,`${P(a,n)} + ${P(b,n)}`,pw(qadd(a,b),n),qadd(pw(a,n),pw(b,n)),'La potència no es reparteix sobre una suma.')},
+  ()=>{const a=genBase();return stmt(P(a,0),'0',pw(a,0),Q(0),'Qualsevol base (≠ 0) elevada a 0 val 1, no 0.')},
+  ()=>{const a=genBase();return stmt(P(a,0),baseH(a),pw(a,0),a,'a⁰ = 1, no la base.')},
+  ()=>{const a=bi(-rnd(2,5)),n=2*rnd(1,2);return stmt(P(a,n),`${MINUS}${baseH(bi(-a.n))}<sup>${n}</sup>`,pw(a,n),Q(-(pw(bi(-a.n),n).n)),'Amb exponent parell, (−a)ⁿ és positiu: el parèntesi inclou el signe.')},
+  ()=>{const a=genBase(),m=rnd(3,5);return stmt(P(a,m),`${baseH(a)} · ${m}`,pw(a,m),qmul(a,bi(m)),'Una potència és un producte repetit, no «base per exponent».')},
+  ()=>{const a=bi(rnd(2,4)),b=bi(rnd(2,4)),n=rnd(2,4);return stmt(`(${baseH(a)} · ${baseH(b)})<sup>${n}</sup>`,`${baseH(a)} · ${P(b,n)}`,pw(qmul(a,b),n),qmul(a,pw(b,n)),'L’exponent afecta els dos factors del producte.')}
+];
+const qadd=(x,y)=>Q(x.n*y.d+y.n*x.d,x.d*y.d);
+const BONS3=[
+  ()=>{const a=bi(rnd(2,5)),n=rnd(1,3);return stmt(P(a,-n),frH('1',P(a,n)),pw(a,-n),qdiv(Q(1),pw(a,n)),'')},
+  ()=>{const a=bi(rnd(2,4)),b=bi(a.n===2n?pick([3,5]):2),n=rnd(2,3);return stmt(`(${frH(baseH(a),baseH(b))})<sup>${n}</sup>`,frH(P(a,n),P(b,n)),pw(qdiv(a,b),n),qdiv(pw(a,n),pw(b,n)),'')},
+  ()=>{const a=bi(rnd(2,5)),n=rnd(1,3),m=n+rnd(1,3);return stmt(`${P(a,n)} ÷ ${P(a,m)}`,P(a,n-m),qdiv(pw(a,n),pw(a,m)),pw(a,n-m),'')}
+];
+const DOLENTS3=[
+  ()=>{const a=bi(rnd(2,5)),n=rnd(1,3);return stmt(P(a,-n),`${MINUS}${P(a,n)}`,pw(a,-n),Q(-pw(a,n).n),'Exponent negatiu NO canvia el signe: és l’invers, 1 ÷ aⁿ.')},
+  ()=>{const a=bi(rnd(2,4)),b=bi(a.n===2n?pick([3,5]):2),n=rnd(2,3);return stmt(`(${frH(baseH(a),baseH(b))})<sup>${n}</sup>`,frH(P(a,n),baseH(b)),pw(qdiv(a,b),n),qdiv(pw(a,n),b),'L’exponent afecta tant el numerador com el denominador.')},
+  ()=>{const a=bi(rnd(2,5)),n=rnd(1,3),m=n+rnd(1,3);return stmt(`${P(a,n)} ÷ ${P(a,m)}`,P(a,m-n),qdiv(pw(a,n),pw(a,m)),pw(a,m-n),'Es resta (exponent de dalt − exponent de baix): surt negatiu.')}
+];
+function errNova(){
+  const bons=shuffle(BONS.slice(0,7).concat(NIV===3?BONS3:[])),dols=shuffle(DOLENTS.concat(NIV===3?DOLENTS3:[]));
+  const nB=4,nD=4,cards=[];
+  const prova=(gen,vol)=>{for(let i=0;i<40;i++){const s=gen();if(!s.lv||!s.rv)continue;if(qeq(s.lv,s.rv)===vol){s.ok=vol;return s}}return null};
+  for(let i=0;cards.length<nB&&i<bons.length;i++){const s=prova(bons[i],true);if(s)cards.push(s)}
+  let nd=0;for(let i=0;nd<nD&&i<dols.length;i++){const s=prova(dols[i],false);if(s){cards.push(s);nd++}}
+  ERR.cards=shuffle(cards);ERR.marcat=new Set();ERR.fet=false;$('#eRes').innerHTML='';
+  clearInterval(ERR.timer);$('#eRell').textContent='';
+  if($('#eTemps').checked){ERR.temps=90;$('#eRell').textContent='90 s';ERR.timer=setInterval(()=>{ERR.temps--;$('#eRell').textContent=ERR.temps+' s';if(ERR.temps<=0){clearInterval(ERR.timer);errCheck()}},1000)}
+  errPinta();
+}
+function errPinta(){
+  $('#eGrid').innerHTML=ERR.cards.map((c,i)=>{
+    let cl='targ';if(!ERR.fet&&ERR.marcat.has(i))cl+=' mark';
+    let ex='';
+    if(ERR.fet){const m=ERR.marcat.has(i);cl+=m&&!c.ok?' ok':m&&c.ok?' bad':!m&&!c.ok?' miss':'';ex=!c.ok?`<span class="why">${c.why}</span>`:''}
+    return`<div class="${cl}" data-i="${i}"><div>${c.l} = ${c.r}${ex}</div></div>`}).join('');
+  $$('#eGrid .targ').forEach(e=>e.onclick=()=>{if(ERR.fet)return;const i=+e.dataset.i;ERR.marcat.has(i)?ERR.marcat.delete(i):ERR.marcat.add(i);errPinta()});
+}
+function errCheck(){
+  if(ERR.fet)return;ERR.fet=true;clearInterval(ERR.timer);
+  let b=0,x=0,f=0;ERR.cards.forEach((c,i)=>{const m=ERR.marcat.has(i);if(m&&!c.ok)b++;else if(m&&c.ok)x++;else if(!m&&!c.ok)f++});
+  const p=b-x;ERR.punts+=p;$('#ePunts').textContent='Punts: '+ERR.punts;
+  $('#eRes').innerHTML=`<div class="avis ${x===0&&f===0?'g':'y'}"><b>${b}</b> errors caçats${x?`, <b>${x}</b> igualtats bones marcades per error`:''}${f?`, <b>${f}</b> errors que t'han passat per alt`:''}. Aquesta ronda: <b>${p>=0?'+':''}${p}</b> punts.${x===0&&f===0?' Ronda perfecta!':''}</div>`;
+  errPinta();
+}
+$('#eNova').onclick=errNova;$('#eCheck').onclick=errCheck;$('#eTemps').onchange=errNova;
+
+/* =====================================================================
+   MINIJOC 2: PARELLES
+   ===================================================================== */
+const POOL={
+  1:[[2,1,3],[3,1,2],[5,1,2],[4,1,3],[10,1,3],[2,1,5],[6,1,2],[7,1,2],[3,1,3],[9,1,2],[2,1,4],[10,1,2],[11,1,2],[5,1,3]],
+  2:[[-2,1,3],[-3,1,2],[5,1,0],[7,1,1],[-1,1,5],[0,1,4],[10,1,4],[-4,1,2],[2,1,7],[-5,1,3],[3,1,4],[-3,1,3]],
+  3:[[2,1,-3],[5,1,-2],[1,2,2],[2,3,3],[10,1,-3],[3,1,-1],[1,3,-2],[2,1,-4],[3,2,2],[2,5,-1],[1,10,-2]]
+};
+const MEM={cards:[],ob:[],fets:0,mov:0,t0:0,timer:0,bloc:false};
+function memSel(){
+  const o=['<option value="1">Fàcil: potències senzilles</option>','<option value="2">Mitjà: signes, 0 i 1</option>'];
+  if(NIV===3)o.push('<option value="3">Difícil: exponents negatius i fraccions</option>');
+  const cur=$('#mDif').value;$('#mDif').innerHTML=o.join('');if(cur&&$('#mDif option[value="'+cur+'"]'))$('#mDif').value=cur;
+}
+function memNova(){
+  clearInterval(MEM.timer);
+  const lvl=+$('#mDif').value||1,pairs=shuffle(POOL[lvl]).slice(0,6),cards=[];
+  pairs.forEach((p,i)=>{const b=bi(p[0],p[1]);cards.push({id:i,h:P(b,p[2]),v:false});cards.push({id:i,h:qH(pw(b,p[2])),v:true})});
+  MEM.cards=shuffle(cards);MEM.ob=[];MEM.fets=0;MEM.mov=0;MEM.t0=0;MEM.bloc=false;$('#mRes').innerHTML='';
+  memInfo();memPinta();
+}
+function memInfo(){const s=MEM.t0?Math.round((Date.now()-MEM.t0)/1000):0;$('#mInfo').textContent=`Moviments: ${MEM.mov} · Temps: ${s} s · Parelles: ${MEM.fets}/6`}
+function memPinta(){
+  $('#mGrid').innerHTML=MEM.cards.map((c,i)=>`<div class="mc ${c.up?'up':''} ${c.up&&c.v?'val':''} ${c.done?'done':''}" data-i="${i}">${c.up||c.done?c.h:'?'}</div>`).join('');
+  $$('#mGrid .mc').forEach(e=>e.onclick=()=>memClic(+e.dataset.i));
+}
+function memClic(i){
+  const c=MEM.cards[i];if(MEM.bloc||c.up||c.done)return;
+  if(!MEM.t0){MEM.t0=Date.now();MEM.timer=setInterval(memInfo,1000)}
+  c.up=true;MEM.ob.push(i);memPinta();
+  if(MEM.ob.length===2){
+    MEM.mov++;const [a,b]=MEM.ob.map(k=>MEM.cards[k]);
+    if(a.id===b.id&&a.v!==b.v){a.done=b.done=true;a.up=b.up=false;MEM.fets++;MEM.ob=[];memPinta();
+      if(MEM.fets===6){clearInterval(MEM.timer);const s=Math.round((Date.now()-MEM.t0)/1000);
+        $('#mRes').innerHTML=`<div class="avis g"><b>Fet!</b> ${MEM.mov} moviments en ${s} segons. Millor que 6 moviments no es pot (6 parelles).</div>`}}
+    else{MEM.bloc=true;setTimeout(()=>{a.up=b.up=false;MEM.ob=[];MEM.bloc=false;memPinta()},1000)}
+    memInfo();
+  }
+}
+$('#mNova').onclick=memNova;$('#mDif').onchange=memNova;
+
+/* =====================================================================
+   MINIJOC 3: DUEL AMB DAUS
+   ===================================================================== */
+const DU={noms:['Equip A','Equip B'],punts:[0,0],r:null,rev:false,roda:false,fi:false};
+function duFaces(){
+  const base=$('#uNeg').checked?[-4,-3,-2,2,3,4]:[2,3,4,5,6,1];
+  let ex=$('#uZero').checked?[0,1,2,3,4,5]:[1,2,3,4,5,6];
+  if(NIV===3&&$('#uNegE').checked)ex=[-2,-1,0,1,2,3];
+  return{base,ex};
+}
+function duPinta(){
+  const meta=+$('#uMeta').value;
+  $('#uEquips').innerHTML=[0,1].map(t=>{
+    const r=DU.r&&DU.r[t];let cos='<div class="note" style="padding:1.6rem 0">Prem «Llança els daus».</div>';
+    if(r){const b=bi(r.b),v=pw(b,r.e);
+      cos=`<div class="row" style="justify-content:center"><span class="dau ${DU.roda?'rodant':''}">${r.b}</span><span style="font-size:1.6rem">^</span><span class="dau e ${DU.roda?'rodant':''}">${r.e}</span></div>
+        <div class="big">${P(b,r.e)} = ${DU.rev?qH(v):'<span class="note" style="font-size:1.2rem">?</span>'}</div>`}
+    return`<div class="equip ${DU.guanya===t&&DU.rev?'guanya':''}"><input value="${DU.noms[t]}" data-t="${t}" aria-label="Nom de l'equip"><div class="pt">${DU.punts[t]} <small style="font-size:1rem;color:var(--muted)">/ ${meta}</small></div>${cos}</div>`}).join('');
+  $$('#uEquips input').forEach(i=>i.oninput=e=>DU.noms[+e.target.dataset.t]=e.target.value);
+}
+function duTira(){
+  if(DU.roda||DU.fi)return;
+  if(DU.r&&!DU.rev)duMostra(true);
+  const F=duFaces();DU.roda=true;DU.rev=false;DU.guanya=null;$('#uMsg').innerHTML='';
+  let k=0;const iv=setInterval(()=>{
+    DU.r=[0,1].map(()=>({b:pick(F.base),e:pick(F.ex)}));duPinta();
+    if(++k>=8){clearInterval(iv);DU.roda=false;duPinta();$('#uMsg').innerHTML='<div class="avis b">Cada equip calcula el valor de la seva potència. Quan estigueu a punt, prem «Mostra el resultat».</div>'}
+  },80);
+}
+function duMostra(silenci){
+  if(!DU.r||DU.rev||DU.roda)return;
+  DU.rev=true;const [va,vb]=DU.r.map(r=>pw(bi(r.b),r.e)),c=qcmp(va,vb);
+  const meta=+$('#uMeta').value;let msg;
+  if(c===0)msg='<div class="avis y"><b>Empat:</b> les dues potències valen el mateix. Ningú no puntua.</div>';
+  else{DU.guanya=c>0?0:1;DU.punts[DU.guanya]++;msg=`<div class="avis g"><b>${DU.noms[DU.guanya]}</b> guanya el punt: ${qH(c>0?va:vb)} és més gran que ${qH(c>0?vb:va)}.</div>`;
+    if(DU.punts[DU.guanya]>=meta){DU.fi=true;msg+=`<div class="avis g" style="font-size:1.2rem"><b>${DU.noms[DU.guanya]} guanya el duel!</b> Prem «Reinicia» per jugar una altra vegada.</div>`}}
+  if(!silenci)$('#uMsg').innerHTML=msg;duPinta();
+}
+function duReset(){DU.punts=[0,0];DU.r=null;DU.rev=false;DU.fi=false;DU.guanya=null;$('#uMsg').innerHTML='';duPinta()}
+$('#uTira').onclick=duTira;$('#uMostra').onclick=()=>duMostra(false);$('#uReset').onclick=duReset;$('#uMeta').onchange=duPinta;
+
+/* =====================================================================
+   MINIJOC 4: CREIXEMENT
+   ===================================================================== */
+const GRO={tipus:'bac',q1:null,q2:null};
+const GINFO={
+  bac:{base:2n,hl:'Hores',max:20,tit:h=>`Després de ${h} ${h===1?'hora':'hores'}: <span class="res">${P(bi(2),h)} = ${qH(Q(2n**BigInt(h)))}</span> bactèries`,unit:'bactèries',desc:'Una bactèria es divideix en dues cada hora.'},
+  rum:{base:3n,hl:'Dies',max:14,tit:h=>`Després de ${h} ${h===1?'dia':'dies'}: <span class="res">${P(bi(3),h)} = ${qH(Q(3n**BigInt(h)))}</span> persones saben el rumor`,unit:'persones',desc:'Cada persona que ho sap ho explica a 2 més cada dia (així són 3 en total cada vegada).'},
+  esc:{base:2n,hl:'Casella',max:64,tit:h=>`Casella ${h}: <span class="res">${P(bi(2),h-1)} = ${qH(Q(2n**BigInt(Math.max(h-1,0))))}</span> grans de blat`,unit:'grans',desc:'Cada casella del tauler té el doble de grans que l’anterior (la primera en té 1).'}
+};
+const gv=(t,h)=>t==='esc'?2n**BigInt(Math.max(h-1,0)):GINFO[t].base**BigInt(h);
+function groRender(){
+  const t=GRO.tipus,I=GINFO[t];
+  $('#gH').max=I.max;$('#gHl').textContent=I.hl;
+  let h=+$('#gH').value;if(h>I.max){h=I.max;$('#gH').value=h}
+  if(t==='esc'&&h<1){h=1;$('#gH').value=1}
+  $('#gHv').textContent=h;
+  const v=gv(t,h);
+  $('#gTit').innerHTML=I.tit(h);
+  $('#gSci').innerHTML=sci(Q(v))?`<div class="eq">En notació científica: <span class="res"><b>${sci(Q(v))}</b></span> ${I.unit}</div>`:'';
+  /* placa */
+  const MAXD=300;let per=1n;while(v/per>BigInt(MAXD))per*=10n;
+  const nd=Number(v/per)||1;let pts='';let s=7;
+  const rnd2=()=>(s=(s*16807)%2147483647)/2147483647;
+  for(let i=0;i<nd;i++){const a=rnd2()*Math.PI*2,r=Math.sqrt(rnd2())*85;pts+=`<circle cx="${200+Math.cos(a)*r*2.1}" cy="${110+Math.sin(a)*r}" r="4" fill="#2f7fd0" opacity=".8"/>`}
+  $('#gDish').innerHTML=pts;
+  $('#gLleg').textContent=`${I.desc}${per>1n?` Cada punt representa ${fmtI(per)} ${I.unit}.`:''}`;
+  /* gràfic */
+  const n=I.max;let mx=0;for(let k=0;k<=h;k++)mx=Math.max(mx,Number(gv(t,k)));
+  const lin=k=>t==='esc'?k*100:1+k*100;
+  let top=Math.max(mx,lin(h),1);const x0=30,x1=410,y0=180,y1=10,xs=k=>x0+(x1-x0)*(h?k/h:0),ys=val=>y0-(y0-y1)*(val/top);
+  let e='',l='';for(let k=0;k<=h;k++){e+=`${xs(k)},${ys(Number(gv(t,k)))} `;l+=`${xs(k)},${ys(lin(t==='esc'?k:k))} `}
+  $('#gChart').innerHTML=`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}" stroke="#888"/><line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}" stroke="#888"/>
+    <polyline points="${l}" fill="none" stroke="#ee8a22" stroke-width="3"/><polyline points="${e}" fill="none" stroke="#2f7fd0" stroke-width="3"/>
+    <text x="${x1}" y="${y0+14}" text-anchor="end" font-size="11" fill="#555">${I.hl.toLowerCase()} →</text>`;
+  /* taula */
+  let rows='<table class="tb"><tr><th>'+I.hl+'</th><th>Potència</th><th>Valor</th><th>+100 cada cop</th></tr>';
+  for(let k=t==='esc'?1:0;k<=h;k++)rows+=`<tr class="${k===h?'hot':''}"><td>${k}</td><td>${P(bi(2n===I.base||t==='esc'?2:3),t==='esc'?k-1:k)}</td><td class="res">${fmtI(gv(t,k))}</td><td>${fmtI(BigInt(t==='esc'?k*100:1+k*100))}</td></tr>`;
+  $('#gTab').innerHTML=rows+'</table>';
+}
+function groPreg(){
+  const t=GRO.tipus,I=GINFO[t];
+  const lim=t==='esc'?64:I.max;
+  GRO.q1=t==='esc'?rnd(8,20):rnd(6,Math.min(14,I.max));
+  const objectiu=t==='esc'?1000000n:1000000n;
+  let h=t==='esc'?1:0;while(gv(t,h)<objectiu)h++;GRO.q2=h;
+  $('#gQ1').innerHTML=t==='esc'?`Quants grans hi ha a la casella <b>${GRO.q1}</b>?`:`Quantes ${I.unit} hi haurà a l'${t==='bac'?'hora':'dia'} <b>${GRO.q1}</b>?`;
+  $('#gQ2').innerHTML=t==='esc'?`En quina casella hi ha per primer cop <b>més d'1.000.000</b> grans? <span class="note">(o exactament)</span>`:`En quin ${t==='bac'?'hora':'dia'} se supera per primer cop <b>1.000.000</b>?`;
+  $('#gA1').value=$('#gA2').value='';$('#gR1').innerHTML=$('#gR2').innerHTML='';
+}
+const llegN=t=>{const s=t.replace(/\./g,'').replace(/\s/g,'');return/^\d+$/.test(s)?BigInt(s):null};
+$('#gC1').onclick=()=>{
+  const t=GRO.tipus,v=gv(t,GRO.q1),r=llegN($('#gA1').value);
+  if(r===null){$('#gR1').innerHTML='<div class="avis y">Escriu un nombre enter.</div>';return}
+  const ok=r===v;$('#gR1').innerHTML=`<div class="avis ${ok?'g':'y'}">${ok?'Correcte!':'No és exacte.'} <span class="res">El valor és <b>${fmtI(v)}</b> (${P(bi(2n===GINFO[t].base?2:3),t==='esc'?GRO.q1-1:GRO.q1)}).</span></div>`};
+$('#gC2').onclick=()=>{
+  const r=$('#gA2').value.trim();if(!/^\d+$/.test(r)){$('#gR2').innerHTML='<div class="avis y">Escriu un nombre enter.</div>';return}
+  const ok=+r===GRO.q2;$('#gR2').innerHTML=`<div class="avis ${ok?'g':'y'}">${ok?'Correcte!':'No.'} <span class="res">Passa al número <b>${GRO.q2}</b>: ${fmtI(gv(GRO.tipus,GRO.q2))} (i abans, ${fmtI(gv(GRO.tipus,GRO.q2-1))}).</span></div>`};
+$('#gNou').onclick=groPreg;
+$$('#gPre button').forEach(b=>b.onclick=()=>{GRO.tipus=b.dataset.g;$('#gH').max=GINFO[GRO.tipus].max;$$('#gPre button').forEach(x=>x.classList.toggle('on',x===b));$('#gH').value=GRO.tipus==='esc'?10:6;groRender();groPreg()});
+$('#gH').oninput=groRender;
+
+/* =====================================================================
+   INTERFÍCIE
+   ===================================================================== */
+function posaNivell(n){
+  NIV=n;$$('#niv button').forEach(b=>b.classList.toggle('on',+b.dataset.n===n));
+  $('#dE').min=n===3?-5:0;if(n===2&&+$('#dE').value<0)$('#dE').value=0;
+  if(n===2)$('#dD').value=1;
+  $('#uNegEw').hidden=n!==3;if(n!==3)$('#uNegE').checked=false;
+  defRender();pTabs();propRender();memSel();memNova();errNova();duPinta();
+}
+$$('#niv button').forEach(b=>b.onclick=()=>posaNivell(+b.dataset.n));
+$$('#tabs button').forEach(b=>b.onclick=()=>{
+  $$('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  ['def','prop','jocs'].forEach(t=>$('#s-'+t).hidden=(t!==b.dataset.t));
+});
+$$('#jTabs button').forEach(b=>b.onclick=()=>{
+  $$('#jTabs button').forEach(x=>x.classList.toggle('on',x===b));
+  ['err','mem','duel','gro'].forEach(t=>$('#j-'+t).hidden=(t!==b.dataset.j));
+});
+$('#bProj').onclick=e=>{document.body.classList.toggle('proj');e.currentTarget.classList.toggle('on')};
+$('#bHide').onclick=e=>{document.body.classList.toggle('hide-res');e.currentTarget.classList.toggle('on');$$('.res.shown').forEach(x=>x.classList.remove('shown'))};
+$('#bPrint').onclick=()=>window.print();
+document.addEventListener('click',e=>{if(!document.body.classList.contains('hide-res'))return;const r=e.target.closest('.res');if(r)r.classList.toggle('shown')});
+
+errorsTipics();
+$('#uNegEw').hidden=true;
+posaNivell(2);
+groRender();groPreg();
+</script>
+</body>
+</html>
