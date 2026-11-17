@@ -180,7 +180,7 @@ body.hide-res .res:not(.shown){filter:blur(7px);cursor:pointer;user-select:none}
         <button class="btn" data-m="vol">Volum (n = 3)</button>
         <button class="btn" data-m="arbre">Arbre</button>
       </div>
-      <div class="note">Cada dibuix només funciona amb algunes potències; si no encaixa, t'ho diu.</div>
+      <div class="note" id="dMNota"></div>
     </div>
   </div>
   <div class="cards">
@@ -335,9 +335,10 @@ const bi=(n,d=1)=>Q(n,d);
    ===================================================================== */
 const DEF={model:''};
 function defRender(){
+  defLimits();
   const n=+$('#dB').value,d=NIV===3?+$('#dD').value:1,e=+$('#dE').value;
   const b=bi(n,d);
-  $('#dBv').textContent=n;$('#dDv').textContent=d;$('#dEv').textContent=e;$('#dDw').hidden=NIV!==3;
+  $('#dBv').textContent=n;$('#dDv').textContent=d;$('#dEv').textContent=e;
   const v=pw(b,e);
   let tit=`${P(b,e)} = `;
   if(b.n===0n&&e===0)tit+=`<span class="res">? (0<sup>0</sup> no es defineix)</span>`;
@@ -367,24 +368,54 @@ function defRender(){
   defModel(b,e);defEsg(b,e);defSigne(n,e);
   $$('#dMod button').forEach(x=>x.classList.toggle('on',x.dataset.m===DEF.model));
 }
+const SUPU=n=>String(n).replace(/-/g,'⁻').replace(/[0-9]/g,d=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[d]);
+const ARB_MAXE={2:6,3:4,4:3};
+/* Cada dibuix força la potència que necessita: exponent i/o base queden restringits */
+function defLimits(){
+  const M=DEF.model,B=$('#dB'),E=$('#dE'),D=$('#dD');
+  let bmin=-9,bmax=9,emin=NIV===3?-5:0,emax=10,msg='';
+  if(M==='area'){emin=emax=2;msg='<b>Àrea:</b> l\u2019exponent queda fixat a <b>2</b>.'}
+  else if(M==='vol'){emin=emax=3;bmin=-6;bmax=6;msg='<b>Volum:</b> l\u2019exponent queda fixat a <b>3</b> i la base entre −6 i 6.'}
+  else if(M==='arbre'){bmin=2;bmax=4;emin=1;msg='<b>Arbre:</b> base 2, 3 o 4 i exponent entre 1 i el màxim que cap al dibuix (2: fins a 6, 3: fins a 4, 4: fins a 3).'}
+  B.min=bmin;B.max=bmax;
+  let n=Math.min(bmax,Math.max(bmin,+B.value));
+  if((M==='area'||M==='vol')&&n===0)n=1;
+  B.value=n;
+  if(M==='arbre')emax=ARB_MAXE[n];
+  E.min=emin;E.max=emax;E.value=Math.min(emax,Math.max(emin,+E.value));
+  if(M){D.value=1}
+  $('#dDw').hidden=NIV!==3||!!M;
+  E.disabled=emin===emax;
+  $('#dMNota').innerHTML=msg||'Cada dibuix fixa la potència que necessita (exponent i base).';
+}
 function defModel(b,e){
   const M=DEF.model,out=$('#defModel');if(!M){out.innerHTML='';return}
   const ab=b.n<0n?-b.n:b.n;let h='';
   if(M==='area'){
-    if(e!==2||b.d!==1n||ab>12n||ab===0n)h=`<div class="avis y">L'àrea d'un quadrat només la tenim per a <b>exponent 2</b> i bases enteres entre 1 i 12 (o −12 i −1). Posa exponent 2.</div>`;
-    else{const k=Number(ab),c=22;h=`<div class="note">Un quadrat de costat ${k} té ${k}·${k} quadradets.${b.n<0n?` Amb base negativa l'àrea (${k*k}) segueix sent positiva: (${MINUS}${k})² = ${k*k}.`:''}</div>
-      <svg viewBox="0 0 ${k*c+4} ${k*c+4}" style="width:min(100%,${k*c+4}px);margin:.4rem 0">${rep(k,i=>rep(k,j=>`<rect x="${j*c+2}" y="${i*c+2}" width="${c-2}" height="${c-2}" rx="3" fill="${(i+j)%2?'#d3e6fa':'#9cc8f0'}" stroke="#2f7fd0"/>`))}</svg>`}
+    const k=Number(ab),c=22;h=`<div class="note">Un quadrat de costat ${k} té ${k}·${k} quadradets, o sigui ${P(bi(k),2)} = ${k*k}.${b.n<0n?` Amb base negativa l'àrea (${k*k}) segueix sent positiva: (${MINUS}${k})² = ${k*k}.`:''}</div>
+      <svg viewBox="0 0 ${k*c+4} ${k*c+4}" style="width:min(100%,${k*c+4}px);margin:.4rem 0">${rep(k,i=>rep(k,j=>`<rect x="${j*c+2}" y="${i*c+2}" width="${c-2}" height="${c-2}" rx="3" fill="${(i+j)%2?'#d3e6fa':'#9cc8f0'}" stroke="#2f7fd0"/>`))}</svg>`;
   }else if(M==='vol'){
-    if(e!==3||b.d!==1n||ab>6n||ab===0n)h=`<div class="avis y">El volum d'un cub el dibuixem per a <b>exponent 3</b> i bases enteres de 1 a 6 (o −6 a −1). Posa exponent 3.</div>`;
-    else{const k=Number(ab),c=16,off=9,W=k*c+k*off+8;h=`<div class="note">Un cub d'aresta ${k}: ${k} capes de ${k}·${k} cubets = ${k*k*k}.${b.n<0n?` Amb base negativa el signe del resultat és negatiu: (${MINUS}${k})³ = ${MINUS}${k*k*k}.`:''}</div>
-      <svg viewBox="0 0 ${W} ${W}" style="width:min(100%,${W*1.4}px);margin:.4rem 0">${rep(k,l=>{const li=k-1-l;return`<g transform="translate(${li*off+4},${(k-1-li)*off+4})">`+rep(k,i=>rep(k,j=>`<rect x="${j*c}" y="${i*c}" width="${c-1.5}" height="${c-1.5}" rx="2" fill="${['#d3e6fa','#fde3c4','#e8dcf6','#d4f1dc','#fbdadf','#fff3c4'][li%6]}" stroke="#555" stroke-width=".6"/>`))+`</g>`})}</svg>`}
+    const k=Number(ab),c=16,off=9,W=k*c+k*off+8;h=`<div class="note">Un cub d'aresta ${k}: ${k} capes de ${k}·${k} cubets = ${k*k*k}.${b.n<0n?` Amb base negativa el signe del resultat és negatiu: (${MINUS}${k})³ = ${MINUS}${k*k*k}.`:''}</div>
+      <svg viewBox="0 0 ${W} ${W}" style="width:min(100%,${W*1.4}px);margin:.4rem 0">${rep(k,l=>{const li=k-1-l;return`<g transform="translate(${li*off+4},${(k-1-li)*off+4})">`+rep(k,i=>rep(k,j=>`<rect x="${j*c}" y="${i*c}" width="${c-1.5}" height="${c-1.5}" rx="2" fill="${['#d3e6fa','#fde3c4','#e8dcf6','#d4f1dc','#fbdadf','#fff3c4'][li%6]}" stroke="#555" stroke-width=".6"/>`))+`</g>`})}</svg>`;
   }else{
-    if(b.d!==1n||ab<2n||ab>4n||e<1||Number(ab)**e>256)h=`<div class="avis y">L'arbre es dibuixa per a bases 2, 3 o 4 (positives), exponent 1 o més i fins a 256 punts en total a l'últim nivell (per exemple 2<sup>8</sup>, 3<sup>5</sup>, 4<sup>4</sup>).</div>`;
-    else{const k=Number(ab);h=`<div class="note">Cada punt es ramifica en ${k}. Al nivell <i>n</i> hi ha ${k}<sup><i>n</i></sup> punts.</div>`+rep(e+1,l=>{const c=k**l;return`<div class="nivell"><b>nivell ${l}: ${P(b,l)} = ${c}</b><span class="punts">${rep(c,()=>'<i></i>')}</span></div>`})}
+    h=`<div class="note">Cada nus es <b>ramifica en ${ab}</b>. Cada nivell multiplica per ${ab} el nombre de nusos: al nivell <i>n</i> hi ha ${P(bi(ab),'n')} nusos. L'últim nivell (${e}) té ${P(b,e)} = <b>${ab**BigInt(e)}</b> fulles.</div>`+arbreSVG(Number(ab),e);
   }
   out.innerHTML=h;
 }
-function defEsg(b,e){
+function arbreSVG(k,e){
+  const L=k**e,u=Math.max(12,Math.min(40,820/L)),pad=20,dy=84,top=34,rw=215;
+  const W=pad*2+L*u+rw,H=top+e*dy+40,cols=['#7b4bb7','#2f7fd0','#2fa84f','#ee8a22','#d9435a','#0e9aa7','#555'];
+  const xs=[];xs[e]=Array.from({length:L},(_,i)=>pad+(i+.5)*u);
+  for(let l=e-1;l>=0;l--){xs[l]=Array.from({length:k**l},(_,j)=>{let s=0;for(let c=0;c<k;c++)s+=xs[l+1][j*k+c];return s/k})}
+  const y=l=>top+l*dy;let ed='',nd='',lb='';
+  for(let l=0;l<e;l++)xs[l].forEach((x,j)=>{for(let c=0;c<k;c++)ed+=`<line x1="${x}" y1="${y(l)}" x2="${xs[l+1][j*k+c]}" y2="${y(l+1)}" stroke="#9aa5b1" stroke-width="3"/>`});
+  for(let l=0;l<=e;l++){
+    const r=l===e?Math.min(9,u/2.2):l===0?14:11;
+    xs[l].forEach(x=>nd+=`<circle cx="${x}" cy="${y(l)}" r="${r}" fill="${cols[l%cols.length]}" stroke="#fff" stroke-width="2"/>`);
+    lb+=`<text x="${pad+L*u+14}" y="${y(l)+5}" font-size="22" font-weight="700" font-family="Cambria Math,Cambria,serif" fill="#1f2933">nivell ${l}: ${k}${SUPU(l)} = ${k**l}</text>`;
+  }
+  return`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto;margin:.5rem 0" role="img" aria-label="Diagrama d'arbre de ${k} elevat a ${e}">${ed}${nd}${lb}</svg>`;
+}function defEsg(b,e){
   const out=$('#defEsg');
   if(b.n===0n||b.n*b.n===b.d*b.d&&false){out.innerHTML='<span class="note">Amb base 0 no es pot dividir: tria una altra base.</span>';return}
   const hi=Math.max(5,e),lo=Math.min(NIV===3?-3:0,e);let h='';

@@ -1,4 +1,4 @@
-﻿# Potències
+# Potències
 
 Aplicatiu visual i interactiu per treballar les potències a 2n d'ESO i repassar-les a 3r. Un sol fitxer, `index.html`, sense instal·lar res i sense internet.
 
@@ -14,7 +14,7 @@ L'interruptor de dalt a la dreta canvia el que es veu:
 
 | Pestanya | Què hi ha |
 |---|---|
-| **Definició** | La potència com a producte de la base n cops, amb fitxes i el resultat acumulat. Exponent 0 explicat (zero factors → el 1). Dibuixos: àrea (n = 2), volum (n = 3) i arbre de ramificacions. L'esglaonat «÷ base» que justifica a⁰ = 1 (i a⁻ⁿ a 3r). Comparador de signes: (−a)ⁿ i −aⁿ. |
+| **Definició** | La potència com a producte de la base n cops, amb fitxes i el resultat acumulat. Exponent 0 explicat (zero factors → el 1). Dibuixos: àrea, volum i diagrama d'arbre. Cada dibuix fixa sol la potència que necessita (àrea: exponent 2; volum: exponent 3 i base entre −6 i 6; arbre: base 2, 3 o 4 i exponent fins al màxim que hi cap). L'esglaonat «÷ base» que justifica a⁰ = 1 (i a⁻ⁿ a 3r). Comparador de signes: (−a)ⁿ i −aⁿ. |
 | **Propietats** | Producte, quocient, potència de potència, potència d'un producte i d'un quocient (i exponent negatiu a 3r), cadascuna amb fitxes i comprovació amb números. «Potències de 10» amb notació científica i convertidor. Errors típics. |
 | **Minijocs** | **Caça l'error** (marca les igualtats falses, amb rellotge opcional), **Parelles** (memòria potència ↔ valor, 3 dificultats), **Duel amb daus** (dos equips, base i exponent, guanya la potència més gran) i **Creixement** (bactèries ×2, rumor ×3, tauler d'escacs; predicció i comparació amb creixement lineal). |
 
