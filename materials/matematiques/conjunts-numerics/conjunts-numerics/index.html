@@ -214,7 +214,7 @@ dialog small{color:var(--muted)}
     <label><input type="checkbox" checked disabled> <span class="sy">ℤ</span> Enters</label>
     <label><input type="checkbox" id="cfQ"> <span class="sy">ℚ</span> Racionals (fraccions i decimals)</label>
     <label><input type="checkbox" id="cfR"> <span class="sy">𝕀</span> Irracionals i <span class="sy">ℝ</span> Reals</label>
-    <label><input type="checkbox" id="cfC"> <span class="sy">ℂ</span> Complexos</label>
+    <label><input type="checkbox" id="cfC"> <span class="sy">ℂ</span> Complexos <small>(desactivats per defecte)</small></label>
     <small>Si actives un conjunt gran, s'activen també els que hi caben a dins.</small>
   </fieldset>
   <fieldset>
@@ -286,8 +286,8 @@ const POOL=[
 ];
 
 /* ===== Configuració ===== */
-const KEY='conjunts-numerics-cfg-v1';
-const DEF={Q:true,R:true,C:true,zeroNat:true,frac:true,per:true,root:true,count:12,fb:'now',proj:false};
+const KEY='conjunts-numerics-cfg-v2'; // v2: els complexos ja no són actius per defecte
+const DEF={Q:true,R:true,C:false,zeroNat:true,frac:true,per:true,root:true,count:12,fb:'now',proj:false};
 let cfg={...DEF};
 try{Object.assign(cfg,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 function norm(){ if(cfg.C)cfg.R=true; if(cfg.R)cfg.Q=true; }

@@ -474,7 +474,7 @@
     {
       "id": "materials/matematiques/conjunts-numerics/conjunts-numerics",
       "titol": "Conjunts numèrics: arrossega i classifica",
-      "descripcio": "Minijoc en un sol fitxer per repartir nombres en ℕ, ℤ, ℚ, 𝕀, ℝ i ℂ: mode arrossega (diagrama de caixes imbricades), mode classifica (marcar tots els conjunts) i teoria amb dibuix. Es poden desactivar els conjunts que encara no s'han donat. Funciona sense internet.",
+      "descripcio": "Minijoc en un sol fitxer per repartir nombres en ℕ, ℤ, ℚ, 𝕀 i ℝ (els complexos ℂ no hi són per defecte i s'afegeixen a Configuració): mode arrossega (diagrama de caixes imbricades), mode classifica (marcar tots els conjunts) i teoria amb dibuix. Es poden desactivar els conjunts que encara no s'han donat. Funciona sense internet.",
       "materia": "matematiques",
       "temes": [
         "conjunts-numerics",
