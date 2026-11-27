@@ -845,9 +845,9 @@
       "carpeta": "materials/matematiques/probabilitat/probabilitat-grans-nombres"
     },
     {
-      "id": "materials/tecnologia/tall-laser/cupula-leonardo",
+      "id": "materials/tecnologia/tall-laser/cupula-leonardo#0",
       "titol": "Cúpula de Leonardo: fulls per a la talladora làser",
-      "descripcio": "Editor per preparar les peces de la cúpula de Leonardo (llistó de 500 × 50 mm amb quatre osques). Tries la mida del full de fusta, escales la peça com vulguis i el programa la reparteix de la millor manera (girant-ne algunes). Es pot gravar el logo que es vulgui (només cal pujar-lo) i es descarrega en SVG o DXF per a la talladora làser. Funciona sense internet.",
+      "descripcio": "Editor per preparar les peces de la cúpula de Leonardo (llistó de 500 × 50 mm amb quatre osques) per a la talladora làser. Tries la mida del full de fusta, escales la peça com vulguis i el programa la reparteix de la millor manera. Pots gravar-hi el logo que vulguis (només cal pujar-lo) i descarregues l'arxiu en SVG o DXF. Funciona sense internet.",
       "materia": "tecnologia",
       "temes": [
         "tall-laser"
@@ -874,7 +874,41 @@
       "obrir": "materials/tecnologia/tall-laser/cupula-leonardo/index.html",
       "imatge": "materials/tecnologia/tall-laser/cupula-leonardo/captura.png",
       "extres": [],
-      "carpeta": "materials/tecnologia/tall-laser/cupula-leonardo"
+      "carpeta": ""
+    },
+    {
+      "id": "materials/tecnologia/tall-laser/cupula-leonardo#1",
+      "titol": "Cúpula de Leonardo: fulls per a la talladora làser",
+      "descripcio": "Eina de geometria aplicada: la cúpula de Leonardo es construeix amb llistons iguals amb osques. L'editor reparteix el llistó (500 × 50 mm) dins d'un full rectangular i calcula quantes peces hi caben i quin percentatge de fusta s'aprofita, girant-ne algunes 90°. Es pot canviar l'escala (semblança) i les mides de la peça. Funciona sense internet.",
+      "materia": "matematiques",
+      "temes": [
+        "figures-planes",
+        "perimetres-arees",
+        "transformacions"
+      ],
+      "nivells": [
+        "3ESO",
+        "4ESO",
+        "1BAT"
+      ],
+      "tipus": "eina",
+      "origen": "propi",
+      "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+      "urlFont": "",
+      "llicencia": "",
+      "etiquetes": [
+        "talladora làser",
+        "cúpula de Leonardo",
+        "SVG",
+        "DXF",
+        "geometria",
+        "logo"
+      ],
+      "data": "2026-11-27",
+      "obrir": "materials/tecnologia/tall-laser/cupula-leonardo/index.html",
+      "imatge": "materials/tecnologia/tall-laser/cupula-leonardo/captura.png",
+      "extres": [],
+      "carpeta": ""
     },
     {
       "id": "materials/tecnologia/tall-laser/inkscape-laser",
