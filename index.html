@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mates ESO · Repositori de matemàtiques</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f5fd0'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 11h16'/%3E%3Cpath d='M13 11l-1 12'/%3E%3Cpath d='M20 11v9q0 3 3 3'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23a8541c'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 11h16'/%3E%3Cpath d='M13 11l-1 12'/%3E%3Cpath d='M20 11v9q0 3 3 3'/%3E%3C/g%3E%3C/svg%3E">
 <script>
 /* mode clar/fosc: el que ha triat l'usuari o, si no, el del sistema (es posa abans de pintar per evitar el parpelleig) */
 (function () {
@@ -14,17 +14,17 @@
 })();
 </script>
 <style>
-  :root { --bg:#f6f8fc; --surf:#fff; --ink:#1f2937; --muted:#64748b; --line:#e2e8f0; --a:#2f5fd0; --a2:#e6edfb; --fosc:#1e3a8a; --h:68px;
-          --inp:#fff; --hov:#f1f5f9; --xip:#f1f5f9; --xipink:#334155; --avis:#fef3c7; --avisink:#92400e;
-          --btn:#2f5fd0; --btnh:#1e3a8a; --cap1:#1e3a8a; --cap2:#2f5fd0; --cap3:#4f8cff; --ombra:rgba(30,58,138,.35); --ombra2:rgba(47,95,208,.14);
+  :root { --bg:#f6f1ea; --surf:#fffdf9; --ink:#2b2118; --muted:#7a6b5c; --line:#e3d8c9; --a:#a8541c; --a2:#fbf1de; --fosc:#7b3a0f; --h:68px;
+          --inp:#fffdf9; --hov:#f3eadb; --xip:#f0e6d6; --xipink:#5a4632; --avis:#f6e3b4; --avisink:#7a4b0c;
+          --btn:#a8541c; --btnh:#7b3a0f; --cap1:#7b3a0f; --cap2:#a8541c; --cap3:#c8863b; --ombra:rgba(123,58,15,.35); --ombra2:rgba(168,84,28,.18);
           color-scheme:light; }
-  /* mode fosc */
-  :root[data-tema="fosc"] { --bg:#0f1523; --surf:#1a2236; --ink:#e6eaf2; --muted:#9aa7bd; --line:#2c3852; --a:#8fb0ff; --a2:#22315a; --fosc:#0b1b4d;
-          --inp:#121a2c; --hov:#232d46; --xip:#26314b; --xipink:#cbd5e6; --avis:#4a3a10; --avisink:#fcd88a;
-          --btn:#3b6fe0; --btnh:#2f5fd0; --cap1:#0b1b4d; --cap2:#1d3a8f; --cap3:#2f5fd0; --ombra:rgba(0,0,0,.5); --ombra2:rgba(0,0,0,.45);
+  /* mode fosc (mateixa paleta de la Cúpula de Leonardo, en versió nit) */
+  :root[data-tema="fosc"] { --bg:#1a1511; --surf:#241d17; --ink:#f1e8dc; --muted:#b3a592; --line:#3a2f25; --a:#e0904f; --a2:#3a2a1c; --fosc:#3b1d08;
+          --inp:#1a1511; --hov:#32281f; --xip:#32281f; --xipink:#e2d3bf; --avis:#4a3a10; --avisink:#fcd88a;
+          --btn:#b5642a; --btnh:#a8541c; --cap1:#3b1d08; --cap2:#7b3a0f; --cap3:#a8541c; --ombra:rgba(0,0,0,.5); --ombra2:rgba(0,0,0,.45);
           color-scheme:dark; }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15.5px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15.5px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
 
   /* capçalera */
   .cap { position:sticky; top:0; z-index:20; height:var(--h); display:flex; align-items:center; gap:14px; padding:0 24px;
@@ -84,7 +84,7 @@
 </head>
 <body>
 <header class="cap">
-  <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#fff"/><g fill="none" stroke="#2f5fd0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11h16"/><path d="M13 11l-1 12"/><path d="M20 11v9q0 3 3 3"/></g></svg>
+  <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#fff"/><g fill="none" stroke="#a8541c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 11h16"/><path d="M13 11l-1 12"/><path d="M20 11v9q0 3 3 3"/></g></svg>
   <div><h1>Mates ESO</h1><p class="lema">Repositori de material de matemàtiques</p></div>
   <div class="dreta"><span id="total"></span></div>
 </header>
