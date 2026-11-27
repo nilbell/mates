@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inkscape per a la làser</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Tutorial d'Inkscape en català per dissenyar peces per a talladora làser: tallar, gravar i marcar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: capçalera fixa amb configuració + índex lateral sticky (escriptori) + columna de lectura de ~70ch.
+   Els colors de TALL / GRAVAT / MARCAT són variables que canvia la Configuració (JS). */
+:root {
+  --bg: #f6f7f5;
+  --surface: #ffffff;
+  --sunken: #eceee9;
+  --fg: #1d2420;
+  --muted: #5c665f;
+  --line: #d5d9d2;
+  --accent: #1f6b5c;      /* verd bosc: fusta tallada, no "IA" */
+  --accent-soft: #dcebe6;
+  --wood: #c99a5b;        /* to de contraxapat per als esquemes */
+  --wood-dark: #8a6334;
+  --warn-bg: #fff4dc; --warn-fg: #6b4a00; --warn-line: #e8c46a;
+  --danger-bg: #fde6e3; --danger-fg: #8a1f12; --danger-line: #eba59a;
+  --c-tall: #000000; --c-gravat: #ff0000; --c-marcat: #0000ff;
+  --f-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141816; --surface: #1c211e; --sunken: #232925; --fg: #e6ebe7; --muted: #a2ada5; --line: #343c37;
+  --accent: #6cc4ad; --accent-soft: #1f3a33; --wood: #b88a4f; --wood-dark: #e0b77f;
+  --warn-bg: #3a2f12; --warn-fg: #f3d68a; --warn-line: #6e5a1f;
+  --danger-bg: #3d1a15; --danger-fg: #f6b2a7; --danger-line: #7a3328;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141816; --surface: #1c211e; --sunken: #232925; --fg: #e6ebe7; --muted: #a2ada5; --line: #343c37;
+  --accent: #6cc4ad; --accent-soft: #1f3a33; --wood: #b88a4f; --wood-dark: #e0b77f;
+  --warn-bg: #3a2f12; --warn-fg: #f3d68a; --warn-line: #6e5a1f;
+  --danger-bg: #3d1a15; --danger-fg: #f6b2a7; --danger-line: #7a3328;
+  color-scheme: dark }
+
+* { box-sizing: border-box }
+img { max-width: 100%; height: auto }   /* manté la proporció de les captures quan s'encongeixen */
+html { scroll-behavior: smooth; scroll-padding-top: 80px }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; margin: 0 }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--surface) }
+a { color: var(--accent) }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
+h1, h2, h3, h4 { font-family: var(--f-display); line-height: 1.2; text-wrap: balance; margin: 0 }
+h2 { font-size: 1.75rem; margin-top: .2rem }
+h3 { font-size: 1.2rem; margin-top: 1.6rem; margin-bottom: .4rem }
+h4 { font-size: 1rem; margin-top: 1rem; margin-bottom: .2rem }
+p, ul, ol { margin: .5rem 0 }
+li { margin: .2rem 0 }
+code, kbd, .mono { font-family: var(--f-mono); font-size: .88em }
+kbd { background: var(--sunken); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 .35em; white-space: nowrap }
+.menu { font-weight: 600; background: var(--accent-soft); color: var(--fg); padding: 0 .35em; border-radius: 4px; white-space: nowrap }
+.menu-path { white-space: normal }
+
+/* ---------- capçalera ---------- */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line) }
+.topbar-in { display: flex; align-items: center; gap: 12px; padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); max-width: 1280px; margin: 0 auto }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0 }
+.brand svg { flex: none }
+.brand b { font-family: var(--f-display); font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.chips { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; padding: 3px 9px; border: 1px solid var(--line); border-radius: 99px; background: var(--bg); white-space: nowrap }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--line); vertical-align: -1px }
+.btn { font: inherit; font-weight: 600; font-size: .9rem; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); padding: 7px 14px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px }
+.btn.ghost { background: transparent; color: var(--accent) }
+.btn:hover { filter: brightness(1.08) }
+@media (max-width: 760px) { .chips .chip.sw-chip { display: none } }
+
+/* ---------- estructura ---------- */
+.wrap { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 40px; padding-block: 24px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+@media (max-width: 960px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 0 } .toc { display: none } }
+.toc { position: sticky; top: 76px; align-self: start; max-height: calc(100vh - 96px); overflow-y: auto; font-size: .88rem; padding-right: 6px }
+.toc p { font-family: var(--f-display); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; color: var(--muted); margin: 0 0 6px }
+.toc ol { list-style: none; padding: 0; margin: 0; counter-reset: t }
+.toc li { margin: 0 }
+.toc a { display: flex; gap: 8px; padding: 4px 8px; border-radius: 6px; color: var(--fg); text-decoration: none }
+.toc a:hover { background: var(--sunken) }
+.toc a.on { background: var(--accent-soft); color: var(--accent); font-weight: 600 }
+.toc .n { font-family: var(--f-mono); color: var(--muted); font-size: .8rem; min-width: 1.5em }
+.toc .adv-tag { margin-left: auto }
+main { min-width: 0 }
+.content { max-width: 74ch }
+section.sec { padding-top: 28px; margin-top: 28px; border-top: 1px solid var(--line) }
+section.sec:first-of-type { border-top: 0; margin-top: 0 }
+.eyebrow { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); letter-spacing: .04em; margin-bottom: 4px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap }
+.tag { font-family: var(--f-body); font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 1px 7px; border-radius: 99px; border: 1px solid currentColor }
+.tag.eso { color: var(--accent) }
+.tag.batx { color: var(--wood-dark) }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; align-items: center; padding-bottom: 8px }
+@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr) } }
+.hero h1 { font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: -.01em }
+.hero .lead { font-size: 1.1rem; color: var(--muted); max-width: 52ch }
+.hero-fig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px }
+.hero-fig svg { width: 100%; height: auto; display: block }
+
+/* ---------- blocs ---------- */
+.legend3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 16px 0 }
+@media (max-width: 640px) { .legend3 { grid-template-columns: minmax(0, 1fr) } }
+.op { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0 }
+.op h4 { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 1.05rem }
+.op .rule { font-family: var(--f-mono); font-size: .8rem; background: var(--sunken); padding: 6px 8px; border-radius: 6px }
+.op svg { width: 100%; height: 70px }
+.op p { margin: 0; font-size: .92rem; color: var(--muted) }
+
+.note, .warn, .danger, .sw-box { border-radius: var(--r); padding: 12px 16px; margin: 14px 0; border: 1px solid }
+.note { background: var(--accent-soft); border-color: transparent }
+.warn { background: var(--warn-bg); color: var(--warn-fg); border-color: var(--warn-line) }
+.danger { background: var(--danger-bg); color: var(--danger-fg); border-color: var(--danger-line) }
+.note > :first-child, .warn > :first-child, .danger > :first-child, .sw-box > :first-child { margin-top: 0 }
+.note > :last-child, .warn > :last-child, .danger > :last-child, .sw-box > :last-child { margin-bottom: 0 }
+.sw-box { background: var(--surface); border-color: var(--accent); border-left-width: 4px }
+.sw-box .sw-name { font-family: var(--f-mono); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-weight: 600 }
+
+figure { margin: 16px 0 }
+figure img { display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); max-width: 100% }
+figcaption { font-size: .85rem; color: var(--muted); margin-top: 6px }
+.figs2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px }
+@media (max-width: 640px) { .figs2 { grid-template-columns: minmax(0, 1fr) } }
+.figs2 figure { margin: 0 }
+
+ol.steps { counter-reset: s; list-style: none; padding-left: 0 }
+ol.steps > li { counter-increment: s; position: relative; padding-left: 38px; margin: .7rem 0 }
+ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--surface); font-family: var(--f-display); font-weight: 700; font-size: .85rem; display: grid; place-items: center }
+
+.tbl { overflow-x: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface) }
+table { border-collapse: collapse; width: 100%; font-size: .92rem }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top }
+th { font-family: var(--f-display); font-weight: 600; background: var(--sunken) }
+tr:last-child td { border-bottom: 0 }
+td.num { font-variant-numeric: tabular-nums; font-family: var(--f-mono) }
+
+.check { list-style: none; padding: 0 }
+.check li { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; border-bottom: 1px dashed var(--line) }
+.check input { margin-top: 5px; width: 18px; height: 18px; accent-color: var(--accent); flex: none }
+
+/* exercicis */
+.ex { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; margin: 18px 0; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px }
+@media (max-width: 700px) { .ex { grid-template-columns: minmax(0, 1fr) } }
+.ex .prev { background: repeating-linear-gradient(45deg, var(--sunken) 0 6px, var(--surface) 6px 12px); border-radius: 8px; display: grid; place-items: center; padding: 10px; border: 1px solid var(--line); align-self: start }
+.ex .prev { min-width: 0; overflow: hidden }
+.ex .prev img { background: #fff; border: 0; border-radius: 4px; width: 100%; height: auto; max-height: 200px; object-fit: contain }
+.ex h3 { margin-top: 0 }
+.ex .meta { display: flex; gap: 8px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); margin-bottom: 6px }
+.ex .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px }
+.ex .actions .msg { font-size: .85rem; color: var(--muted); align-self: center }
+
+/* Configuració */
+dialog#cfg { border: 1px solid var(--line); border-radius: 14px; padding: 0; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 40px); background: var(--surface); color: var(--fg) }
+dialog#cfg::backdrop { background: rgb(0 0 0 / .45) }
+.cfg-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); z-index: 1 }
+.cfg-body { padding: 4px 20px 20px; overflow-y: auto }
+.cfg-body fieldset { border: 0; padding: 0; margin: 18px 0 0 }
+.cfg-body legend { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; margin-bottom: 8px }
+.cfg-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px }
+@media (max-width: 600px) { .cfg-row { grid-template-columns: minmax(0, 1fr) } }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: .88rem; min-width: 0 }
+.field > span { font-weight: 600 }
+.colorpick { display: flex; gap: 8px; align-items: center }
+.colorpick input[type=color] { width: 44px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: none; cursor: pointer }
+input[type=text], input[type=number], select { font: inherit; font-size: .92rem; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); color: var(--fg); width: 100%; min-width: 0 }
+.cfg-body table input { width: 5.5em }
+.cfg-msg { font-size: .85rem; margin-top: 8px; min-height: 1.2em }
+.cfg-msg.err { color: var(--danger-fg) }
+.sw-radios { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px }
+.sw-radios label { border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; display: flex; gap: 8px; align-items: flex-start; cursor: pointer; font-size: .9rem; background: var(--bg) }
+.sw-radios label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft) }
+.sw-radios small { display: block; color: var(--muted); font-size: .78rem }
+.toggle { display: flex; gap: 8px; align-items: center; font-size: .92rem }
+
+.shortcuts { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0 24px }
+.shortcuts div { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: .92rem }
+.glossari dt { font-weight: 700; margin-top: .6rem }
+.glossari dd { margin: 0 0 0 0; color: var(--muted) }
+footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted) }
+
+/* Mostrar/amagar contingut segons configuració */
+body:not(.show-adv) .adv { display: none !important }
+[data-sw] { display: none }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <rect x="1" y="1" width="28" height="28" rx="6" fill="var(--wood)"/>
+        <path d="M15 3 V12" stroke="var(--c-gravat)" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="8" y="14" width="14" height="10" rx="2" fill="none" stroke="var(--c-tall)" stroke-width="1.6"/>
+      </svg>
+      <b>Inkscape per a la làser</b>
+    </div>
+    <div class="chips" aria-label="Configuració actual">
+      <span class="chip sw-chip"><span class="sw" style="background:var(--c-tall)"></span>Tall</span>
+      <span class="chip sw-chip"><span class="sw" style="background:var(--c-gravat)"></span>Gravat</span>
+      <span class="chip sw-chip"><span class="sw" style="background:var(--c-marcat)"></span>Marcat</span>
+      <span class="chip sw-chip" id="chip-sw">LightBurn</span>
+      <button class="btn" id="obre-cfg" type="button" aria-haspopup="dialog">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm8.9 4.5-.1-2 2-1.6-2-3.4-2.4.9a7.6 7.6 0 0 0-1.7-1L16.3 3h-4l-.4 2.4c-.6.3-1.2.6-1.7 1l-2.4-1-2 3.5 2 1.5a7 7 0 0 0 0 2l-2 1.6 2 3.4 2.4-.9c.5.4 1.1.7 1.7 1l.4 2.5h4l.4-2.5c.6-.3 1.2-.6 1.7-1l2.4.9 2-3.4-2-1.5Z"/></svg>
+        Configuració
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Índex">
+    <p>Índex</p>
+    <ol id="toc-list"></ol>
+  </nav>
+
+  <main>
+  <div class="content">
+
+  <!-- ============================================================ 0 -->
+  <section class="sec" id="inici" data-toc="Introducció">
+    <div class="hero">
+      <div>
+        <div class="eyebrow"><span>Tutorial · Inkscape 1.4 en català</span><span class="tag eso">ESO</span><span class="tag batx">Batxillerat</span></div>
+        <h1>Dissenyar per a la talladora làser amb Inkscape</h1>
+        <p class="lead">Aprèn a dibuixar peces que la màquina sap llegir: què es talla, què es grava i què només es marca, i com preparar el fitxer perquè surti bé a la primera.</p>
+        <p>Abans de començar, obre la <button class="btn ghost" type="button" data-obre-cfg style="padding:2px 10px">Configuració</button> i tria el programa de la vostra talladora i els colors del taller. Tot el tutorial s'adapta a aquesta tria.</p>
+      </div>
+      <div class="hero-fig" aria-label="Exemple de peça: contorn tallat, text gravat i línia marcada">
+        <svg viewBox="0 0 320 190" role="img">
+          <title>Clauer de fusta amb les tres operacions</title>
+          <rect x="10" y="10" width="300" height="170" rx="10" fill="#e2c08f"/>
+          <rect x="40" y="40" width="240" height="110" rx="24" fill="none" stroke="var(--c-tall)" stroke-width="2.5"/>
+          <circle cx="78" cy="95" r="12" fill="none" stroke="var(--c-tall)" stroke-width="2.5"/>
+          <text x="185" y="110" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="44" fill="var(--c-gravat)">MARIA</text>
+          <rect x="52" y="52" width="216" height="86" rx="16" fill="none" stroke="var(--c-marcat)" stroke-width="1.4" stroke-dasharray="4 3"/>
+          <g font-family="Inter, sans-serif" font-size="11" fill="#3b2a14">
+            <text x="40" y="30">tall (contorn)</text>
+            <text x="200" y="170">gravat (ple)</text>
+            <text x="190" y="30">marcat (línia)</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <h3>Com està organitzat</h3>
+    <ul>
+      <li>Els apartats marcats amb <span class="tag eso">ESO</span> són la base que tothom ha de saber.</li>
+      <li>Els marcats amb <span class="tag batx">Batxillerat</span> aprofundeixen (encaixos, kerf, mosaics...). Es poden amagar des de la Configuració.</li>
+      <li>Els requadres amb vora verda canvien segons el <b>programa de la talladora</b> que hagis triat.</li>
+      <li>Els menús d'Inkscape s'escriuen així: <span class="menu">Camí ▸ Objecte a camí</span>, i les tecles així: <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd>.</li>
+      <li>Les captures de pantalla fan servir els colors per defecte (tall <b>negre</b>, gravat <b>vermell</b>, marcat <b>blau</b>).</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ 1 -->
+  <section class="sec" id="laser" data-toc="Com llegeix el fitxer la làser">
+    <div class="eyebrow"><span>01</span><span class="tag eso">ESO</span></div>
+    <h2>Com llegeix el fitxer la talladora</h2>
+    <p>La talladora làser no "veu" el dibuix com nosaltres. Rep una llista de <b>línies i formes</b> (un fitxer <b>vectorial</b>, com l'SVG) i, per a cada una, mira el <b>color</b> o la <b>capa</b> per saber què ha de fer. Per això el dibuix ha de ser molt ordenat.</p>
+
+    <h3>Vectorial i mapa de bits</h3>
+    <div class="figs2">
+      <div class="op">
+        <h4>Vectorial (SVG, DXF, PDF)</h4>
+        <p>Formes descrites amb punts i corbes. Es poden ampliar sense perdre qualitat. <b>És el que fem servir per tallar.</b></p>
+      </div>
+      <div class="op">
+        <h4>Mapa de bits (PNG, JPG)</h4>
+        <p>Una quadrícula de píxels, com una foto. Només serveix per <b>gravar</b> imatges; no es pot tallar.</p>
+      </div>
+    </div>
+
+    <h3>Les tres operacions</h3>
+    <div class="legend3">
+      <div class="op">
+        <h4><span class="sw" style="background:var(--c-tall)"></span>Tallar</h4>
+        <svg viewBox="0 0 200 70" aria-hidden="true"><rect x="5" y="20" width="190" height="30" fill="var(--wood)"/><path d="M60 20 V50 M140 20 V50" stroke="var(--c-tall)" stroke-width="3"/><path d="M100 0 V18" stroke="var(--c-gravat)" stroke-width="2" stroke-dasharray="3 2" opacity=".5"/></svg>
+        <p>El làser travessa tot el material, a poca velocitat i molta potència. La peça se separa.</p>
+        <div class="rule">traç <span data-hex="tall"></span> · sense emplenat · <span data-gruix></span></div>
+      </div>
+      <div class="op">
+        <h4><span class="sw" style="background:var(--c-gravat)"></span>Gravar</h4>
+        <svg viewBox="0 0 200 70" aria-hidden="true"><rect x="5" y="20" width="190" height="30" fill="var(--wood)"/><rect x="60" y="20" width="80" height="7" fill="var(--wood-dark)"/></svg>
+        <p>El làser escombra la superfície línia a línia (com una impressora) i crema una mica la fusta. Omple àrees.</p>
+        <div class="rule">emplenat <span data-hex="gravat"></span> · sense traç</div>
+      </div>
+      <div class="op">
+        <h4><span class="sw" style="background:var(--c-marcat)"></span>Marcar</h4>
+        <svg viewBox="0 0 200 70" aria-hidden="true"><rect x="5" y="20" width="190" height="30" fill="var(--wood)"/><path d="M60 20 V24 M140 20 V24" stroke="var(--wood-dark)" stroke-width="3"/></svg>
+        <p>Com tallar però amb poca potència: segueix la línia i només en deixa el rastre. Ideal per a línies fines i plecs.</p>
+        <div class="rule">traç <span data-hex="marcat"></span> · sense emplenat · <span data-gruix></span></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><b>La regla d'or:</b> a la talladora, el que importa és <b>el color i si la forma té traç o emplenat</b>. El gruix de la línia, a la majoria de programes, no canvia el gruix del tall: el làser sempre fa el mateix tall fi (unes dècimes de mil·límetre).</p>
+    </div>
+
+    <h3>Per què dues (o tres) capes?</h3>
+    <p>Separem el dibuix en capes d'Inkscape amb el nom de cada operació. Així pots amagar, bloquejar o seleccionar tot el que es talla d'un sol cop, i et costa més equivocar-te de color. L'ordre també importa: <b>primer es grava i es marca, i al final es talla</b>. Si tallessis primer, la peça podria moure's o caure i el gravat sortiria desplaçat.</p>
+  </section>
+
+  <!-- ============================================================ 2 -->
+  <section class="sec" id="preparar" data-toc="Preparar Inkscape">
+    <div class="eyebrow"><span>02</span><span class="tag eso">ESO</span></div>
+    <h2>Preparar Inkscape</h2>
+
+    <h3>Posar Inkscape en català</h3>
+    <ol class="steps">
+      <li>Obre <span class="menu menu-path">Edit ▸ Preferences</span> (o <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>P</kbd>).</li>
+      <li>Ves a <b>Interface</b> i, a <b>Language</b>, tria <b>Catalan (ca)</b>.</li>
+      <li>Tanca i torna a obrir Inkscape.</li>
+    </ol>
+
+    <h3>Mida de la pàgina = àrea de treball</h3>
+    <p>Fes que la pàgina tingui la mida de la planxa de fusta (o de l'àrea de la talladora). Així veus de seguida si la peça hi cap.</p>
+    <ol class="steps">
+      <li>Obre <span class="menu menu-path">Fitxer ▸ Propietats del document</span> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>D</kbd>).</li>
+      <li>A <b>Format</b>, posa les unitats en <b>mm</b>.</li>
+      <li>Escriu l'<b>Amplada</b> i l'<b>Alçada</b> de la planxa. Comprova que <b>Escala</b> sigui <code>1,000000</code> (1 mm per unitat d'usuari).</li>
+      <li>A la barra de dalt, posa també les unitats de les caselles <b>X, Y, A, H</b> en <b>mm</b>.</li>
+    </ol>
+    <figure><img src="img/cap-07-propietats-document.png" alt="Diàleg Propietats del document amb amplada 170 mm i alçada 85 mm" loading="lazy" width="712" height="722" style="width:min(100%,520px)"><figcaption>Propietats del document: format, unitats en mm i mida de la pàgina.</figcaption></figure>
+
+    <div class="note"><p><b>Drecera:</b> fes servir la <a href="#exercicis">plantilla</a> d'aquest tutorial. Ja té les capes creades, els colors correctes i les unitats en mm. Només cal canviar la mida de pàgina.</p></div>
+  </section>
+
+  <!-- ============================================================ 3 -->
+  <section class="sec" id="interficie" data-toc="La interfície">
+    <div class="eyebrow"><span>03</span><span class="tag eso">ESO</span></div>
+    <h2>La interfície</h2>
+    <figure><img src="img/cap-01-interficie.png" alt="Finestra principal d'Inkscape en català amb un dibuix de mostra" loading="lazy" width="1920" height="1135"><figcaption>Finestra d'Inkscape amb el fitxer de mostra obert.</figcaption></figure>
+    <div class="tbl"><table>
+      <thead><tr><th>Zona</th><th>On és</th><th>Per a què serveix</th></tr></thead>
+      <tbody>
+        <tr><td>Barra de menús</td><td>A dalt de tot</td><td>Totes les ordres: <span class="menu">Fitxer</span>, <span class="menu">Capa</span>, <span class="menu">Objecte</span>, <span class="menu">Camí</span>, <span class="menu">Text</span>...</td></tr>
+        <tr><td>Barra de controls de l'eina</td><td>Sota els menús</td><td>Canvia segons l'eina. Amb el seleccionador mostra <b>X, Y, A (amplada), H (alçada)</b>: aquí escrius mides exactes.</td></tr>
+        <tr><td>Caixa d'eines</td><td>Columna esquerra</td><td>Seleccionar, dibuixar formes, text, nodes...</td></tr>
+        <tr><td>Llenç i pàgina</td><td>Al centre</td><td>On dibuixes. La pàgina blanca representa la planxa.</td></tr>
+        <tr><td>Panells (diàlegs)</td><td>Columna dreta</td><td><b>Capes i objectes</b>, <b>Emplenat i traç</b>, <b>Alinea i distribueix</b>...</td></tr>
+        <tr><td>Paleta de colors</td><td>A baix</td><td>Clic = color d'emplenat. <kbd>Maj</kbd>+clic = color del traç. La <b>X</b> vermella treu el color.</td></tr>
+        <tr><td>Barra d'estat</td><td>A baix de tot</td><td>Mostra l'emplenat i el traç de l'objecte, a quina <b>capa</b> és i consells.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Moure't pel dibuix</h3>
+    <ul>
+      <li><kbd>5</kbd> encaixa tota la pàgina a la pantalla. <kbd>3</kbd> fa zoom a la selecció. <kbd>1</kbd> és mida real 1:1.</li>
+      <li>Roda del ratolí = desplaçament vertical. <kbd>Ctrl</kbd>+roda = zoom. <kbd>Maj</kbd>+roda = desplaçament horitzontal.</li>
+      <li>Botó central del ratolí (roda) premut i arrossegar = moure el llenç.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ 4 -->
+  <section class="sec" id="eines" data-toc="Eines bàsiques">
+    <div class="eyebrow"><span>04</span><span class="tag eso">ESO</span></div>
+    <h2>Les eines bàsiques</h2>
+    <div class="ex" style="grid-template-columns: 50px minmax(0,1fr); padding:14px">
+      <img src="img/cap-08-eines.png" alt="Caixa d'eines d'Inkscape" width="30" height="750" style="width:30px;border:0;background:var(--surface)" loading="lazy">
+      <div class="tbl" style="margin:0;border:0">
+        <table>
+          <thead><tr><th>Eina</th><th>Tecla</th><th>Per a la làser</th></tr></thead>
+          <tbody>
+            <tr><td><b>Seleccionador</b> (fletxa)</td><td><kbd>S</kbd></td><td>Seleccionar, moure, escalar. Clic de nou sobre l'objecte = girar.</td></tr>
+            <tr><td><b>Nodes</b></td><td><kbd>N</kbd></td><td>Editar els punts d'un camí. Útil per arreglar formes i lletres.</td></tr>
+            <tr><td><b>Rectangle</b></td><td><kbd>R</kbd></td><td>Peces, plaques, marcs. Pots arrodonir les cantonades (Rx, Ry).</td></tr>
+            <tr><td><b>Cercle / El·lipse</b></td><td><kbd>E</kbd></td><td>Forats, posagots, rodes. <kbd>Ctrl</kbd> en arrossegar = cercle perfecte.</td></tr>
+            <tr><td><b>Estel / Polígon</b></td><td><kbd>*</kbd></td><td>Estrelles i polígons regulars (hexàgons, triangles).</td></tr>
+            <tr><td><b>Espiral</b></td><td><kbd>I</kbd></td><td>Decoració marcada o gravada.</td></tr>
+            <tr><td><b>Llapis</b> (mà alçada)</td><td><kbd>P</kbd></td><td>Dibuix lliure. Després, <span class="menu">Camí ▸ Simplifica</span> (<kbd>Ctrl</kbd>+<kbd>L</kbd>).</td></tr>
+            <tr><td><b>Ploma</b> (Bézier)</td><td><kbd>B</kbd></td><td>Línies rectes i corbes precises clic a clic. Doble clic o <kbd>Retorn</kbd> per acabar.</td></tr>
+            <tr><td><b>Text</b></td><td><kbd>T</kbd></td><td>Noms, rètols. Recorda passar-lo a camí (apartat 7).</td></tr>
+            <tr><td><b>Constructor de formes</b></td><td><kbd>X</kbd></td><td>Uneix o resta trossos de formes encavalcades fent clic i arrossegant.</td></tr>
+            <tr><td><b>Mesura</b></td><td><kbd>M</kbd></td><td>Comprovar distàncies i mides reals en mm.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3>Mides exactes</h3>
+    <p>Amb el seleccionador (<kbd>S</kbd>), escriu a la barra de dalt la posició <b>X, Y</b> i la mida <b>A, H</b> en mm, i prem <kbd>Retorn</kbd>. Activa el cadenat per mantenir la proporció.</p>
+    <div class="warn"><p><b>Atenció a la vora:</b> les caixes X/Y/A/H poden incloure el gruix del traç (“caixa contenidora visual”). Amb traços de <span data-gruix></span> la diferència és mínima, però si la línia és gruixuda la mida no serà exacta. Pots canviar-ho a <span class="menu menu-path">Edita ▸ Preferències ▸ Eines ▸ Caixa contenidora: Geomètrica</span>.</p></div>
+
+    <h3>Agrupar, duplicar i ordenar</h3>
+    <ul>
+      <li><kbd>Ctrl</kbd>+<kbd>D</kbd> duplica (la còpia queda just a sobre: compte amb els <a href="#comprovar">talls dobles</a>).</li>
+      <li><kbd>Ctrl</kbd>+<kbd>G</kbd> agrupa, <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>G</kbd> desagrupa.</li>
+      <li><kbd>Ctrl</kbd>+clic selecciona un objecte dins d'un grup.</li>
+      <li><kbd>Alt</kbd>+clic selecciona l'objecte que hi ha a sota.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ 5 -->
+  <section class="sec" id="capes" data-toc="Capes de tall i gravat">
+    <div class="eyebrow"><span>05</span><span class="tag eso">ESO</span></div>
+    <h2>Les capes de tall i gravat</h2>
+    <div class="figs2">
+      <div>
+        <p>Obre el panell <span class="menu menu-path">Capa ▸ Capes i objectes...</span> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>L</kbd>).</p>
+        <ol class="steps">
+          <li><span class="menu menu-path">Capa ▸ Afegeix una capa...</span> i anomena-la <b>TALL</b>.</li>
+          <li>Repeteix-ho per a <b>GRAVAT</b> i, si cal, <b>MARCAT</b>.</li>
+          <li>Ordena-les com a la imatge: <b>TALL</b> a dalt de tot, perquè les línies de tall es vegin sempre per sobre.</li>
+          <li>Per canviar el nom: doble clic sobre el nom de la capa.</li>
+        </ol>
+      </div>
+      <figure><img src="img/cap-02-capes.png" alt="Panell Capes i objectes amb les capes TALL, MARCAT i GRAVAT" loading="lazy" width="430" height="420"><figcaption>Panell Capes i objectes: la capa TALL desplegada mostra els seus objectes.</figcaption></figure>
+    </div>
+
+    <h3>Treballar amb capes</h3>
+    <ul>
+      <li><b>Capa activa:</b> el que dibuixes va a la capa seleccionada al panell. La barra d'estat ho diu (p. ex. “a capa GRAVAT”).</li>
+      <li><b>Moure un objecte a una altra capa:</b> selecciona'l i fes <span class="menu menu-path">Capa ▸ Mou la selecció a la capa...</span>, o <kbd>Maj</kbd>+<kbd>Re Pàg</kbd> / <kbd>Maj</kbd>+<kbd>Av Pàg</kbd> per pujar-lo o baixar-lo d'una capa.</li>
+      <li><b>Ull</b> = amagar/mostrar. <b>Cadenat</b> = bloquejar (no la podràs tocar sense voler).</li>
+      <li>Truc: bloqueja la capa TALL mentre treballes el gravat.</li>
+    </ul>
+
+    <div class="sw-box" data-sw="lightburn"><p class="sw-name">LightBurn</p><p>LightBurn <b>no fa servir el nom de les capes d'Inkscape</b>: llegeix el <b>color</b> de cada objecte i el posa a la capa de LightBurn amb el color més semblant. Les capes d'Inkscape serveixen per ordenar-te tu.</p></div>
+    <div class="sw-box" data-sw="rdworks"><p class="sw-name">RDWorks / LaserCut</p><p>RDWorks crea una capa per <b>color</b>. Quan exportis a DXF, Inkscape desa també el nom de les capes, però el que compta a la màquina és el color de cada capa a RDWorks.</p></div>
+    <div class="sw-box" data-sw="xtool"><p class="sw-name">xTool Creative Space</p><p>XCS importa cada objecte amb el seu color. Les capes d'Inkscape t'ajuden a seleccionar ràpid; a XCS triaràs el tipus de processament per objecte o per color.</p></div>
+    <div class="sw-box" data-sw="lasergrbl"><p class="sw-name">LaserGRBL</p><p>LaserGRBL aplica <b>una sola configuració per fitxer importat</b>. Per això les capes són imprescindibles: exportaràs cada capa com a fitxer separat (apartat 10).</p></div>
+    <div class="sw-box" data-sw="generic"><p class="sw-name">Trotec, Epilog, Glowforge i altres</p><p>Aquests sistemes assignen paràmetres per <b>color</b> (taula de colors del controlador o passos de Glowforge). Fes servir colors purs i exactes.</p></div>
+  </section>
+
+  <!-- ============================================================ 6 -->
+  <section class="sec" id="emplenat" data-toc="Emplenat i traç">
+    <div class="eyebrow"><span>06</span><span class="tag eso">ESO</span></div>
+    <h2>Emplenat i traç: el color de cada operació</h2>
+    <p>Cada forma té dues propietats de color: l'<b>emplenat</b> (l'interior) i el <b>traç</b> (la vora). Les controles al panell <span class="menu menu-path">Objecte ▸ Emplenat i traç...</span> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>F</kbd>).</p>
+
+    <div class="tbl"><table>
+      <thead><tr><th>Capa</th><th>Emplenat</th><th>Color del traç</th><th>Estil del traç (amplada)</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sw" style="background:var(--c-tall)"></span> <b>TALL</b></td><td>Cap (X)</td><td><span data-hex="tall"></span></td><td><span data-gruix></span></td></tr>
+        <tr><td><span class="sw" style="background:var(--c-gravat)"></span> <b>GRAVAT</b></td><td><span data-hex="gravat"></span></td><td>Cap (X)</td><td>–</td></tr>
+        <tr><td><span class="sw" style="background:var(--c-marcat)"></span> <b>MARCAT</b></td><td>Cap (X)</td><td><span data-hex="marcat"></span></td><td><span data-gruix></span></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Posar el color exacte</h3>
+    <ol class="steps">
+      <li>Selecciona la forma i obre <b>Emplenat i traç</b>.</li>
+      <li>Pestanya <b>Emplenat</b> o <b>Color del traç</b>: tria <b>Un únic color</b> (quadrat ple) o <b>Cap</b> (la X).</li>
+      <li>A la casella <b>RGBA</b> escriu el codi exacte: <code data-rgba="tall"></code> (tall), <code data-rgba="gravat"></code> (gravat), <code data-rgba="marcat"></code> (marcat). Les dues últimes lletres <code>ff</code> volen dir opacitat 100%.</li>
+      <li>Pestanya <b>Estil del traç</b>: posa l'amplada a <span data-gruix></span> i les unitats en <b>mm</b>.</li>
+    </ol>
+    <div class="figs2">
+      <figure><img src="img/cap-03-emplenat-gravat.png" alt="Estrella vermella seleccionada amb el panell Emplenat mostrant RGBA ff0000ff" loading="lazy" width="1920" height="1135"><figcaption>Gravat: estrella amb emplenat vermell <code>ff0000ff</code>.</figcaption></figure>
+      <figure><img src="img/cap-04-color-traca-tall.png" alt="Quadrat seleccionat amb el panell Color del traç mostrant RGBA 000000ff" loading="lazy" width="1920" height="1135"><figcaption>Tall: quadrat amb traç negre <code>000000ff</code> i sense emplenat.</figcaption></figure>
+    </div>
+    <figure><img src="img/cap-05-estil-traca.png" alt="Pestanya Estil del traç amb amplada 0,100 mm" loading="lazy" width="430" height="600" style="width:min(100%,330px)"><figcaption>Estil del traç: amplada 0,100 mm.</figcaption></figure>
+
+    <div class="warn">
+      <p><b>Errors típics</b></p>
+      <ul>
+        <li>Un color “gairebé” negre o vermell (p. ex. <code>#1a1a1a</code>): el programa de la làser el pot posar a una altra capa. Escriu sempre el codi exacte.</li>
+        <li>Una peça de tall amb emplenat: alguns programes la gravaran sencera. Treu l'emplenat (X).</li>
+        <li>Opacitat o difuminat diferents de 100% / 0%.</li>
+      </ul>
+    </div>
+    <div class="note"><p><b>Truc ràpid:</b> a la paleta de baix, <b>clic</b> posa el color d'emplenat i <kbd>Maj</kbd>+<b>clic</b> el del traç. Clic a la <b>X</b> treu l'emplenat i <kbd>Maj</kbd>+clic a la X treu el traç. Amb <span class="menu menu-path">Edita ▸ Selecciona el mateix ▸ Color d'emplenat</span> selecciones totes les formes del mateix color d'un cop.</p></div>
+
+    <div class="sw-box" data-sw="lightburn"><p class="sw-name">LightBurn</p><p>El gruix del traç no importa. LightBurn agafa el color del traç (o de l'emplenat si no té traç). Comprova després de la importació que cada forma ha anat a la capa esperada.</p></div>
+    <div class="sw-box" data-sw="generic"><p class="sw-name">Trotec / Epilog (impressió pel controlador)</p><p>Aquests controladors només tallen les línies que són <b>molt fines</b> (habitualment 0,01 mm o “hairline”). Si una línia és més gruixuda, la graven. Posa l'amplada del traç a la Configuració en <b>0,01 mm</b>.</p></div>
+  </section>
+
+  <!-- ============================================================ 7 -->
+  <section class="sec" id="figures" data-toc="Figures i formes">
+    <div class="eyebrow"><span>07</span><span class="tag eso">ESO</span></div>
+    <h2>Figures i formes</h2>
+    <h3>Rectangle amb cantonades arrodonides</h3>
+    <ol class="steps">
+      <li>Activa la capa <b>TALL</b>. Eina rectangle (<kbd>R</kbd>), dibuixa'l.</li>
+      <li>A la barra de controls escriu <b>A</b> i <b>H</b> en mm, i <b>Rx</b>/<b>Ry</b> (radi de la cantonada), p. ex. 5 mm.</li>
+      <li>Treu l'emplenat i posa el traç de tall.</li>
+    </ol>
+    <h3>Forats</h3>
+    <p>Un forat és només un cercle de tall <b>dins</b> la peça. Per a una anella de clauer, un forat de 5–6 mm de diàmetre va bé. Deixa almenys <b>3 mm de fusta</b> entre el forat i la vora, o es trencarà.</p>
+    <h3>Polígons i estrelles</h3>
+    <p>Amb l'eina <kbd>*</kbd> tria a la barra de controls si vols <b>polígon</b> o <b>estel</b>, el nombre de <b>vèrtexs</b>, la <b>proporció</b> dels radis i l'<b>arrodoniment</b>. Un hexàgon és un polígon de 6 vèrtexs.</p>
+    <h3>Combinar formes (operacions booleanes)</h3>
+    <p>Selecciona dues o més formes i fes servir el menú <span class="menu">Camí</span>:</p>
+    <div class="figs2">
+      <div class="tbl" style="margin:0"><table>
+        <thead><tr><th>Ordre</th><th>Tecla</th><th>Resultat</th></tr></thead>
+        <tbody>
+          <tr><td><b>Unió</b></td><td><kbd>Ctrl</kbd>+<kbd>+</kbd></td><td>Una sola forma amb el contorn exterior. Elimina línies interiors que es tallarien.</td></tr>
+          <tr><td><b>Resta</b></td><td><kbd>Ctrl</kbd>+<kbd>-</kbd></td><td>La de dalt fa un “mos” a la de sota.</td></tr>
+          <tr><td><b>Intersecció</b></td><td><kbd>Ctrl</kbd>+<kbd>*</kbd></td><td>Només la part comuna.</td></tr>
+          <tr><td><b>Exclusió</b></td><td><kbd>Ctrl</kbd>+<kbd>^</kbd></td><td>Tot menys la part comuna.</td></tr>
+          <tr><td><b>Divisió</b></td><td><kbd>Ctrl</kbd>+<kbd>/</kbd></td><td>Talla la de sota en trossos amb la forma de dalt.</td></tr>
+          <tr><td><b>Combina</b> / <b>Separa</b></td><td><kbd>Ctrl</kbd>+<kbd>K</kbd> / <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Ajunta camins en un sol objecte (o el contrari) sense canviar-ne la forma.</td></tr>
+        </tbody>
+      </table></div>
+      <figure><img src="img/cap-06-menu-cami.png" alt="Menú Camí d'Inkscape en català" loading="lazy" width="760" height="870"><figcaption>Menú Camí: Objecte a camí, Traç a camí, operacions booleanes, Contrau i Expandeix.</figcaption></figure>
+    </div>
+    <div class="note"><p><b>Exemple:</b> per fer un núvol, dibuixa uns quants cercles encavalcats, selecciona'ls tots i fes <b>Unió</b>. Si no ho fas, la làser tallaria tots els cercles sencers i el núvol quedaria esmicolat.</p></div>
+
+    <h3>Alinear i distribuir</h3>
+    <div class="figs2">
+      <div>
+        <p><span class="menu menu-path">Objecte ▸ Alinea i distribueix...</span> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>A</kbd>). Tria <b>Relatiu a:</b> <i>Pàgina</i>, <i>Primer seleccionat</i>, <i>Objecte més gran</i>... i prem el botó d'alineació.</p>
+        <p>Ús típic: centrar el text sobre la placa (relatiu a <i>Objecte més gran</i>, centrar horitzontal i vertical).</p>
+      </div>
+      <figure><img src="img/cap-09-alinea.png" alt="Panell Alinea i distribueix" loading="lazy" width="508" height="560"><figcaption>Panell Alinea i distribueix.</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ============================================================ 8 -->
+  <section class="sec" id="text" data-toc="Textos">
+    <div class="eyebrow"><span>08</span><span class="tag eso">ESO</span></div>
+    <h2>Textos</h2>
+    <ol class="steps">
+      <li>Eina text (<kbd>T</kbd>), clic al llenç i escriu.</li>
+      <li>A la barra de dalt tria el <b>tipus de lletra</b>, l'estil (<i>Bold</i> grava millor) i la mida.</li>
+      <li>Torna al seleccionador (<kbd>S</kbd>) i ajusta'n la mida amb les caselles <b>A/H</b>.</li>
+      <li>Posa el color de <b>gravat</b> a l'emplenat i treu el traç.</li>
+      <li><b>Converteix-lo en camí:</b> <span class="menu menu-path">Camí ▸ Objecte a camí</span> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd>).</li>
+    </ol>
+    <figure><img src="img/cap-12-barra-text.png" alt="Barra de controls de l'eina text amb tipus de lletra i mida" loading="lazy" width="1560" height="45"><figcaption>Barra de controls de l'eina Text: tipus de lletra, estil, mida, interlineat i alineació.</figcaption></figure>
+
+    <div class="danger"><p><b>Per què passar el text a camí?</b> Si l'ordinador de la talladora no té instal·lat el mateix tipus de lletra, el canviarà per un altre o no el mostrarà. Un cop és camí, ja són formes i surten igual a tot arreu. <b>Desa abans una còpia amb el text editable</b>, perquè després ja no podràs canviar les lletres.</p></div>
+
+    <h3>Text gravat, marcat o tallat</h3>
+    <div class="legend3">
+      <div class="op"><h4><span class="sw" style="background:var(--c-gravat)"></span>Gravat</h4><p>Emplenat de gravat. És el més habitual i el que es llegeix millor.</p></div>
+      <div class="op"><h4><span class="sw" style="background:var(--c-marcat)"></span>Marcat</h4><p>Només el contorn de les lletres amb traç de marcat. Molt més ràpid que gravar, ideal per lletres grans.</p></div>
+      <div class="op"><h4><span class="sw" style="background:var(--c-tall)"></span>Tallat</h4><p>Les lletres es buiden. Compte: l'interior de la <b>o, a, e, d, p...</b> caurà.</p></div>
+    </div>
+    <p>Per tallar lletres sense perdre els “ulls”, fes servir una font <b>stencil</b> (plantilla), o afegeix <b>ponts</b>: dibuixa petits rectangles que creuin l'ull de la lletra i fes <b>Resta</b>. Per tallar un nom que es mantingui d'una peça, les lletres s'han de tocar: redueix l'espaiat (barra de text, <i>espaiat entre lletres</i>) i, al final, fes <b>Unió</b>.</p>
+    <p class="adv"><span class="tag batx">Batxillerat</span> <b>Text sobre un camí:</b> selecciona el text i un cercle i fes <span class="menu menu-path">Text ▸ Posa en el camí</span>. Molt útil per a rètols rodons i posagots.</p>
+  </section>
+
+  <!-- ============================================================ 9 -->
+  <section class="sec" id="linies" data-toc="Línies i imatges">
+    <div class="eyebrow"><span>09</span><span class="tag eso">ESO</span></div>
+    <h2>Línies, contorns i imatges</h2>
+    <h3>Línies gruixudes per gravar</h3>
+    <p>Una línia amb traç només es pot <b>tallar</b> o <b>marcar</b> (el làser la segueix). Si vols una línia gruixuda <b>gravada</b>, primer converteix el traç en forma: <span class="menu menu-path">Camí ▸ Traç a camí</span> (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd>). Ara la línia és una forma plena: posa-hi l'emplenat de gravat.</p>
+    <h3>Contorn al voltant d'un dibuix</h3>
+    <p>Per fer una peça que segueixi la silueta d'un dibuix (adhesius, imants, figures): duplica el dibuix (<kbd>Ctrl</kbd>+<kbd>D</kbd>), fes <b>Unió</b>, i després <span class="menu menu-path">Camí ▸ Expandeix</span> (<kbd>Ctrl</kbd>+<kbd>)</kbd>) unes quantes vegades. Posa aquesta forma a la capa TALL amb el traç de tall. Per controlar exactament quants mil·límetres creix, ves a <span class="menu menu-path">Edita ▸ Preferències ▸ Comportament ▸ Passos</span> i canvia el valor d'<b>Insereix/Expandeix</b>.</p>
+    <h3>Logotips i dibuixos d'una imatge</h3>
+    <div class="figs2">
+      <div>
+        <ol class="steps">
+          <li><span class="menu menu-path">Fitxer ▸ Importa...</span> (<kbd>Ctrl</kbd>+<kbd>I</kbd>) la imatge (millor en blanc i negre, amb contrast).</li>
+          <li>Selecciona-la i obre <span class="menu menu-path">Camí ▸ Vectoritza un mapa de bits...</span> (<kbd>Maj</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd>).</li>
+          <li>Mode <b>Tall de brillantor</b>. Ajusta el <b>Llindar</b> mirant la vista prèvia i prem <b>Aplica</b>.</li>
+          <li>Esborra la imatge original (el vector queda just a sobre).</li>
+          <li>Posa el resultat a la capa GRAVAT amb l'emplenat de gravat.</li>
+        </ol>
+      </div>
+      <figure><img src="img/cap-13-vectoritza.png" alt="Panell Traça el mapa de bits" loading="lazy" width="635" height="880"><figcaption>Panell per vectoritzar un mapa de bits.</figcaption></figure>
+    </div>
+    <div class="note"><p><b>Fotografies:</b> per gravar una foto amb grisos no cal vectoritzar. Importa-la directament al programa de la talladora i fes-la servir com a imatge (mode imatge / dithering). Inkscape només cal per col·locar-la i tallar-ne el marc.</p></div>
+  </section>
+
+  <!-- ============================================================ 10 -->
+  <section class="sec" id="comprovar" data-toc="Comprovar abans d'enviar">
+    <div class="eyebrow"><span>10</span><span class="tag eso">ESO</span></div>
+    <h2>Comprovacions abans d'enviar</h2>
+    <p>Fes aquesta llista cada vegada. Les caselles es queden marcades només en aquest navegador.</p>
+    <ul class="check" id="checklist">
+      <li><input type="checkbox" id="ck1"><label for="ck1">Tot el <b>text</b> està convertit en camí (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd>).</label></li>
+      <li><input type="checkbox" id="ck2"><label for="ck2">Les formes de <b>tall</b> no tenen emplenat i tenen el traç <span data-hex="tall"></span> de <span data-gruix></span>.</label></li>
+      <li><input type="checkbox" id="ck3"><label for="ck3">Les formes de <b>gravat</b> tenen l'emplenat <span data-hex="gravat"></span> i no tenen traç.</label></li>
+      <li><input type="checkbox" id="ck4"><label for="ck4">No hi ha <b>línies duplicades</b> una a sobre de l'altra (el làser tallaria dues vegades i cremaria la vora). Prova: mou una peça i mira si en queda una de sota.</label></li>
+      <li><input type="checkbox" id="ck5"><label for="ck5">Les formes de tall estan <b>tancades</b> (si no, la peça no se separarà).</label></li>
+      <li><input type="checkbox" id="ck6"><label for="ck6">Les mides són correctes en <b>mm</b> i tot cap dins la planxa, amb uns 3–5 mm de marge a les vores.</label></li>
+      <li><input type="checkbox" id="ck7"><label for="ck7">No hi ha <b>clons</b> ni imatges oblidades (<span class="menu menu-path">Edita ▸ Clona ▸ Desenllaça el clon</span>).</label></li>
+      <li><input type="checkbox" id="ck8"><label for="ck8">Les peces petites no són massa fines: mínim uns 2–3 mm d'amplada a la fusta de 3 mm.</label></li>
+      <li><input type="checkbox" id="ck9"><label for="ck9">He fet <span class="menu menu-path">Fitxer ▸ Neteja el document</span> per treure coses invisibles.</label></li>
+      <li><input type="checkbox" id="ck10"><label for="ck10">He desat una còpia <b>editable</b> i una còpia per a la làser.</label></li>
+    </ul>
+    <button class="btn ghost" type="button" id="reset-check">Desmarca-ho tot</button>
+    <p style="margin-top:12px">Truc per veure només les línies: <span class="menu menu-path">Visualitza ▸ Mode de visualització ▸ Contorn</span> (<kbd>Ctrl</kbd>+<kbd>5</kbd> alterna els modes). Així veus les línies duplicades i les formes amagades.</p>
+  </section>
+
+  <!-- ============================================================ 11 -->
+  <section class="sec" id="desar" data-toc="Desar i enviar a la làser">
+    <div class="eyebrow"><span>11</span><span class="tag eso">ESO</span></div>
+    <h2>Desar i enviar a la talladora</h2>
+    <p>Desa sempre el fitxer de treball com a <b>SVG de l'Inkscape</b> (conserva capes i noms). Per a la làser, fes una còpia amb <span class="menu menu-path">Fitxer ▸ Desa una còpia...</span> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>S</kbd>) i tria el format que demana el teu programa:</p>
+    <figure><img src="img/cap-11-tipus-fitxer.png" alt="Llista de tipus de fitxer del diàleg de desar: SVG simple, PDF, DXF R14, Capes com SVG separats..." loading="lazy" width="850" height="1105" style="width:min(100%,560px)"><figcaption>Tipus de fitxer disponibles a Desa / Desa una còpia.</figcaption></figure>
+
+    <div class="sw-box" data-sw="lightburn">
+      <p class="sw-name">LightBurn</p>
+      <ol>
+        <li>Desa una còpia com a <b>SVG simple (*.svg)</b>.</li>
+        <li>A LightBurn: <b>File ▸ Import</b> (<kbd>Ctrl</kbd>+<kbd>I</kbd>) o arrossega el fitxer.</li>
+        <li>Al panell <b>Cuts / Layers</b> apareix una capa per color. Configura-les: color de tall en mode <b>Line</b>, color de gravat en mode <b>Fill</b>, color de marcat en mode <b>Line</b> amb poca potència.</li>
+        <li>Ordena les capes amb les fletxes perquè el <b>tall quedi l'últim</b>.</li>
+        <li>Amb <b>Window ▸ Preview</b> (<kbd>Alt</kbd>+<kbd>P</kbd>) comprova el recorregut i el temps.</li>
+        <li>Desa la configuració a la <b>Material Library</b> per reutilitzar-la.</li>
+      </ol>
+    </div>
+    <div class="sw-box" data-sw="rdworks">
+      <p class="sw-name">RDWorks / LaserCut (controladora Ruida)</p>
+      <ol>
+        <li>RDWorks no importa bé l'SVG. Desa una còpia com a <b>Plòter de tall d'escriptori (AutoCAD DXF R14) (*.dxf)</b>, amb la <b>unitat base en mm</b>.</li>
+        <li>A RDWorks: <b>File ▸ Import</b> el DXF. Comprova que la mida sigui la correcta.</li>
+        <li>Cada color és una capa. Posa la capa de tall en mode <b>Cut</b>, la de gravat en mode <b>Scan</b> (escombratge) i la de marcat en mode <b>Cut</b> amb poca potència.</li>
+        <li>El DXF no guarda emplenats: RDWorks omple en mode Scan les formes tancades de la capa de gravat.</li>
+        <li>Si els colors no surten bé, selecciona les peces a RDWorks i fes clic al color de capa correcte de la barra de colors.</li>
+        <li>Ordena les capes perquè el tall vagi l'últim i fes <b>Download</b> o <b>Start</b>.</li>
+      </ol>
+    </div>
+    <div class="sw-box" data-sw="xtool">
+      <p class="sw-name">xTool Creative Space (XCS)</p>
+      <ol>
+        <li>Desa una còpia com a <b>SVG simple (*.svg)</b>.</li>
+        <li>A XCS, importa o arrossega el fitxer. Si queda agrupat, desagrupa'l.</li>
+        <li>Selecciona les peces de tall i tria <b>Tallar</b> (Cut). El gravat, <b>Gravar</b> (Engrave, ple). El marcat, <b>Marcar</b> (Score).</li>
+        <li>Tria el material de la llista (p. ex. contraxapat 3 mm) per tenir valors de partida, i ajusta'ls.</li>
+        <li>XCS processa per defecte gravat i marcat abans que el tall; comprova-ho a la vista prèvia.</li>
+      </ol>
+    </div>
+    <div class="sw-box" data-sw="lasergrbl">
+      <p class="sw-name">LaserGRBL (làsers de díode)</p>
+      <ol>
+        <li>Desa una còpia com a <b>Capes com SVG separats (*.tar)</b>, o amaga capes i desa un SVG simple per a cada capa (<code>nom-gravat.svg</code>, <code>nom-tall.svg</code>).</li>
+        <li>A LaserGRBL: <b>File ▸ Open</b> el fitxer de gravat i configura'l (potència i velocitat).</li>
+        <li>Després <b>File ▸ Append</b> el fitxer de tall i configura'l amb els seus valors. Així el tall s'executa al final.</li>
+        <li>LaserGRBL fa servir el contorn: per gravar àrees plenes, fes servir el mode d'emplenat de l'SVG si la teva versió el té, o exporta el gravat com a PNG i importa'l com a imatge.</li>
+      </ol>
+    </div>
+    <div class="sw-box" data-sw="generic">
+      <p class="sw-name">Trotec, Epilog, Glowforge i altres</p>
+      <ul>
+        <li><b>Trotec / Epilog:</b> s'envia imprimint (<span class="menu">Fitxer ▸ Imprimeix...</span>) o des del programa propi (JobControl, Ruby, Epilog Dashboard). Línies de tall a <b>0,01 mm</b> i colors RGB exactes, que han de coincidir amb la taula de colors del controlador. També pots desar com a <b>PDF</b>.</li>
+        <li><b>Glowforge:</b> puja l'<b>SVG simple</b> a l'aplicació web. Crea un pas per color i tries Cut / Score / Engrave.</li>
+        <li><b>Altres:</b> si accepta SVG, desa <b>SVG simple</b>. Si no, prova <b>PDF</b> o <b>DXF R14</b>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ 12 -->
+  <section class="sec" id="parametres" data-toc="Paràmetres de la màquina">
+    <div class="eyebrow"><span>12</span><span class="tag eso">ESO</span></div>
+    <h2>Paràmetres de la màquina</h2>
+    <p>Aquests són els valors que tens guardats a la Configuració per a <b id="param-material">contraxapat 3 mm</b>. Són un punt de partida: cada màquina és diferent.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Operació</th><th>Color</th><th>Mode</th><th>Potència</th><th>Velocitat</th><th>Passades</th></tr></thead>
+      <tbody id="param-body"></tbody>
+    </table></div>
+    <div class="warn"><p><b>Fes sempre una prova</b> en un tros de la mateixa planxa: un quadrat de 10 mm tallat i un altre gravat. Si el tall no travessa, baixa la velocitat o afegeix una passada abans que pujar molt la potència. La potència alta crema més les vores.</p></div>
+    <div class="sw-box" data-sw="lightburn"><p class="sw-name">LightBurn</p><p>A <b>Laser Tools ▸ Material Test</b> pots generar una quadrícula de proves amb diferents potències i velocitats.</p></div>
+  </section>
+
+  <!-- ============================================================ 13 -->
+  <section class="sec" id="exercicis" data-toc="Exercicis pràctics">
+    <div class="eyebrow"><span>13</span><span class="tag eso">ESO</span><span class="tag batx">Batxillerat</span></div>
+    <h2>Exercicis pràctics</h2>
+    <p>Descarrega el fitxer d'inici de cada exercici: ja té les capes i els <b>teus colors</b> de la Configuració. Obre'l amb Inkscape (<span class="menu">Fitxer ▸ Obre...</span>).</p>
+    <div id="exercicis-llista"></div>
+    <p id="nota-descarrega" class="note" hidden>Si el botó de descàrrega no funciona en aquest visor, fes servir <b>Copia el codi</b>, enganxa'l al Bloc de notes i desa'l amb extensió <code>.svg</code>. També pots enganxar-lo directament a Inkscape amb <kbd>Ctrl</kbd>+<kbd>V</kbd>.</p>
+  </section>
+
+  <!-- ============================================================ 14 -->
+  <section class="sec adv" id="avancat" data-toc="Nivell avançat" data-adv="1">
+    <div class="eyebrow"><span>14</span><span class="tag batx">Batxillerat</span></div>
+    <h2>Nivell avançat</h2>
+
+    <h3>El kerf: el gruix del tall</h3>
+    <p>El làser crema una franja de material d'unes <b>0,1–0,2 mm</b> (el <i>kerf</i>). La peça surt una mica més petita que el dibuix i els forats una mica més grans. Per a decoració no importa; per a <b>encaixos</b> sí.</p>
+    <ul>
+      <li><b>Mesurar el kerf:</b> talla un quadrat de 20 mm, mesura'l amb el peu de rei. Kerf = 20 − mida mesurada.</li>
+      <li><b>Compensar:</b> engrandeix les peces exteriors kerf/2 per cada costat. A Inkscape: <span class="menu menu-path">Camí ▸ Desplaçament enllaçat</span> o <span class="menu">Expandeix</span> amb el pas configurat a kerf/2 (Preferències ▸ Comportament ▸ Passos). Molts programes de làser també tenen opció <i>Kerf offset</i>.</li>
+    </ul>
+
+    <h3>Caixes amb encaixos (dits)</h3>
+    <figure><img src="img/cap-14-caixa.png" alt="Inkscape amb les sis cares d'una caixa amb dits d'encaix" loading="lazy" width="1920" height="1135"><figcaption>La caixa de l'exercici 5 oberta a Inkscape: 6 cares amb dits per a fusta de 3 mm.</figcaption></figure>
+    <ul>
+      <li>La profunditat de cada dit = <b>gruix real del material</b> (mesura'l: el “3 mm” sovint fa 2,8–3,2 mm).</li>
+      <li>Un dit d'una cara entra al forat de l'altra: els patrons han de ser complementaris.</li>
+      <li>Generadors: l'extensió <span class="menu menu-path">Extensions ▸ Renderització ▸ Capsa plegable</span> (Foldable Box) per a caixes de cartró amb plecs; per a caixes de fusta, la web <a href="https://www.festi.info/boxes.py/" target="_blank" rel="noopener">boxes.py</a> genera SVG amb encaixos i kerf.</li>
+      <li>Engranatges: <span class="menu menu-path">Extensions ▸ Renderització ▸ Engranatges</span>.</li>
+    </ul>
+
+    <h3>Repetir motius: clons en mosaic</h3>
+    <p>Per fer un patró (posagots, celosies), selecciona el motiu i fes <span class="menu menu-path">Edita ▸ Clona ▸ Crea clons en mosaic...</span>. Tria la simetria, files i columnes. Al final selecciona-ho tot i fes <span class="menu menu-path">Edita ▸ Clona ▸ Desenllaça el clon</span> i <b>Unió</b>, perquè la làser rebi formes normals.</p>
+
+    <h3>Plecs de fusta (<i>living hinge</i>)</h3>
+    <p>Moltes línies de tall paral·leles i alternades fan que el contraxapat es pugui doblegar. Dibuixa una línia, duplica-la amb <span class="menu">Alinea i distribueix ▸ Quadrícula</span> o amb clons en mosaic, i deixa uns 2 mm entre línies.</p>
+
+    <h3>Altres eines útils</h3>
+    <ul>
+      <li><b>Editor XML</b> (<kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>X</kbd>): veure i corregir els colors exactes de cada objecte.</li>
+      <li><span class="menu menu-path">Camí ▸ Simplifica</span> (<kbd>Ctrl</kbd>+<kbd>L</kbd>): menys nodes, moviment més suau de la màquina.</li>
+      <li><span class="menu menu-path">Camí ▸ Retalla el camí</span>: talla línies amb una altra forma (p. ex. per fer ponts).</li>
+      <li><b>Guies i ajust</b> (<kbd>%</kbd> activa/desactiva l'ajust): per encaixar peces exactament una al costat de l'altra.</li>
+      <li><b>Línies compartides:</b> quan dues peces es toquen, pots esborrar una de les dues línies comunes. Estalvies temps i material, però compte amb la línia duplicada.</li>
+    </ul>
+  </section>
+
+  <!-- ============================================================ 15 -->
+  <section class="sec" id="seguretat" data-toc="Seguretat">
+    <div class="eyebrow"><span>15</span><span class="tag eso">ESO</span></div>
+    <h2>Seguretat al taller</h2>
+    <div class="danger">
+      <ul>
+        <li><b>Mai deixis la talladora sola</b> mentre treballa. Hi pot haver flama.</li>
+        <li>L'<b>extractor de fums</b> i l'aire (<i>air assist</i>) han d'estar engegats.</li>
+        <li>No obris la tapa fins que la màquina hagi acabat i el fum hagi marxat.</li>
+        <li><b>Materials prohibits:</b> PVC, vinil, polipell, pell artificial, policarbonat, fibra de vidre, materials que no sàpigues què són. Desprenen gasos tòxics o corrosius.</li>
+        <li>Fes servir només materials autoritzats pel professorat (contraxapat, DM, cartró, metacrilat...).</li>
+        <li>Has de saber on és l'<b>aturada d'emergència</b> i l'extintor.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============================================================ 16 -->
+  <section class="sec" id="dreceres" data-toc="Dreceres de teclat">
+    <div class="eyebrow"><span>16</span><span class="tag eso">ESO</span></div>
+    <h2>Dreceres de teclat</h2>
+    <div class="shortcuts">
+      <div><span>Desfés / Refés</span><span><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>Z</kbd></span></div>
+      <div><span>Desa</span><span><kbd>Ctrl</kbd>+<kbd>S</kbd></span></div>
+      <div><span>Importa</span><span><kbd>Ctrl</kbd>+<kbd>I</kbd></span></div>
+      <div><span>Duplica</span><span><kbd>Ctrl</kbd>+<kbd>D</kbd></span></div>
+      <div><span>Agrupa / Desagrupa</span><span><kbd>Ctrl</kbd>+<kbd>G</kbd> / <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>G</kbd></span></div>
+      <div><span>Objecte a camí</span><span><kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd></span></div>
+      <div><span>Traç a camí</span><span><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd></span></div>
+      <div><span>Unió / Resta</span><span><kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd></span></div>
+      <div><span>Combina / Separa</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd> / <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>K</kbd></span></div>
+      <div><span>Capes i objectes</span><span><kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>L</kbd></span></div>
+      <div><span>Emplenat i traç</span><span><kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>F</kbd></span></div>
+      <div><span>Alinea i distribueix</span><span><kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>A</kbd></span></div>
+      <div><span>Propietats del document</span><span><kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>D</kbd></span></div>
+      <div><span>Encaixa la pàgina</span><span><kbd>5</kbd></span></div>
+      <div><span>Mode contorn (alterna)</span><span><kbd>Ctrl</kbd>+<kbd>5</kbd></span></div>
+      <div><span>Seleccionador / Nodes</span><span><kbd>S</kbd> / <kbd>N</kbd></span></div>
+      <div><span>Rectangle / El·lipse</span><span><kbd>R</kbd> / <kbd>E</kbd></span></div>
+      <div><span>Text / Ploma</span><span><kbd>T</kbd> / <kbd>B</kbd></span></div>
+      <div><span>Mou a la capa de dalt / de sota</span><span><kbd>Maj</kbd>+<kbd>Re Pàg</kbd> / <kbd>Maj</kbd>+<kbd>Av Pàg</kbd></span></div>
+      <div><span>Selecciona-ho tot (capa)</span><span><kbd>Ctrl</kbd>+<kbd>A</kbd></span></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 17 -->
+  <section class="sec" id="glossari" data-toc="Glossari">
+    <div class="eyebrow"><span>17</span><span class="tag eso">ESO</span></div>
+    <h2>Glossari</h2>
+    <dl class="glossari">
+      <dt>Camí (path)</dt><dd>Forma feta de nodes i segments. És el que entén la làser.</dd>
+      <dt>Node</dt><dd>Punt d'un camí. L'eina Nodes (<kbd>N</kbd>) els mou.</dd>
+      <dt>Emplenat</dt><dd>Color de l'interior d'una forma. A la làser = gravat.</dd>
+      <dt>Traç</dt><dd>Línia de la vora d'una forma. A la làser = tall o marcat.</dd>
+      <dt>Capa</dt><dd>Carpeta transparent on poses objectes per ordenar el dibuix.</dd>
+      <dt>Kerf</dt><dd>Amplada del material que crema el làser en tallar.</dd>
+      <dt>Gravat (raster / escombratge)</dt><dd>El làser va d'un costat a l'altre línia a línia per omplir una àrea.</dd>
+      <dt>Vectorial</dt><dd>Imatge descrita amb formes matemàtiques (SVG, DXF, PDF).</dd>
+      <dt>Mapa de bits</dt><dd>Imatge feta de píxels (PNG, JPG).</dd>
+      <dt>SVG simple</dt><dd>SVG sense la informació extra d'Inkscape. El més compatible.</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <p>Tutorial per a l'aula de Tecnologia · Inkscape 1.4 en català · Fitxers d'exemple generats amb <code>scripts/genera_svgs.py</code>.</p>
+  </footer>
+
+  </div>
+  </main>
+</div>
+
+<!-- ============================================================ CONFIGURACIÓ -->
+<dialog id="cfg" aria-labelledby="cfg-title">
+  <form method="dialog" id="cfg-form" novalidate>
+    <div class="cfg-head">
+      <h2 id="cfg-title" style="font-size:1.3rem">Configuració</h2>
+      <button class="btn ghost" value="close" type="submit" aria-label="Tanca la configuració">Tanca</button>
+    </div>
+    <div class="cfg-body">
+      <fieldset>
+        <legend>Programa de la talladora</legend>
+        <div class="sw-radios" id="sw-radios">
+          <label><input type="radio" name="sw" value="lightburn" id="sw-lightburn"><span><b>LightBurn</b><small>CO2 i díode · per colors</small></span></label>
+          <label><input type="radio" name="sw" value="rdworks" id="sw-rdworks"><span><b>RDWorks / LaserCut</b><small>CO2 amb Ruida · DXF</small></span></label>
+          <label><input type="radio" name="sw" value="xtool" id="sw-xtool"><span><b>xTool Creative Space</b><small>xTool M1, P2, S1, F1...</small></span></label>
+          <label><input type="radio" name="sw" value="lasergrbl" id="sw-lasergrbl"><span><b>LaserGRBL</b><small>Díode amb GRBL · gratuït</small></span></label>
+          <label><input type="radio" name="sw" value="generic" id="sw-generic"><span><b>Altres</b><small>Trotec, Epilog, Glowforge...</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Colors de cada capa</legend>
+        <div class="cfg-row">
+          <label class="field"><span>Tall</span><span class="colorpick"><input type="color" id="c-tall"><input type="text" id="t-tall" maxlength="7" aria-label="Codi del color de tall"></span></label>
+          <label class="field"><span>Gravat</span><span class="colorpick"><input type="color" id="c-gravat"><input type="text" id="t-gravat" maxlength="7" aria-label="Codi del color de gravat"></span></label>
+          <label class="field"><span>Marcat</span><span class="colorpick"><input type="color" id="c-marcat"><input type="text" id="t-marcat" maxlength="7" aria-label="Codi del color de marcat"></span></label>
+        </div>
+        <div class="cfg-row" style="margin-top:12px">
+          <label class="field"><span>Amplada del traç (mm)</span><input type="number" id="gruix" step="any" min="0.001" max="1" inputmode="decimal"></label>
+          <label class="field" style="grid-column: span 2"><span>Material</span><input type="text" id="material"></label>
+        </div>
+        <p class="cfg-msg" id="cfg-msg" role="status"></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Paràmetres de la màquina</legend>
+        <div class="tbl"><table>
+          <thead><tr><th>Operació</th><th>Potència %</th><th>Velocitat mm/s</th><th>Passades</th></tr></thead>
+          <tbody>
+            <tr><td>Tall</td><td><input type="number" id="p-tall-pot" min="1" max="100"></td><td><input type="number" id="p-tall-vel" min="1" max="1000"></td><td><input type="number" id="p-tall-pas" min="1" max="10"></td></tr>
+            <tr><td>Gravat</td><td><input type="number" id="p-gravat-pot" min="1" max="100"></td><td><input type="number" id="p-gravat-vel" min="1" max="1000"></td><td><input type="number" id="p-gravat-pas" min="1" max="10"></td></tr>
+            <tr><td>Marcat</td><td><input type="number" id="p-marcat-pot" min="1" max="100"></td><td><input type="number" id="p-marcat-vel" min="1" max="1000"></td><td><input type="number" id="p-marcat-pas" min="1" max="10"></td></tr>
+          </tbody>
+        </table></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Nivell</legend>
+        <label class="toggle"><input type="checkbox" id="adv"> Mostra els continguts de Batxillerat (nivell avançat)</label>
+      </fieldset>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:20px">
+        <button class="btn" value="close" type="submit">Desa i tanca</button>
+        <button class="btn ghost" type="button" id="cfg-reset">Torna als valors per defecte</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<script src="js/exemples.js"></script>
+<script>
+(function () {
+  "use strict";
+  // ---------------------------------------------------------------- valors per defecte
+  // Per canviar els valors per defecte del centre, edita aquest objecte.
+  var DEFAULTS = {
+    sw: "lightburn",
+    tall: "#000000", gravat: "#ff0000", marcat: "#0000ff",
+    gruix: 0.1,
+    material: "Contraxapat o DM de 3 mm (làser CO2 40–60 W)",
+    p: { tall: [65, 12, 1], gravat: [25, 250, 1], marcat: [15, 120, 1] },
+    adv: true
+  };
+  var SW_NOMS = { lightburn: "LightBurn", rdworks: "RDWorks", xtool: "xTool XCS", lasergrbl: "LaserGRBL", generic: "Altres" };
+  var MODES = {
+    lightburn: { tall: "Line", gravat: "Fill", marcat: "Line" },
+    rdworks: { tall: "Cut", gravat: "Scan", marcat: "Cut" },
+    xtool: { tall: "Tallar", gravat: "Gravar", marcat: "Marcar" },
+    lasergrbl: { tall: "Vector (tall)", gravat: "Emplenat / imatge", marcat: "Vector" },
+    generic: { tall: "Vector / Cut", gravat: "Raster / Engrave", marcat: "Vector / Score" }
+  };
+  var CLAU = "inkscape-laser-config-v1";
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function carrega() {
+    var c = clone(DEFAULTS);
+    try {
+      var s = JSON.parse(localStorage.getItem(CLAU) || "null");
+      if (s && typeof s === "object") {
+        for (var k in s) if (k in c) c[k] = s[k];
+      }
+    } catch (e) {}
+    return c;
+  }
+  function desa(c) { try { localStorage.setItem(CLAU, JSON.stringify(c)); } catch (e) {} }
+
+  var cfg = carrega();
+
+  // ---------------------------------------------------------------- utilitats de color
+  var NOMS_COLOR = { "#000000": "negre", "#ff0000": "vermell", "#0000ff": "blau", "#00ff00": "verd", "#ffff00": "groc", "#ff00ff": "magenta", "#00ffff": "cian", "#ff8000": "taronja", "#808080": "gris" };
+  function norm(h) {
+    h = String(h || "").trim().toLowerCase();
+    if (/^[0-9a-f]{6}$/.test(h)) h = "#" + h;
+    if (/^#[0-9a-f]{3}$/.test(h)) h = "#" + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+    return /^#[0-9a-f]{6}$/.test(h) ? h : null;
+  }
+  function etiqueta(h) { return (NOMS_COLOR[h] ? NOMS_COLOR[h] + " " : "") + h.toUpperCase(); }
+
+  // Substitueix els colors per defecte dels SVG pels configurats (amb marcadors per evitar cadenes).
+  function recolor(svg) {
+    return svg.replace(/#000000/gi, "@@T@@").replace(/#ff0000/gi, "@@G@@").replace(/#0000ff/gi, "@@M@@")
+      .replace(/stroke-width:0\.1(?![0-9])/g, "stroke-width:" + cfg.gruix)
+      .split("@@T@@").join(cfg.tall).split("@@G@@").join(cfg.gravat).split("@@M@@").join(cfg.marcat);
+  }
+
+  // ---------------------------------------------------------------- aplicar
+  function aplica() {
+    var r = document.documentElement.style;
+    r.setProperty("--c-tall", cfg.tall);
+    r.setProperty("--c-gravat", cfg.gravat);
+    r.setProperty("--c-marcat", cfg.marcat);
+    document.querySelectorAll("[data-hex]").forEach(function (el) {
+      var k = el.getAttribute("data-hex");
+      el.innerHTML = '<span class="sw" style="background:' + cfg[k] + '"></span> <code>' + etiqueta(cfg[k]) + "</code>";
+    });
+    document.querySelectorAll("[data-rgba]").forEach(function (el) {
+      el.textContent = cfg[el.getAttribute("data-rgba")].slice(1) + "ff";
+    });
+    document.querySelectorAll("[data-gruix]").forEach(function (el) {
+      el.textContent = String(cfg.gruix).replace(".", ",") + " mm";
+    });
+    document.querySelectorAll("[data-sw]").forEach(function (el) {
+      el.style.display = el.getAttribute("data-sw") === cfg.sw ? "block" : "none";
+    });
+    document.getElementById("chip-sw").textContent = SW_NOMS[cfg.sw] || cfg.sw;
+    document.body.classList.toggle("show-adv", !!cfg.adv);
+    document.getElementById("param-material").textContent = cfg.material;
+    var modes = MODES[cfg.sw] || MODES.generic;
+    var files = [["tall", "Tall"], ["gravat", "Gravat"], ["marcat", "Marcat"]].map(function (o) {
+      var p = cfg.p[o[0]];
+      return "<tr><td><b>" + o[1] + "</b></td><td><span class=\"sw\" style=\"background:" + cfg[o[0]] + "\"></span> <code>" + cfg[o[0]].toUpperCase() + "</code></td><td>" + modes[o[0]] +
+        "</td><td class=\"num\">" + p[0] + " %</td><td class=\"num\">" + p[1] + " mm/s</td><td class=\"num\">" + p[2] + "</td></tr>";
+    });
+    document.getElementById("param-body").innerHTML = files.join("");
+    pintaExercicis();
+    construeixIndex();
+  }
+
+  // ---------------------------------------------------------------- exercicis
+  var EXERCICIS = [
+    { f: "00-plantilla-laser.svg", t: "Plantilla buida", n: ["ESO"], d: "Pàgina de 300 × 200 mm amb les capes TALL, GRAVAT i MARCAT ja creades. Canvia la mida de pàgina a la de la teva planxa.", p: [] },
+    { f: "01-mostra-tall-gravat-marcat.svg", t: "Exercici 1 · Mostra de les tres operacions", n: ["ESO"], d: "Observa cada objecte amb Emplenat i traç i amb el panell de capes.", p: ["Obre el panell de capes i amaga'n una cada vegada.", "Selecciona cada objecte i mira a la barra d'estat a quina capa és.", "Converteix els dos textos en camí. Quines lletres del text tallat perdran l'interior?"] },
+    { f: "02-clauer.svg", t: "Exercici 2 · Clauer amb nom", n: ["ESO"], d: "Clauer de 60 × 25 mm amb forat per a l'anella.", p: ["Amb l'eina Text, canvia NOM pel teu nom.", "Ajusta la mida del text perquè no toqui el forat ni la vora (3 mm de marge).", "Centra'l verticalment amb Alinea i distribueix.", "Objecte a camí i desa una còpia per a la làser."] },
+    { f: "03-retol-porta.svg", t: "Exercici 3 · Rètol de porta", n: ["ESO"], d: "Placa de 150 × 60 mm amb dos forats, marc marcat i text gravat.", p: ["Canvia el text pel nom de la teva aula o habitació.", "Afegeix una icona: un estel (eina *) gravat o un logotip vectoritzat.", "Comprova la llista de l'apartat 10 abans d'enviar."] },
+    { f: "04-posagots.svg", t: "Exercici 4 · Posagots", n: ["ESO", "Batxillerat"], d: "Cercle de 90 mm amb una flor de sis pètals gravada i un cercle marcat.", p: ["Substitueix la flor per un disseny propi (polígons, estrelles, text en cercle).", "Batxillerat: fes el motiu amb Crea clons en mosaic (simetria P1 o rotació).", "Recorda desenllaçar els clons i fer Unió abans d'enviar."] },
+    { f: "05-caixa-encaixos.svg", t: "Exercici 5 · Caixa amb encaixos", n: ["Batxillerat"], d: "Caixa de 80 × 60 × 50 mm per a fusta de 3 mm: sis cares amb dits.", p: ["Mesura el gruix real de la fusta. Si no és 3 mm, cal tornar a generar la caixa.", "Talla primer una sola cara de prova i comprova l'encaix.", "Si queda fluixa, compensa el kerf (apartat 14) amb un desplaçament de kerf/2.", "Afegeix el teu nom gravat a la tapa."], adv: true }
+  ];
+
+  function pintaExercicis() {
+    var cont = document.getElementById("exercicis-llista");
+    var data = window.EXEMPLES_SVG || {};
+    cont.innerHTML = "";
+    EXERCICIS.forEach(function (ex) {
+      var svg = data[ex.f];
+      var div = document.createElement("article");
+      div.className = "ex" + (ex.adv ? " adv" : "");
+      var tags = ex.n.map(function (n) { return '<span class="tag ' + (n === "ESO" ? "eso" : "batx") + '">' + n + "</span>"; }).join("");
+      var prev = svg ? '<img alt="Vista prèvia de ' + ex.t + '" src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(recolor(svg)) + '">' : "";
+      var passos = ex.p.length ? '<ol class="steps">' + ex.p.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</ol>" : "";
+      div.innerHTML = '<div class="prev">' + prev + '</div><div style="min-width:0"><div class="meta">' + tags + '<span class="mono">' + ex.f + "</span></div><h3>" + ex.t + "</h3><p>" + ex.d + "</p>" + passos +
+        '<div class="actions"><button class="btn" type="button" data-dl="' + ex.f + '">Descarrega l\'SVG</button><button class="btn ghost" type="button" data-cp="' + ex.f + '">Copia el codi</button><span class="msg" aria-live="polite"></span></div></div>';
+      cont.appendChild(div);
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-dl],[data-cp]");
+    if (!b) return;
+    var f = b.getAttribute("data-dl") || b.getAttribute("data-cp");
+    var svg = (window.EXEMPLES_SVG || {})[f];
+    var msg = b.parentNode.querySelector(".msg");
+    if (!svg) { msg.textContent = "No s'ha trobat el fitxer. Obre'l des de la carpeta svg/."; return; }
+    svg = recolor(svg);
+    if (b.hasAttribute("data-dl")) {
+      try {
+        var url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+        var a = document.createElement("a");
+        a.href = url; a.download = f; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        msg.textContent = "Descàrrega iniciada: " + f;
+        document.getElementById("nota-descarrega").hidden = false;
+      } catch (err) {
+        msg.textContent = "Aquest visor no permet descarregar. Fes servir Copia el codi.";
+      }
+    } else {
+      var ok = function () { msg.textContent = "Codi copiat. Enganxa'l a Inkscape (Ctrl+V) o desa'l com a .svg."; };
+      var fallback = function () {
+        var ta = document.createElement("textarea"); ta.value = svg; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); ok(); } catch (er) { msg.textContent = "No s'ha pogut copiar."; }
+        ta.remove();
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(svg).then(ok, fallback); else fallback();
+    }
+  });
+
+  // ---------------------------------------------------------------- índex lateral
+  function construeixIndex() {
+    var ol = document.getElementById("toc-list");
+    ol.innerHTML = "";
+    var n = 0;
+    document.querySelectorAll("section[data-toc]").forEach(function (s, i) {
+      if (s.classList.contains("adv") && !cfg.adv) return;
+      var li = document.createElement("li");
+      var num = i === 0 ? "" : String(i).padStart(2, "0");
+      li.innerHTML = '<a href="#' + s.id + '"><span class="n">' + num + "</span><span>" + s.getAttribute("data-toc") + "</span>" + (s.hasAttribute("data-adv") ? '<span class="tag batx adv-tag">Batx</span>' : "") + "</a>";
+      ol.appendChild(li);
+      n++;
+    });
+  }
+  var obs = "IntersectionObserver" in window ? new IntersectionObserver(function (ents) {
+    ents.forEach(function (en) {
+      if (en.isIntersecting) {
+        document.querySelectorAll(".toc a").forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + en.target.id); });
+      }
+    });
+  }, { rootMargin: "-30% 0px -60% 0px" }) : null;
+  if (obs) document.querySelectorAll("section[data-toc]").forEach(function (s) { obs.observe(s); });
+
+  // ---------------------------------------------------------------- llista de comprovació
+  var CLAU_CK = "inkscape-laser-checklist-v1";
+  var ck = {};
+  try { ck = JSON.parse(localStorage.getItem(CLAU_CK) || "{}") || {}; } catch (e) {}
+  document.querySelectorAll("#checklist input").forEach(function (i) {
+    i.checked = !!ck[i.id];
+    i.addEventListener("change", function () { ck[i.id] = i.checked; try { localStorage.setItem(CLAU_CK, JSON.stringify(ck)); } catch (e) {} });
+  });
+  document.getElementById("reset-check").addEventListener("click", function () {
+    ck = {}; document.querySelectorAll("#checklist input").forEach(function (i) { i.checked = false; });
+    try { localStorage.removeItem(CLAU_CK); } catch (e) {}
+  });
+
+  // ---------------------------------------------------------------- diàleg de configuració
+  var dlg = document.getElementById("cfg");
+  var $ = function (id) { return document.getElementById(id); };
+  function omplirForm() {
+    var r = $("sw-" + cfg.sw); if (r) r.checked = true;
+    ["tall", "gravat", "marcat"].forEach(function (k) {
+      $("c-" + k).value = cfg[k]; $("t-" + k).value = cfg[k].toUpperCase();
+      $("p-" + k + "-pot").value = cfg.p[k][0]; $("p-" + k + "-vel").value = cfg.p[k][1]; $("p-" + k + "-pas").value = cfg.p[k][2];
+    });
+    $("gruix").value = cfg.gruix; $("material").value = cfg.material; $("adv").checked = !!cfg.adv;
+    $("cfg-msg").textContent = ""; $("cfg-msg").className = "cfg-msg";
+  }
+  function llegirForm() {
+    var nou = clone(cfg);
+    var sel = document.querySelector('input[name="sw"]:checked'); if (sel) nou.sw = sel.value;
+    ["tall", "gravat", "marcat"].forEach(function (k) {
+      var h = norm($("t-" + k).value) || norm($("c-" + k).value); if (h) nou[k] = h;
+      nou.p[k] = [+$("p-" + k + "-pot").value || cfg.p[k][0], +$("p-" + k + "-vel").value || cfg.p[k][1], +$("p-" + k + "-pas").value || cfg.p[k][2]];
+    });
+    var g = parseFloat(String($("gruix").value).replace(",", ".")); if (g > 0 && g <= 1) nou.gruix = g;
+    nou.material = $("material").value.trim() || DEFAULTS.material;
+    nou.adv = $("adv").checked;
+    return nou;
+  }
+  function valida(n) {
+    if (n.tall === n.gravat || n.tall === n.marcat || n.gravat === n.marcat) return "Cada operació ha de tenir un color diferent.";
+    return "";
+  }
+  function canviEnViu() {
+    var n = llegirForm(); var err = valida(n);
+    $("cfg-msg").textContent = err || "Canvis aplicats.";
+    $("cfg-msg").className = "cfg-msg" + (err ? " err" : "");
+    if (!err) { cfg = n; desa(cfg); aplica(); }
+  }
+  ["tall", "gravat", "marcat"].forEach(function (k) {
+    $("c-" + k).addEventListener("input", function () { $("t-" + k).value = this.value.toUpperCase(); canviEnViu(); });
+    $("t-" + k).addEventListener("change", function () { var h = norm(this.value); if (h) $("c-" + k).value = h; else this.value = cfg[k].toUpperCase(); canviEnViu(); });
+  });
+  $("cfg-form").addEventListener("change", function (e) { if (!/^(c-|t-)/.test(e.target.id)) canviEnViu(); });
+  $("cfg-reset").addEventListener("click", function () { cfg = clone(DEFAULTS); desa(cfg); omplirForm(); aplica(); $("cfg-msg").textContent = "Valors per defecte restaurats."; });
+  function obre() { omplirForm(); if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
+  $("obre-cfg").addEventListener("click", obre);
+  document.querySelectorAll("[data-obre-cfg]").forEach(function (b) { b.addEventListener("click", obre); });
+
+  aplica();
+})();
+</script>
+</body>
+</html>

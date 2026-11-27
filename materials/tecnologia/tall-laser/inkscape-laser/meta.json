@@ -1,0 +1,30 @@
+{
+  "titol": "Inkscape per a la talladora làser",
+  "descripcio": "Tutorial pas a pas en català per dissenyar amb Inkscape 1.4 peces per a la talladora làser: tall, gravat i marcat de fusta. Amb exemples SVG descarregables (clauer, rètol, posagots, caixa amb encaixos) i configuració per a LightBurn, RDWorks, xTool i LaserGRBL.",
+  "materia": "tecnologia",
+  "temes": [
+    "tall-laser"
+  ],
+  "nivells": [
+    "3ESO",
+    "4ESO",
+    "1BAT",
+    "2BAT"
+  ],
+  "tipus": "teoria",
+  "origen": "propi",
+  "obrir": "index.html",
+  "imatge": "img/cap-01-interficie.png",
+  "font": {
+    "autor": "Nil Bellmunt Vilalta",
+    "url": "",
+    "llicencia": ""
+  },
+  "etiquetes": [
+    "Inkscape",
+    "talladora làser",
+    "SVG",
+    "disseny vectorial"
+  ],
+  "data": "2026-11-27"
+}

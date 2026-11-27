@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+     width="300mm" height="200mm" viewBox="0 0 300 200" version="1.1">
+  <title>Plantilla làser (300 x 200 mm)</title>
+  <desc>Plantilla buida amb les capes TALL, GRAVAT i MARCAT. Ajusta la mida de pàgina a l'àrea de treball de la teva talladora.</desc>
+  <sodipodi:namedview id="namedview1" pagecolor="#ffffff" bordercolor="#666666"
+     inkscape:document-units="mm" showgrid="false" />
+  <!-- CAPA GRAVAT: farciment (color de gravat), sense traç. Es grava primer. -->
+  <g inkscape:groupmode="layer" id="capa-gravat" inkscape:label="GRAVAT">
+  </g>
+  <!-- CAPA MARCAT: línia fina superficial (opcional). -->
+  <g inkscape:groupmode="layer" id="capa-marcat" inkscape:label="MARCAT">
+  </g>
+  <!-- CAPA TALL: només contorns (color de tall), sense farciment, 0.1 mm. Es talla l'últim. -->
+  <g inkscape:groupmode="layer" id="capa-tall" inkscape:label="TALL">
+  </g>
+</svg>

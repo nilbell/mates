@@ -403,6 +403,25 @@
           ]
         }
       ]
+    },
+    {
+      "id": "tecnologia",
+      "nom": "Tecnologia",
+      "blocs": [
+        {
+          "nom": "Disseny i fabricació digital",
+          "temes": [
+            {
+              "id": "tall-laser",
+              "nom": "Disseny per a talladora làser (Inkscape)"
+            },
+            {
+              "id": "tecnologia-altres",
+              "nom": "Altres (tecnologia)"
+            }
+          ]
+        }
+      ]
     }
   ],
   "recursos": [
@@ -824,6 +843,37 @@
       "imatge": "materials/matematiques/probabilitat/probabilitat-grans-nombres/captura.png",
       "extres": [],
       "carpeta": "materials/matematiques/probabilitat/probabilitat-grans-nombres"
+    },
+    {
+      "id": "materials/tecnologia/tall-laser/inkscape-laser",
+      "titol": "Inkscape per a la talladora làser",
+      "descripcio": "Tutorial pas a pas en català per dissenyar amb Inkscape 1.4 peces per a la talladora làser: tall, gravat i marcat de fusta. Amb exemples SVG descarregables (clauer, rètol, posagots, caixa amb encaixos) i configuració per a LightBurn, RDWorks, xTool i LaserGRBL.",
+      "materia": "tecnologia",
+      "temes": [
+        "tall-laser"
+      ],
+      "nivells": [
+        "3ESO",
+        "4ESO",
+        "1BAT",
+        "2BAT"
+      ],
+      "tipus": "teoria",
+      "origen": "propi",
+      "autor": "Nil Bellmunt Vilalta",
+      "urlFont": "",
+      "llicencia": "",
+      "etiquetes": [
+        "Inkscape",
+        "talladora làser",
+        "SVG",
+        "disseny vectorial"
+      ],
+      "data": "2026-11-27",
+      "obrir": "materials/tecnologia/tall-laser/inkscape-laser/index.html",
+      "imatge": "materials/tecnologia/tall-laser/inkscape-laser/img/cap-01-interficie.png",
+      "extres": [],
+      "carpeta": "materials/tecnologia/tall-laser/inkscape-laser"
     },
     {
       "id": "materials/tutoria/xarxes-socials/xarxes-socials-institut",
