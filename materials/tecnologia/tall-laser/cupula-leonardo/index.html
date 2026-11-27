@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cúpula de Leonardo — fulls per a talladora làser</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:,">
+<style>
+:root{
+  --bg:#f6f1ea;--panel:#fffdf9;--ink:#2b2118;--muted:#7a6b5c;--line:#e3d8c9;
+  --accent:#a8541c;--accent-2:#7b3a0f;--ok:#2f7d4f;--warn:#b3261e;--wood:#f0d9b5;--wood-line:#c9a56b;
+  --radius:12px;
+}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.2rem;background:var(--panel);border-bottom:1px solid var(--line)}
+.logo{width:2.4rem;height:2.4rem;flex:none;display:block}
+.logo svg{width:100%;height:100%;display:block}
+h1{font-size:1.25rem;margin:0}
+header small{color:var(--muted);display:block;font-size:.8rem;font-weight:400}
+main{display:grid;grid-template-columns:minmax(300px,370px) 1fr;gap:1rem;padding:1rem;max-width:1500px;margin:0 auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem 1rem;margin-bottom:.9rem}
+.card h2{font-size:.95rem;margin:0 0 .6rem;color:var(--accent-2);text-transform:uppercase;letter-spacing:.04em}
+.row{display:flex;gap:.6rem;align-items:end;margin-bottom:.55rem;flex-wrap:wrap}
+label{display:flex;flex-direction:column;font-size:.8rem;color:var(--muted);gap:.15rem;flex:1;min-width:90px}
+input,select{font:inherit;color:var(--ink);padding:.4rem .5rem;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.45rem .8rem;border-radius:8px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.primary:hover{background:var(--accent-2)}
+.scale-row{display:flex;gap:.6rem;align-items:center}
+.scale-row input[type=range]{flex:1;padding:0;accent-color:var(--accent)}
+.scale-row input[type=number]{width:5.6rem}
+details summary{cursor:pointer;color:var(--accent-2);font-weight:600;margin-bottom:.5rem}
+.hint{font-size:.78rem;color:var(--muted);margin:.2rem 0 0}
+.result{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:baseline;margin-bottom:.5rem}
+.big{font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1}
+.big small{font-size:.95rem;font-weight:500;color:var(--muted)}
+.stat{font-size:.85rem;color:var(--muted)}
+.stat b{color:var(--ink)}
+.msg{border-radius:10px;padding:.6rem .8rem;margin:.5rem 0;font-size:.9rem;background:#fdecea;border:1px solid #f3b9b4;color:#7a1a14}
+.msg.ok{background:#e9f5ee;border-color:#b5dcc4;color:#1e5a38}
+.msg button{margin-top:.4rem}
+#vista{background:var(--wood);border:2px solid var(--wood-line);border-radius:6px;overflow:hidden;line-height:0}
+#vista svg{width:100%;height:auto;display:block}
+#vista.buit{background:#fff;border-color:var(--line)}
+.dl{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{padding:.25rem .4rem;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+tr.cur td{background:#fbeede;font-weight:600}
+.check{flex-direction:row;align-items:center;gap:.5rem;color:var(--ink);font-size:.9rem}
+.check input{width:auto}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo" id="logo"></span>
+  <h1>Cúpula de Leonardo <small>Reparteix les peces en un full de fusta i descarrega l'arxiu per a la talladora làser</small></h1>
+</header>
+
+<main>
+<div>
+  <section class="card">
+    <h2>1 · Full de fusta</h2>
+    <div class="row">
+      <label>Mida estàndard
+        <select id="preset"></select>
+      </label>
+    </div>
+    <div class="row">
+      <label>Amplada (mm)<input type="number" id="fw" min="10" step="1"></label>
+      <label>Alçada (mm)<input type="number" id="fh" min="10" step="1"></label>
+      <button id="gira" title="Intercanvia amplada i alçada">⇄</button>
+    </div>
+    <div class="row">
+      <label>Marge (mm)<input type="number" id="marge" min="0" step="0.5"></label>
+      <label>Separació entre peces (mm)<input type="number" id="sep" min="0" step="0.5"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2 · Escala</h2>
+    <div class="scale-row">
+      <input type="range" id="escalaR" min="10" max="200" step="1">
+      <input type="number" id="escala" min="5" max="500" step="0.1"> %
+    </div>
+    <p class="hint" id="midaPeca"></p>
+    <div class="row" style="margin-top:.6rem">
+      <label>Vull que hi càpiguen (peces)<input type="number" id="volN" min="1" step="1" value="8"></label>
+      <button id="maxEscala">Escala màxima</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3 · Peça</h2>
+    <details>
+      <summary>Mides de la peça (per defecte, les del dibuix)</summary>
+      <div class="row">
+        <label>Llargada (mm)<input type="number" id="pL" step="1"></label>
+        <label>Alçada (mm)<input type="number" id="pH" step="1"></label>
+      </div>
+      <div class="row">
+        <label>Distància entre osques (mm)<input type="number" id="pPas" step="1"></label>
+        <label>Amplada de l'osca (mm)<input type="number" id="pOsW" step="0.5"></label>
+      </div>
+      <div class="row">
+        <label>Profunditat osques B i C (mm)<input type="number" id="pOsTop" step="0.5"></label>
+        <label>Desnivell A/D respecte B/C (mm)<input type="number" id="pDesn" step="0.5"></label>
+      </div>
+      <div class="row">
+        <label>Arrodoniment cantonades (mm)<input type="number" id="pRad" step="0.5" min="0"></label>
+        <button id="resetPeca">Valors del dibuix</button>
+      </div>
+      <p class="hint" id="infoPeca"></p>
+    </details>
+    <label class="check"><input type="checkbox" id="logoOn" checked> Gravar un logo a cada peça</label>
+    <div class="row" style="margin-top:.4rem">
+      <label>Amplada màxima del logo (mm)<input type="number" id="logoW" min="5" step="1"></label>
+    </div>
+    <div class="row">
+      <button id="logoPuja" type="button">⬆ Puja el teu logo…</button>
+      <button id="logoReset" type="button">Logo de l'Institut</button>
+      <input type="file" id="logoFitxer" accept="image/png,image/jpeg,image/svg+xml,image/webp,image/gif" hidden>
+    </div>
+    <p class="hint" id="logoNom">Ara: logo de l'Institut Ermengol IV.</p>
+    <div id="logoAjust" hidden>
+      <div class="row">
+        <label>Llindar de negre (<span id="llindarV">150</span>)<input type="range" id="llindar" min="30" max="230" step="1" value="150"></label>
+      </div>
+      <label class="check"><input type="checkbox" id="logoInv"> Invertir (logo clar sobre fons fosc)</label>
+    </div>
+    <p class="hint">Es grava el que és <b>fosc</b> a la imatge (millor en blanc i negre, amb fons blanc o transparent). La imatge es processa al teu ordinador i no es puja enlloc.</p>
+  </section>
+
+  <section class="card">
+    <h2>Capacitat segons el full</h2>
+    <table id="taula"></table>
+    <p class="hint">Amb l'escala, el marge i la separació actuals.</p>
+  </section>
+</div>
+
+<div>
+  <section class="card">
+    <div class="result">
+      <div class="big" id="nPeces">0 <small>peces</small></div>
+      <div class="stat" id="stats"></div>
+    </div>
+    <div id="avis"></div>
+    <div id="vista"></div>
+    <div class="dl">
+      <button class="primary" id="dSvg">⬇ Descarrega SVG</button>
+      <button class="primary" id="dDxf">⬇ Descarrega DXF</button>
+    </div>
+    <p class="hint">Unitats en mm. <b style="color:#c00">Vermell</b> = tallar, <b>negre</b> = gravar (el logo). Gravar primer i tallar després. Les peces es reparteixen automàticament de la millor manera (girant-ne algunes si convé).</p>
+  </section>
+</div>
+</main>
+
+<script src="js/dades-logo.js"></script>
+<script>
+// ---------------------------------------------------------------- logo i favicon
+const LOGO_SVG=`<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="14" fill="#a8541c"/><path d="M6 25h13v-6h9v6h8v-6h9v6h13v14H45v6h-9v-6h-8v6h-9v-6H6z" fill="#fff"/><circle cx="19" cy="32" r="2.4" fill="#a8541c"/><circle cx="45" cy="32" r="2.4" fill="#a8541c"/></svg>`;
+document.getElementById('logo').innerHTML=LOGO_SVG;
+document.getElementById('fav').href='data:image/svg+xml,'+encodeURIComponent(LOGO_SVG);
+
+// ---------------------------------------------------------------- valors per defecte
+const PECA0={L:500,H:50,pas:140,osW:30,osTop:15,desn:9,rad:4};
+const FULLS=[
+  ['A3 (420 × 297)',420,297],['A4 (297 × 210)',297,210],['A2 (594 × 420)',594,420],['A1 (841 × 594)',841,594],
+  ['600 × 400',600,400],['600 × 300',600,300],['900 × 600',900,600],['1000 × 600',1000,600],['Personalitzat',0,0]
+];
+const $=id=>document.getElementById(id);
+const ids=['fw','fh','marge','sep','escala','pL','pH','pPas','pOsW','pOsTop','pDesn','pRad','logoW','volN'];
+let estat={fw:420,fh:297,marge:3,sep:2,escala:100,pL:500,pH:50,pPas:140,pOsW:30,pOsTop:15,pDesn:9,pRad:4,logoW:70,logoOn:true,volN:8};
+try{const g=JSON.parse(localStorage.getItem('cupula-leonardo')||'null');if(g&&typeof g==='object')Object.assign(estat,g)}catch(e){}
+
+const num=(v,d)=>{v=parseFloat(v);return isFinite(v)?v:d};
+const fmt=(x,d=3)=>{let s=x.toFixed(d);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s};
+
+// ---------------------------------------------------------------- geometria de la peça
+const BULGE90=Math.tan(Math.PI/8);
+function paramsPeca(){return{L:estat.pL,H:estat.pH,pas:estat.pPas,osW:estat.pOsW,osTop:estat.pOsTop,desn:estat.pDesn,rad:estat.pRad}}
+function peçaValida(p){
+  const e=(p.L-3*p.pas)/2;
+  if(!(p.L>0&&p.H>0&&p.pas>0&&p.osW>0))return 'Mides no vàlides.';
+  if(e-p.osW/2<0)return 'Les osques surten de la peça: redueix la distància entre osques o l\'amplada.';
+  if(p.pas<=p.osW)return 'La distància entre osques ha de ser més gran que l\'amplada de l\'osca.';
+  if(p.osTop+p.desn>=p.H||p.osTop<=0||p.desn<0)return 'Les profunditats de les osques no caben en l\'alçada de la peça.';
+  return '';
+}
+// contorn antihorari, y cap amunt, origen a baix a l'esquerra: [[x,y,bulge],...]
+function contornPeca(p){
+  const e=(p.L-3*p.pas)/2,a=e,b=e+p.pas,c=e+2*p.pas,d=e+3*p.pas,h=p.osW/2;
+  const yb=p.H-(p.osTop+p.desn),yt=p.H-p.osTop;
+  const v=[
+    [0,0,1],[a-h,0,1],[a-h,yb,0],[a+h,yb,0],[a+h,0,1],
+    [d-h,0,1],[d-h,yb,0],[d+h,yb,0],[d+h,0,1],
+    [p.L,0,1],[p.L,p.H,1],
+    [c+h,p.H,1],[c+h,yt,0],[c-h,yt,0],[c-h,p.H,1],
+    [b+h,p.H,1],[b+h,yt,0],[b-h,yt,0],[b-h,p.H,1],
+    [0,p.H,1]];
+  const n=v.length,out=[];
+  v.forEach((q,i)=>{
+    if(!q[2]||p.rad<=0){out.push([q[0],q[1],0]);return}
+    const pr=v[(i+n-1)%n],nx=v[(i+1)%n];
+    const l1=Math.hypot(pr[0]-q[0],pr[1]-q[1]),l2=Math.hypot(nx[0]-q[0],nx[1]-q[1]);
+    const r=Math.min(p.rad,l1/2,l2/2);
+    out.push([q[0]+(pr[0]-q[0])/l1*r,q[1]+(pr[1]-q[1])/l1*r,BULGE90]);
+    out.push([q[0]+(nx[0]-q[0])/l2*r,q[1]+(nx[1]-q[1])/l2*r,0]);
+  });
+  return out;
+}
+// logo en coordenades de la peça (mm, y amunt)
+function logoPeca(p,ample){
+  const e=(p.L-3*p.pas)/2,cx=(e+2*p.pas+e+3*p.pas)/2,cy=p.H/2;
+  // que no surti de la zona lliure entre l'osca C i l'osca D, ni de l'alçada de la peça
+  const lliure=Math.max(5,p.pas-p.osW-6),maxH=Math.max(5,p.H-8);
+  const k=Math.min(ample,lliure)/LOGO_ACT.w;
+  const k2=Math.min(k,maxH/LOGO_ACT.h);
+  ample=LOGO_ACT.w*k2;const hh=LOGO_ACT.h*k2;
+  return LOGO_ACT.c.map(c=>{const o=[];for(let i=0;i<c.length;i+=2)o.push([cx-ample/2+c[i]*k2,cy+hh/2-c[i+1]*k2,0]);return o});
+}
+
+// ---------------------------------------------------------------- repartiment òptim
+// pw x ph = peça (llarga x curta). Retorna {n, items:[{x,y,rot}]} dins d'un rectangle UW x UH.
+function empaqueta(UW,UH,pw,ph,sep){
+  const memo=new Map(),EPS=1e-6;
+  function best(w,h,depth){
+    const key=Math.round(w*100)+','+Math.round(h*100)+','+depth;
+    if(memo.has(key))return memo.get(key);
+    let res={n:0};
+    if(depth>0&&w>0&&h>0){
+      for(const rot of [0,1]){
+        const a=rot?ph:pw,b=rot?pw:ph;
+        const cols=Math.floor((w+sep+EPS)/(a+sep)),rows=Math.floor((h+sep+EPS)/(b+sep));
+        if(cols<1||rows<1)continue;
+        const ks=[];
+        if(rows<=12){for(let k=rows;k>=1;k--)ks.push(k)}else{ks.push(rows,rows-1,rows-2,Math.ceil(rows/2),1)}
+        for(const k of ks){
+          const bw=cols*(a+sep)-sep,bh=k*(b+sep)-sep,nb=cols*k;
+          for(const mode of [0,1]){
+            const r1=mode?{x:bw+sep,y:0,w:w-bw-sep,h:h}:{x:bw+sep,y:0,w:w-bw-sep,h:bh};
+            const r2=mode?{x:0,y:bh+sep,w:bw,h:h-bh-sep}:{x:0,y:bh+sep,w:w,h:h-bh-sep};
+            const s1=best(r1.w,r1.h,depth-1),s2=best(r2.w,r2.h,depth-1);
+            const n=nb+s1.n+s2.n;
+            if(n>res.n)res={n,blk:{rot,cols,k,a,b},r1,r2,s1,s2};
+          }
+        }
+      }
+    }
+    memo.set(key,res);return res;
+  }
+  const arrel=best(UW,UH,3),items=[];
+  (function recull(nd,ox,oy){
+    if(!nd||!nd.n)return;
+    const bl=nd.blk;
+    for(let r=0;r<bl.k;r++)for(let c=0;c<bl.cols;c++)items.push({x:ox+c*(bl.a+sep),y:oy+r*(bl.b+sep),rot:bl.rot});
+    recull(nd.s1,ox+nd.r1.x,oy+nd.r1.y);recull(nd.s2,ox+nd.r2.x,oy+nd.r2.y);
+  })(arrel,0,0);
+  return{n:arrel.n,items};
+}
+
+// ---------------------------------------------------------------- càlcul complet
+function calcula(sc=estat.escala/100,fw=estat.fw,fh=estat.fh){
+  const p=paramsPeca();
+  const UW=fw-2*estat.marge,UH=fh-2*estat.marge;
+  return empaqueta(UW,UH,p.L*sc,p.H*sc,estat.sep);
+}
+function escalaMaxima(N){
+  const f=s=>calcula(s/100).n;
+  let s=300;
+  while(s>=1&&f(s)<N)s-=1;
+  if(s<1)return null;
+  let t=s;
+  for(let x=s+0.1;x<=s+1.0001;x+=0.1){if(f(x)>=N)t=x}
+  return Math.floor(t*10)/10;
+}
+
+// polilínies en coordenades del full (y avall, bulge>0 = antihorari visual)
+function geometria(r){
+  const p=paramsPeca(),sc=estat.escala/100;
+  const cont=contornPeca(p),logo=estat.logoOn?logoPeca(p,estat.logoW):[];
+  const ox0=estat.marge,oy0=estat.marge;
+  const talls=[],gravats=[];
+  const tf=(pt,it)=>{
+    const lx=pt[0],ly=pt[1];
+    return it.rot===0?[ox0+it.x+sc*lx,oy0+it.y+sc*(p.H-ly),pt[2]]:[ox0+it.x+sc*ly,oy0+it.y+sc*lx,pt[2]];
+  };
+  r.items.forEach(it=>{
+    talls.push(cont.map(q=>tf(q,it)));
+    logo.forEach(c=>gravats.push(c.map(q=>tf(q,it))));
+  });
+  return{talls,gravats};
+}
+
+// ---------------------------------------------------------------- sortida SVG / DXF
+function dCami(poli){
+  const n=poli.length;let d='';
+  for(let i=0;i<n;i++){
+    const [x,y,b]=poli[i],q=poli[(i+1)%n];
+    if(i===0)d+='M'+fmt(x)+' '+fmt(y);
+    if(b===0){if(i<n-1)d+='L'+fmt(q[0])+' '+fmt(q[1])}
+    else{
+      const ch=Math.hypot(q[0]-x,q[1]-y),th=4*Math.atan(Math.abs(b)),r=ch/(2*Math.sin(th/2));
+      d+='A'+fmt(r)+' '+fmt(r)+' 0 0 '+(b>0?0:1)+' '+fmt(q[0])+' '+fmt(q[1]);
+    }
+  }
+  return d+'Z';
+}
+function svgText(g,fw,fh,titol,previ){
+  let s='<svg xmlns="http://www.w3.org/2000/svg" '+(previ?'':'width="'+fmt(fw)+'mm" height="'+fmt(fh)+'mm" ')+'viewBox="0 0 '+fmt(fw)+' '+fmt(fh)+'">';
+  s+='<title>'+titol+'</title>';
+  if(!previ)s+='<!-- Unitats: mm. GRAVAT = negre (gravar); TALL = vermell (tallar). Gravar primer i tallar després. -->';
+  if(g.gravats.length)s+='<g id="GRAVAT" fill="#000000" fill-rule="evenodd" stroke="none"><path d="'+g.gravats.map(dCami).join('')+'"/></g>';
+  s+='<g id="TALL" fill="'+(previ?'rgba(255,255,255,.35)':'none')+'" stroke="#FF0000" stroke-width="'+(previ?'1.2':'0.1')+'" stroke-linejoin="round"'+(previ?' vector-effect="non-scaling-stroke"':'')+'>';
+  g.talls.forEach(p=>{s+='<path d="'+dCami(p)+'"'+(previ?' vector-effect="non-scaling-stroke"':'')+'/>'});
+  return s+'</g></svg>';
+}
+function dxfText(g,fh){
+  const L=['0','SECTION','2','HEADER','9','$ACADVER','1','AC1009','0','ENDSEC',
+   '0','SECTION','2','TABLES','0','TABLE','2','LTYPE','70','1','0','LTYPE','2','CONTINUOUS','70','0','3','Solid line','72','65','73','0','40','0.0','0','ENDTAB',
+   '0','TABLE','2','LAYER','70','2','0','LAYER','2','TALL','70','0','62','1','6','CONTINUOUS','0','LAYER','2','GRAVAT','70','0','62','5','6','CONTINUOUS','0','ENDTAB','0','ENDSEC',
+   '0','SECTION','2','ENTITIES'];
+  const pol=(capa,poli)=>{
+    L.push('0','POLYLINE','8',capa,'66','1','70','1');
+    poli.forEach(q=>{L.push('0','VERTEX','8',capa,'10',(q[0]).toFixed(4),'20',(fh-q[1]).toFixed(4),'30','0.0');if(q[2]!==0)L.push('42',q[2].toFixed(6))});
+    L.push('0','SEQEND','8',capa);
+  };
+  g.gravats.forEach(p=>pol('GRAVAT',p));
+  g.talls.forEach(p=>pol('TALL',p));
+  L.push('0','ENDSEC','0','EOF');
+  return L.join('\r\n')+'\r\n';
+}
+function descarrega(nom,text,mime){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:mime}));
+  a.download=nom;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+}
+
+// ---------------------------------------------------------------- interfície
+let ultim=null;
+function actualitza(){
+  const p=paramsPeca(),err=peçaValida(p);
+  const sc=estat.escala/100;
+  $('infoPeca').textContent=err?'⚠ '+err:('Osques a '+fmt((p.L-3*p.pas)/2)+', '+fmt((p.L-3*p.pas)/2+p.pas)+', '+fmt((p.L-3*p.pas)/2+2*p.pas)+' i '+fmt((p.L-3*p.pas)/2+3*p.pas)+' mm; les de baix (A i D) fan '+fmt(p.H-p.osTop-p.desn)+' mm de fondària.');
+  $('midaPeca').textContent='Peça resultant: '+fmt(p.L*sc,1)+' × '+fmt(p.H*sc,1)+' mm (osques de '+fmt(p.osW*sc,1)+' mm).';
+  $('escalaR').value=Math.min(200,Math.max(10,estat.escala));
+  const avis=$('avis');avis.innerHTML='';
+  if(err){
+    $('nPeces').innerHTML='0 <small>peces</small>';$('stats').textContent='';$('vista').innerHTML='';
+    avis.innerHTML='<div class="msg">'+err+'</div>';ultim=null;desaEstat();return;
+  }
+  const r=calcula();
+  const g=geometria(r);
+  ultim={r,g};
+  $('nPeces').innerHTML=r.n+' <small>'+(r.n===1?'peça':'peces')+'</small>';
+  const area=(p.L*p.H-2*p.osW*(p.H-p.osTop-p.desn)-2*p.osW*p.osTop)*sc*sc;
+  const usat=100*r.n*area/(estat.fw*estat.fh);
+  const gir=r.items.filter(i=>i.rot).length;
+  $('stats').innerHTML='Full de <b>'+fmt(estat.fw)+' × '+fmt(estat.fh)+' mm</b> · aprofitament <b>'+fmt(usat,1)+' %</b>'+(r.n?' · '+(gir?gir+' girades 90°':'totes en el mateix sentit'):'');
+  if(r.n===0){
+    const m1=escalaMaxima(1),m=escalaMaxima(Math.max(1,num(estat.volN,1)));
+    let h='<div class="msg">A l\'escala del '+fmt(estat.escala)+' % la peça ('+fmt(p.L*sc,1)+' × '+fmt(p.H*sc,1)+' mm) <b>no hi cap</b> en un full de '+fmt(estat.fw)+' × '+fmt(estat.fh)+' mm (amb marge de '+fmt(estat.marge)+' mm).';
+    if(m1!==null)h+='<br>Escala màxima perquè n\'hi càpiga 1: <b>'+fmt(m1)+' %</b> <button data-esc="'+m1+'">Aplica</button>';
+    avis.innerHTML=h+'</div>';
+  }
+  $('vista').classList.toggle('buit',r.n===0);
+  $('vista').innerHTML=r.n?svgText(g,estat.fw,estat.fh,'previ',true):previPecaFora(p,sc);
+  omplirTaula();desaEstat();
+}
+// quan no hi cap cap peça: el full i la peça (a la mateixa escala) sortint-ne, perquè es vegi per què
+function previPecaFora(p,sc){
+  const m=estat.marge,pw=p.L*sc,ph=p.H*sc;
+  const vw=Math.max(estat.fw,m+pw)+10,vh=Math.max(estat.fh,m+ph)+10;
+  const cont=contornPeca(p).map(q=>[m+sc*q[0],m+sc*(p.H-q[1]),q[2]]);
+  const logo=estat.logoOn?logoPeca(p,estat.logoW).map(c=>c.map(q=>[m+sc*q[0],m+sc*(p.H-q[1]),0])):[];
+  let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+fmt(vw)+' '+fmt(vh)+'">';
+  s+='<rect x="0" y="0" width="'+fmt(estat.fw)+'" height="'+fmt(estat.fh)+'" fill="#f0d9b5" stroke="#c9a56b" stroke-width="1.5" vector-effect="non-scaling-stroke"/>';
+  if(logo.length)s+='<path fill="#000" fill-rule="evenodd" d="'+logo.map(dCami).join('')+'"/>';
+  s+='<path d="'+dCami(cont)+'" fill="rgba(255,255,255,.35)" stroke="#d00" stroke-width="1.5" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/>';
+  return s+'</svg>';
+}
+function omplirTaula(){
+  let h='<tr><th>Full</th><th>Peces</th></tr>';
+  FULLS.filter(f=>f[1]).forEach(f=>{
+    const n=calcula(undefined,f[1],f[2]).n,cur=f[1]===estat.fw&&f[2]===estat.fh;
+    h+='<tr'+(cur?' class="cur"':'')+'><td>'+f[0]+' mm</td><td>'+n+'</td></tr>';
+  });
+  $('taula').innerHTML=h;
+}
+function desaEstat(){try{localStorage.setItem('cupula-leonardo',JSON.stringify(estat))}catch(e){}}
+function llegeix(){
+  ids.forEach(id=>{const k=id==='fw'||id==='fh'||id==='marge'||id==='sep'||id==='escala'||id==='volN'||id==='logoW'?id:id;estat[k]=num($(id).value,estat[k])});
+  estat.logoOn=$('logoOn').checked;
+}
+function escriu(){
+  ids.forEach(id=>{$(id).value=estat[id]});
+  $('logoOn').checked=estat.logoOn;
+  const f=FULLS.findIndex(f=>f[1]===estat.fw&&f[2]===estat.fh);
+  $('preset').value=f>=0?f:FULLS.length-1;
+}
+// presets
+$('preset').innerHTML=FULLS.map((f,i)=>'<option value="'+i+'">'+f[0]+(f[1]?' mm':'')+'</option>').join('');
+$('preset').addEventListener('change',()=>{
+  const f=FULLS[+$('preset').value];
+  if(f[1]){estat.fw=f[1];estat.fh=f[2];escriu();actualitza()}
+});
+ids.forEach(id=>$(id).addEventListener('input',()=>{
+  const v=num($(id).value,NaN);
+  if(!isFinite(v)||(['fw','fh','pL','pH','pPas','pOsW','logoW'].includes(id)&&v<=0))return;
+  llegeix();
+  if(id==='fw'||id==='fh'){const f=FULLS.findIndex(f=>f[1]===estat.fw&&f[2]===estat.fh);$('preset').value=f>=0?f:FULLS.length-1}
+  actualitza();
+}));
+$('logoOn').addEventListener('change',()=>{llegeix();actualitza()});
+$('escalaR').addEventListener('input',()=>{estat.escala=num($('escalaR').value,100);$('escala').value=estat.escala;actualitza()});
+$('gira').addEventListener('click',()=>{[estat.fw,estat.fh]=[estat.fh,estat.fw];escriu();actualitza()});
+$('resetPeca').addEventListener('click',()=>{
+  Object.assign(estat,{pL:PECA0.L,pH:PECA0.H,pPas:PECA0.pas,pOsW:PECA0.osW,pOsTop:PECA0.osTop,pDesn:PECA0.desn,pRad:PECA0.rad,logoW:70});escriu();actualitza();
+});
+$('maxEscala').addEventListener('click',()=>{
+  const n=Math.max(1,Math.round(num($('volN').value,1)));
+  const m=escalaMaxima(n);
+  if(m===null){$('avis').innerHTML='<div class="msg">No és possible tenir-ne '+n+' en aquest full.</div>';return}
+  estat.escala=m;estat.volN=n;escriu();actualitza();
+});
+$('avis').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-esc]');
+  if(b){estat.escala=parseFloat(b.dataset.esc);escriu();actualitza()}
+});
+function nomFitxer(ext){
+  return 'cupula-leonardo-'+fmt(estat.fw)+'x'+fmt(estat.fh)+'-'+ultim.r.n+'peces-escala'+fmt(estat.escala)+'.'+ext;
+}
+$('dSvg').addEventListener('click',()=>{
+  if(!ultim||!ultim.r.n){alert('No hi ha cap peça per descarregar. Redueix l\'escala o fes servir un full més gran.');return}
+  descarrega(nomFitxer('svg'),svgText(ultim.g,estat.fw,estat.fh,'Cúpula de Leonardo - '+ultim.r.n+' peces',false),'image/svg+xml');
+});
+$('dDxf').addEventListener('click',()=>{
+  if(!ultim||!ultim.r.n){alert('No hi ha cap peça per descarregar. Redueix l\'escala o fes servir un full més gran.');return}
+  descarrega(nomFitxer('dxf'),dxfText(ultim.g,estat.fh),'application/dxf');
+});
+
+// ---------------------------------------------------------------- logo propi
+// El logo per defecte és LOGO_DADES (js/dades-logo.js). Un logo pujat es vectoritza aquí mateix.
+let LOGO_ACT=LOGO_DADES;
+let logoImg=null; // {gris:Float32Array, w, h, nom} de la imatge pujada
+
+function gaussianBlur(g,w,h,sigma){
+  const r=Math.max(1,Math.ceil(sigma*3)),ker=[];let s=0;
+  for(let i=-r;i<=r;i++){const v=Math.exp(-i*i/(2*sigma*sigma));ker.push(v);s+=v}
+  for(let i=0;i<ker.length;i++)ker[i]/=s;
+  const t=new Float32Array(w*h),o=new Float32Array(w*h);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){let a=0;for(let i=-r;i<=r;i++){const xx=Math.min(w-1,Math.max(0,x+i));a+=g[y*w+xx]*ker[i+r]}t[y*w+x]=a}
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){let a=0;for(let i=-r;i<=r;i++){const yy=Math.min(h-1,Math.max(0,y+i));a+=t[yy*w+x]*ker[i+r]}o[y*w+x]=a}
+  return o;
+}
+// marching squares sobre la regió v<nivell; v té w*h valors. Retorna contorns [[x,y],...]
+function contorns(v,w,h,nivell){
+  const dins=i=>v[i]<nivell;
+  const veins=new Map(),pts=new Map();
+  const W=w; // clau aresta: (i*W+j)*2+t  (t=0 horitzontal (i,j)-(i,j+1); t=1 vertical (i,j)-(i+1,j))
+  const kh=(i,j)=>(i*W+j)*2,kv=(i,j)=>(i*W+j)*2+1;
+  const pt=key=>{
+    let p=pts.get(key);if(p)return p;
+    const t=key&1,c=(key-t)/2,i=Math.floor(c/W),j=c%W;
+    if(!t){const a=v[i*W+j],b=v[i*W+j+1];p=[j+(nivell-a)/(b-a),i]}
+    else{const a=v[i*W+j],b=v[(i+1)*W+j];p=[j,i+(nivell-a)/(b-a)]}
+    pts.set(key,p);return p;
+  };
+  const uneix=(a,b)=>{(veins.get(a)||veins.set(a,[]).get(a)).push(b);(veins.get(b)||veins.set(b,[]).get(b)).push(a)};
+  for(let i=0;i<h-1;i++)for(let j=0;j<w-1;j++){
+    const a=i*W+j,tl=dins(a),tr=dins(a+1),br=dins(a+W+1),bl=dins(a+W);
+    const c=(tl?8:0)|(tr?4:0)|(br?2:0)|(bl?1:0);
+    if(c===0||c===15)continue;
+    const top=kh(i,j),bot=kh(i+1,j),lef=kv(i,j),rig=kv(i,j+1);
+    switch(c){
+      case 1:case 14:uneix(lef,bot);break;
+      case 2:case 13:uneix(bot,rig);break;
+      case 3:case 12:uneix(lef,rig);break;
+      case 4:case 11:uneix(top,rig);break;
+      case 6:case 9:uneix(top,bot);break;
+      case 7:case 8:uneix(top,lef);break;
+      case 5:case 10:{
+        const cen=(v[a]+v[a+1]+v[a+W+1]+v[a+W])/4<nivell;
+        if(c===5){if(cen){uneix(top,lef);uneix(bot,rig)}else{uneix(lef,bot);uneix(top,rig)}}
+        else{if(cen){uneix(top,rig);uneix(lef,bot)}else{uneix(top,lef);uneix(bot,rig)}}
+      }
+    }
+  }
+  const vist=new Set(),res=[];
+  for(const ini of veins.keys()){
+    if(vist.has(ini))continue;
+    const cami=[ini];vist.add(ini);let ant=-1,act=ini;
+    for(;;){
+      let seg=null;
+      for(const k of veins.get(act)){if(k!==ant&&!vist.has(k)){seg=k;break}}
+      if(seg===null)break;
+      vist.add(seg);cami.push(seg);ant=act;act=seg;
+    }
+    if(cami.length>=4)res.push(cami.map(pt));
+  }
+  return res;
+}
+function areaPoli(p){let s=0;for(let i=0;i<p.length;i++){const a=p[i],b=p[(i+1)%p.length];s+=a[0]*b[1]-b[0]*a[1]}return s/2}
+function dp(p,eps){
+  if(p.length<3)return p;
+  const a=p[0],b=p[p.length-1],dx=b[0]-a[0],dy=b[1]-a[1],n=Math.hypot(dx,dy);
+  let m=-1,im=0;
+  for(let i=1;i<p.length-1;i++){
+    const d=n===0?Math.hypot(p[i][0]-a[0],p[i][1]-a[1]):Math.abs(dy*(p[i][0]-a[0])-dx*(p[i][1]-a[1]))/n;
+    if(d>m){m=d;im=i}
+  }
+  if(m>eps){const l=dp(p.slice(0,im+1),eps),r=dp(p.slice(im),eps);return l.slice(0,-1).concat(r)}
+  return [a,b];
+}
+function simplificaTancat(p,eps){
+  const x0=p[0][0],y0=p[0][1];let k=0,md=-1;
+  p.forEach((q,i)=>{const d=(q[0]-x0)**2+(q[1]-y0)**2;if(d>md){md=d;k=i}});
+  const a=dp(p.slice(0,k+1),eps),b=dp(p.slice(k).concat([p[0]]),eps);
+  return a.slice(0,-1).concat(b.slice(0,-1));
+}
+// vectoritza la imatge guardada amb el llindar i la inversió actuals; retorna {w,h,c} o null
+function vectoritzaImatge(){
+  const {gris,w,h}=logoImg,inv=$('logoInv').checked,nivell=num($('llindar').value,150);
+  const PAD=2,W=w+2*PAD,H=h+2*PAD,v=new Float32Array(W*H).fill(255);
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++)v[(y+PAD)*W+x+PAD]=inv?255-gris[y*w+x]:gris[y*w+x];
+  const aMin=Math.max(12,0.00012*w*h),eps=Math.max(0.4,w/2000);
+  const cs=contorns(v,W,H,nivell).map(c=>c.map(q=>[q[0]-PAD,q[1]-PAD])).filter(c=>Math.abs(areaPoli(c))>=aMin).map(c=>simplificaTancat(c,eps)).filter(c=>c.length>=3);
+  if(!cs.length)return null;
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  cs.forEach(c=>c.forEach(q=>{x0=Math.min(x0,q[0]);x1=Math.max(x1,q[0]);y0=Math.min(y0,q[1]);y1=Math.max(y1,q[1])}));
+  if(x1-x0<1||y1-y0<1)return null;
+  return{w:x1-x0,h:y1-y0,c:cs.map(c=>{const o=[];c.forEach(q=>o.push(+(q[0]-x0).toFixed(1),+(q[1]-y0).toFixed(1)));return o})};
+}
+function aplicaLogoPropi(){
+  if(!logoImg)return;
+  const r=vectoritzaImatge();
+  if(!r){
+    $('logoNom').innerHTML='⚠ No s\'ha trobat cap forma fosca a «'+logoImg.nom.replace(/</g,'&lt;')+'». Prova de canviar el llindar o d\'invertir.';
+    return;
+  }
+  LOGO_ACT=r;
+  $('logoNom').textContent='Ara: «'+logoImg.nom+'» ('+r.c.length+' contorns).';
+  $('logoAjust').hidden=false;
+  try{localStorage.setItem('cupula-logo',JSON.stringify({nom:logoImg.nom,llindar:$('llindar').value,inv:$('logoInv').checked,gris:null,dades:r}))}catch(e){}
+  actualitza();
+}
+function carregaFitxerLogo(fitxer){
+  if(!fitxer)return;
+  const url=URL.createObjectURL(fitxer),img=new Image();
+  img.onload=()=>{
+    let w=img.naturalWidth||800,h=img.naturalHeight||300;
+    const mx=1000;if(w>mx){h=Math.round(h*mx/w);w=mx}
+    if(w<400){h=Math.round(h*400/w);w=400}   // els SVG petits es dibuixen més grans
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    const cx=cv.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.drawImage(img,0,0,w,h);
+    URL.revokeObjectURL(url);
+    let d;try{d=cx.getImageData(0,0,w,h).data}catch(e){alert('No s\'ha pogut llegir la imatge.');return}
+    const g=new Float32Array(w*h);
+    for(let i=0;i<w*h;i++)g[i]=0.299*d[i*4]+0.587*d[i*4+1]+0.114*d[i*4+2];
+    logoImg={gris:gaussianBlur(g,w,h,1.2),w,h,nom:fitxer.name};
+    $('llindar').value=150;$('llindarV').textContent=150;$('logoInv').checked=false;
+    estat.logoOn=true;$('logoOn').checked=true;
+    aplicaLogoPropi();
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);alert('No s\'ha pogut obrir aquesta imatge. Prova amb PNG, JPG o SVG.')};
+  img.src=url;
+}
+$('logoPuja').addEventListener('click',()=>$('logoFitxer').click());
+$('logoFitxer').addEventListener('change',()=>{carregaFitxerLogo($('logoFitxer').files[0]);$('logoFitxer').value=''});
+$('logoReset').addEventListener('click',()=>{
+  logoImg=null;LOGO_ACT=LOGO_DADES;$('logoAjust').hidden=true;
+  $('logoNom').textContent='Ara: logo de l\'Institut Ermengol IV.';
+  try{localStorage.removeItem('cupula-logo')}catch(e){}
+  actualitza();
+});
+let tLogo=0;
+function reprocessa(){clearTimeout(tLogo);tLogo=setTimeout(aplicaLogoPropi,120)}
+$('llindar').addEventListener('input',()=>{$('llindarV').textContent=$('llindar').value;reprocessa()});
+$('logoInv').addEventListener('change',reprocessa);
+// recupera el logo propi d'una visita anterior (es guarda ja vectoritzat)
+try{
+  const g=JSON.parse(localStorage.getItem('cupula-logo')||'null');
+  if(g&&g.dades&&Array.isArray(g.dades.c)&&g.dades.w>0&&g.dades.h>0){
+    LOGO_ACT=g.dades;$('logoAjust').hidden=true;
+    $('logoNom').textContent='Ara: «'+g.nom+'» (el llindar es pot tornar a ajustar pujant-lo un altre cop).';
+  }
+}catch(e){}
+
+// primera càrrega: si l'estat desat no és vàlid, tornem als valors per defecte
+escriu();actualitza();
+</script>
+</body>
+</html>

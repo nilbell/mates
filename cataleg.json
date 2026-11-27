@@ -845,6 +845,38 @@
       "carpeta": "materials/matematiques/probabilitat/probabilitat-grans-nombres"
     },
     {
+      "id": "materials/tecnologia/tall-laser/cupula-leonardo",
+      "titol": "Cúpula de Leonardo: fulls per a la talladora làser",
+      "descripcio": "Editor per preparar les peces de la cúpula de Leonardo (llistó de 500 × 50 mm amb quatre osques). Tries la mida del full de fusta, escales la peça com vulguis i el programa la reparteix de la millor manera (girant-ne algunes). Es pot gravar el logo que es vulgui (només cal pujar-lo) i es descarrega en SVG o DXF per a la talladora làser. Funciona sense internet.",
+      "materia": "tecnologia",
+      "temes": [
+        "tall-laser"
+      ],
+      "nivells": [
+        "3ESO",
+        "4ESO",
+        "1BAT"
+      ],
+      "tipus": "eina",
+      "origen": "propi",
+      "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
+      "urlFont": "",
+      "llicencia": "",
+      "etiquetes": [
+        "talladora làser",
+        "cúpula de Leonardo",
+        "SVG",
+        "DXF",
+        "geometria",
+        "logo"
+      ],
+      "data": "2026-11-27",
+      "obrir": "materials/tecnologia/tall-laser/cupula-leonardo/index.html",
+      "imatge": "materials/tecnologia/tall-laser/cupula-leonardo/captura.png",
+      "extres": [],
+      "carpeta": "materials/tecnologia/tall-laser/cupula-leonardo"
+    },
+    {
       "id": "materials/tecnologia/tall-laser/inkscape-laser",
       "titol": "Inkscape per a la talladora làser",
       "descripcio": "Tutorial pas a pas en català per dissenyar amb Inkscape 1.4 peces per a la talladora làser: tall, gravat i marcat de fusta. Amb exemples SVG descarregables (clauer, rètol, posagots, caixa amb encaixos) i configuració per a LightBurn, RDWorks, xTool i LaserGRBL.",

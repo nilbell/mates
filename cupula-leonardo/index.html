@@ -45,6 +45,7 @@ details summary{cursor:pointer;color:var(--accent-2);font-weight:600;margin-bott
 .msg button{margin-top:.4rem}
 #vista{background:var(--wood);border:2px solid var(--wood-line);border-radius:6px;overflow:hidden;line-height:0}
 #vista svg{width:100%;height:auto;display:block}
+#vista.buit{background:#fff;border-color:var(--line)}
 .dl{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem}
 table{border-collapse:collapse;width:100%;font-size:.85rem}
 th,td{padding:.25rem .4rem;border-bottom:1px solid var(--line);text-align:right}
@@ -367,8 +368,21 @@ function actualitza(){
     if(m1!==null)h+='<br>Escala màxima perquè n\'hi càpiga 1: <b>'+fmt(m1)+' %</b> <button data-esc="'+m1+'">Aplica</button>';
     avis.innerHTML=h+'</div>';
   }
-  $('vista').innerHTML=svgText(g,estat.fw,estat.fh,'previ',true);
+  $('vista').classList.toggle('buit',r.n===0);
+  $('vista').innerHTML=r.n?svgText(g,estat.fw,estat.fh,'previ',true):previPecaFora(p,sc);
   omplirTaula();desaEstat();
+}
+// quan no hi cap cap peça: el full i la peça (a la mateixa escala) sortint-ne, perquè es vegi per què
+function previPecaFora(p,sc){
+  const m=estat.marge,pw=p.L*sc,ph=p.H*sc;
+  const vw=Math.max(estat.fw,m+pw)+10,vh=Math.max(estat.fh,m+ph)+10;
+  const cont=contornPeca(p).map(q=>[m+sc*q[0],m+sc*(p.H-q[1]),q[2]]);
+  const logo=estat.logoOn?logoPeca(p,estat.logoW).map(c=>c.map(q=>[m+sc*q[0],m+sc*(p.H-q[1]),0])):[];
+  let s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+fmt(vw)+' '+fmt(vh)+'">';
+  s+='<rect x="0" y="0" width="'+fmt(estat.fw)+'" height="'+fmt(estat.fh)+'" fill="#f0d9b5" stroke="#c9a56b" stroke-width="1.5" vector-effect="non-scaling-stroke"/>';
+  if(logo.length)s+='<path fill="#000" fill-rule="evenodd" d="'+logo.map(dCami).join('')+'"/>';
+  s+='<path d="'+dCami(cont)+'" fill="rgba(255,255,255,.35)" stroke="#d00" stroke-width="1.5" stroke-dasharray="6 4" vector-effect="non-scaling-stroke"/>';
+  return s+'</svg>';
 }
 function omplirTaula(){
   let h='<tr><th>Full</th><th>Peces</th></tr>';
