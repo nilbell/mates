@@ -11,9 +11,7 @@
     --accent: #2f5bea; --accent-ink: #ffffff; --cut: #e5251f; --mark: #1f3fd1; --chip: #eef1f7;
     --shadow: 0 1px 2px rgba(16,24,40,.06), 0 4px 14px rgba(16,24,40,.06);
   }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #11141b; --card: #1a1f2a; --ink: #eef1f7; --muted: #9aa3b5; --line: #2a3140; --chip: #252c3b; --accent: #6f8fff; --accent-ink: #0b1020; --shadow: none; }
-  }
+  
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
   header { padding: 28px 20px 8px; max-width: 1280px; margin: 0 auto; }
@@ -43,7 +41,7 @@
   body.laser .laserinfo { display: block; }
   .laserinfo b { color: var(--ink); }
   .save { color: #107a3e; font-weight: 600; }
-  @media (prefers-color-scheme: dark) { .save { color: #46c27e; } }
+  
   .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; }
   .btns a { text-decoration: none; font-size: 13px; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--line); color: var(--ink); background: var(--card); display: inline-flex; gap: 6px; align-items: center; }
   .btns a:hover { border-color: var(--accent); }
@@ -57,10 +55,10 @@
   footer { max-width: 1280px; margin: 0 auto; padding: 0 20px 30px; color: var(--muted); font-size: 13px; }
 
 /* tema-cupula: colors i lletra de la Cúpula de Leonardo */
-:root{--bg:#f6f1ea;--card:#fffdf9;--ink:#2b2118;--muted:#7a6b5c;--line:#e3d8c9;--accent:#a8541c;--accent-ink:#fff;--chip:#f0e6d6;--shadow:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.06)}
-@media (prefers-color-scheme: dark){:root{--bg:#1a1511;--card:#241d17;--ink:#f1e8dc;--muted:#b3a592;--line:#3a2f25;--chip:#32281f;--accent:#e0904f;--accent-ink:#1a1511;--shadow:none}}
+:root{color-scheme:light;--bg:#f6f1ea;--card:#fffdf9;--ink:#2b2118;--muted:#7a6b5c;--line:#e3d8c9;--accent:#a8541c;--accent-ink:#fff;--chip:#f0e6d6;--shadow:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.06)}
+
 h1,h2{color:#7b3a0f}
-@media (prefers-color-scheme: dark){h1,h2{color:#f1c9a0}}
+
 </style>
 </head>
 <body>
