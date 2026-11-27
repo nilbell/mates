@@ -430,6 +430,7 @@
       "titol": "PhET: simulacions interactives",
       "descripcio": "Simulacions de física, química, biologia i matemàtiques de la Universitat de Colorado, disponibles en català.",
       "materia": "fisica",
+      "materiesExtra": [],
       "temes": [
         "cinematica",
         "forces",
@@ -461,6 +462,7 @@
       "titol": "Physics Figures: generadors de figures de física",
       "descripcio": "Generadors de diagrames de forces, vectors, pla inclinat, politges, moviment d'un projectil, gràfiques de moviment, circuits, ones i raigs òptics. Web en anglès.",
       "materia": "fisica",
+      "materiesExtra": [],
       "temes": [
         "fisica-altres",
         "forces",
@@ -495,6 +497,7 @@
       "titol": "Conjunts numèrics: arrossega i classifica",
       "descripcio": "Minijoc en un sol fitxer per repartir nombres en ℕ, ℤ, ℚ, 𝕀 i ℝ (els complexos ℂ no hi són per defecte i s'afegeixen a Configuració): mode arrossega (diagrama de caixes imbricades), mode classifica (marcar tots els conjunts) i teoria amb dibuix. Es poden desactivar els conjunts que encara no s'han donat. Funciona sense internet.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "conjunts-numerics",
         "nombres-reals"
@@ -528,6 +531,7 @@
       "titol": "Diagrames de Venn: pinta, col·loca nombres i preguntes d'examen",
       "descripcio": "Aplicatiu en un sol fitxer, en català, inspirat en el Venn Paint de Transum. Venn inicial (arrossega els nombres a tres cercles amb propietats), tres nivells per pintar regions segons una expressió (A barra, ∪, ∩; amb comprovació diagrama a diagrama) i 8 problemes tipus examen amb correcció automàtica i solució. Funciona sense internet.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "conjunts-venn"
       ],
@@ -561,6 +565,7 @@
       "titol": "Equacions de primer grau: balança, pas a pas i gràfic",
       "descripcio": "Aplicatiu en un sol fitxer per visualitzar equacions de 1r grau: balança amb caixes x, boles i globus negatius (amb parelles que s'eliminen), resolució pas a pas (automàtica o triant les operacions) i gràfic de les dues rectes amb el punt de tall. Admet parèntesis, fraccions i decimals, i té botó d'equació aleatòria. Funciona sense internet.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "equacions-1r-grau",
         "llenguatge-algebraic"
@@ -592,6 +597,7 @@
       "titol": "Com estudiar matemàtiques? Les quatre infografies",
       "descripcio": "Quatre infografies amb consells per estudiar matemàtiques, una per etapa (1r–2n d'ESO, 3r–4t d'ESO, Batxillerat i una per a tots els cursos). Es veuen totes en una sola pàgina; cada una s'obre a mida real i es pot descarregar en PDF (A3) per imprimir.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "estudiar-mates"
       ],
@@ -623,6 +629,7 @@
       "titol": "Puzles matemàtics: galeria i generador",
       "descripcio": "Galeria de 12 puzles de peces i 3 fantasmes d'equacions (per imprimir o per a tall làser), amb el generador per crear-ne de nous.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "jocs-recreacions",
         "fraccions",
@@ -665,6 +672,7 @@
       "titol": "Teorema de Pitàgores: aplicatiu visual",
       "descripcio": "Triangle rectangle arrossegable amb els tres quadrats (a² + b² = c²), triangles perfectes de costats enters, demostració per recol·locació, calculadora pas a pas, ternes d'Euclides, aplicacions i exercicis aleatoris amb autocorrecció. Mode Projecció i mode Amaga resultats. Funciona sense internet.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "pitagores"
       ],
@@ -696,6 +704,7 @@
       "titol": "Teorema de Tales i semblança: aplicatiu visual",
       "descripcio": "Triangles semblants amb una paral·lela que es mou, paral·leles tallades per secants, mesurar alçades amb ombres, escales de figures i de mapes (longituds, perímetres i àrees) i exercicis aleatoris amb autocorrecció. Mode Projecció i mode Amaga resultats.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "tales-semblanca"
       ],
@@ -728,6 +737,7 @@
       "titol": "Trigonometria: raons, cercle goniomètric i regla fonamental",
       "descripcio": "Raons trigonomètriques en el triangle rectangle, cercle goniomètric interactiu (graus, radians, valors exactes), sin²α + cos²α = 1, gràfiques de sinus i cosinus, resolució de triangles rectangles, aplicacions i exercicis aleatoris amb autocorrecció.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "trigonometria"
       ],
@@ -762,6 +772,7 @@
       "titol": "Teoremes del sinus i del cosinus: aplicatiu visual",
       "descripcio": "Triangle qualsevol amb vèrtexs arrossegables: teorema del sinus (amb la circumferència circumscrita) i teorema del cosinus (amb els quadrats dels costats), amb exercicis aleatoris i autocorrecció.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "trigonometria"
       ],
@@ -792,6 +803,7 @@
       "titol": "Potències: definició, propietats i minijocs",
       "descripcio": "Aplicatiu en un sol fitxer per visualitzar les potències: la definició com a producte de la base n cops (incloent zero cops), les propietats amb fitxes i comprovació numèrica, potències de 10 i notació científica, i quatre minijocs (Caça l'error, Parelles, Duel amb daus i Creixement). Té un interruptor 2n / 3r (a 3r s'afegeixen els exponents negatius i les fraccions). Funciona sense internet.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "potencies",
         "notacio-cientifica"
@@ -822,6 +834,7 @@
       "titol": "Simulador de la llei dels grans nombres",
       "descripcio": "Simulador en un sol fitxer: moneda, daus, bossa de boles i dau trucat, fins a 1.000.000 de tirades, amb taula de freqüències i gràfics. Funciona sense internet.",
       "materia": "matematiques",
+      "materiesExtra": [],
       "temes": [
         "probabilitat",
         "estadistica"
@@ -845,43 +858,15 @@
       "carpeta": "materials/matematiques/probabilitat/probabilitat-grans-nombres"
     },
     {
-      "id": "materials/tecnologia/tall-laser/cupula-leonardo#0",
+      "id": "materials/tecnologia/tall-laser/cupula-leonardo",
       "titol": "Cúpula de Leonardo: fulls per a la talladora làser",
-      "descripcio": "Editor per preparar les peces de la cúpula de Leonardo (llistó de 500 × 50 mm amb quatre osques) per a la talladora làser. Tries la mida del full de fusta, escales la peça com vulguis i el programa la reparteix de la millor manera. Pots gravar-hi el logo que vulguis (només cal pujar-lo) i descarregues l'arxiu en SVG o DXF. Funciona sense internet.",
+      "descripcio": "Editor per preparar les peces de la cúpula de Leonardo (llistó de 500 × 50 mm amb quatre osques) per a la talladora làser. Tries la mida del full de fusta, escales la peça com vulguis (semblança) i el programa la reparteix de la millor manera, girant-ne algunes, i calcula quantes en caben i quin percentatge de fusta s'aprofita. Pots gravar-hi el logo que vulguis (només cal pujar-lo) i descarregues l'arxiu en SVG o DXF. Funciona sense internet.",
       "materia": "tecnologia",
+      "materiesExtra": [
+        "matematiques"
+      ],
       "temes": [
-        "tall-laser"
-      ],
-      "nivells": [
-        "3ESO",
-        "4ESO",
-        "1BAT"
-      ],
-      "tipus": "eina",
-      "origen": "propi",
-      "autor": "Nil Bellmunt Vilalta · Institut Ermengol IV",
-      "urlFont": "",
-      "llicencia": "",
-      "etiquetes": [
-        "talladora làser",
-        "cúpula de Leonardo",
-        "SVG",
-        "DXF",
-        "geometria",
-        "logo"
-      ],
-      "data": "2026-11-27",
-      "obrir": "materials/tecnologia/tall-laser/cupula-leonardo/index.html",
-      "imatge": "materials/tecnologia/tall-laser/cupula-leonardo/captura.png",
-      "extres": [],
-      "carpeta": ""
-    },
-    {
-      "id": "materials/tecnologia/tall-laser/cupula-leonardo#1",
-      "titol": "Cúpula de Leonardo: fulls per a la talladora làser",
-      "descripcio": "Eina de geometria aplicada: la cúpula de Leonardo es construeix amb llistons iguals amb osques. L'editor reparteix el llistó (500 × 50 mm) dins d'un full rectangular i calcula quantes peces hi caben i quin percentatge de fusta s'aprofita, girant-ne algunes 90°. Es pot canviar l'escala (semblança) i les mides de la peça. Funciona sense internet.",
-      "materia": "matematiques",
-      "temes": [
+        "tall-laser",
         "figures-planes",
         "perimetres-arees",
         "transformacions"
@@ -908,13 +893,14 @@
       "obrir": "materials/tecnologia/tall-laser/cupula-leonardo/index.html",
       "imatge": "materials/tecnologia/tall-laser/cupula-leonardo/captura.png",
       "extres": [],
-      "carpeta": ""
+      "carpeta": "materials/tecnologia/tall-laser/cupula-leonardo"
     },
     {
       "id": "materials/tecnologia/tall-laser/inkscape-laser",
       "titol": "Inkscape per a la talladora làser",
       "descripcio": "Tutorial pas a pas en català per dissenyar amb Inkscape 1.4 peces per a la talladora làser: tall, gravat i marcat de fusta. Amb exemples SVG descarregables (clauer, rètol, posagots, caixa amb encaixos) i configuració per a LightBurn, RDWorks, xTool i LaserGRBL.",
       "materia": "tecnologia",
+      "materiesExtra": [],
       "temes": [
         "tall-laser"
       ],
@@ -946,6 +932,7 @@
       "titol": "Instaxat: tutoria sobre xarxes socials",
       "descripcio": "Sessió de tutoria de 45 min per projectar: calcula el temps que dediquem a les xarxes i «detectius de privacitat» amb perfils fictius. Català, castellà i anglès.",
       "materia": "tutoria",
+      "materiesExtra": [],
       "temes": [
         "xarxes-socials"
       ],
