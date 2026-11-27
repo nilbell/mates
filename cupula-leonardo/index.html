@@ -51,6 +51,15 @@ table{border-collapse:collapse;width:100%;font-size:.85rem}
 th,td{padding:.25rem .4rem;border-bottom:1px solid var(--line);text-align:right}
 th:first-child,td:first-child{text-align:left}
 tr.cur td{background:#fbeede;font-weight:600}
+.info h2{text-transform:none;font-size:1.15rem;letter-spacing:0}
+.info h3{font-size:.95rem;margin:1rem 0 .3rem;color:var(--accent-2)}
+.info p,.info li{font-size:.92rem}
+.info ul{margin:.3rem 0;padding-left:1.2rem}
+.enllacos{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 .5rem}
+.enllacos a{display:inline-block;padding:.4rem .8rem;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--accent-2);text-decoration:none;font-size:.88rem}
+.enllacos a:hover{border-color:var(--accent)}
+.enllacos a.primari{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.enllacos a.primari:hover{background:var(--accent-2)}
 .check{flex-direction:row;align-items:center;gap:.5rem;color:var(--ink);font-size:.9rem}
 .check input{width:auto}
 </style>
@@ -155,6 +164,32 @@ tr.cur td{background:#fbeede;font-weight:600}
       <button class="primary" id="dDxf">⬇ Descarrega DXF</button>
     </div>
     <p class="hint">Unitats en mm. <b style="color:#c00">Vermell</b> = tallar, <b>negre</b> = gravar (el logo). Gravar primer i tallar després. Les peces es reparteixen automàticament de la millor manera (girant-ne algunes si convé).</p>
+  </section>
+
+  <section class="card info" id="info">
+    <h2>Què és una cúpula de Leonardo?</h2>
+    <p>És una estructura de bastons <b>que es sostenen entre ells</b>, sense cargols ni cola: el mateix pes de les peces la manté dreta. Apareix als escrits de Leonardo da Vinci i l'escultor <b>Rinus Roelofs</b> va redescobrir aquests dibuixos i en va fer derivacions escultòriques. Inspirant-se en això, el <b>MMACA</b> (Museu de Matemàtiques de Catalunya) va desenvolupar el disseny <b>LEONARDOME</b>, amb bastons de <b>quatre osques</b>: són les peces d'aquesta eina.</p>
+
+    <h3>El taller del MMACA</h3>
+    <ul>
+      <li>Es construeix col·lectivament una cúpula d'uns <b>4 m de diàmetre</b> i aproximadament <b>1 m d'alçada</b>; en uns 10 minuts ja es veu créixer.</li>
+      <li>Hi ha infinits patrons possibles; el taller en proposa <b>11 models simples</b>.</li>
+      <li>És per a <b>8 anys en amunt</b>, amb entre 10 i 30 participants, durant una hora aproximadament.</li>
+      <li>Com que els bastons es sostenen entre ells, si un falla cau tot en cadena: cal anar amb compte!</li>
+    </ul>
+
+    <h3>Les matemàtiques que hi ha al darrere</h3>
+    <p>Els bastons se situen seguint una <b>superfície esfèrica</b>. Les quatre osques d'un bastó (A, B, C i D, d'esquerra a dreta) no són al mateix nivell: si ho fossin, la cúpula quedaria plana. Aquest <b>desnivell de 9 mm</b> és el que provoca la curvatura. La circumferència que passa per A, B, C i D té el mateix radi que l'esfera imaginària que completaria la cúpula sota terra.</p>
+    <p>El MMACA proposa un exercici: calcular el centre i el radi d'aquesta circumferència a partir de les mides del bastó, ja sigui amb regle i compàs (dues mediatrius, a escala 1:10 per cabre en un A4) o analíticament amb coordenades. Amb les dades de la seva pàgina (osques separades 140 mm i desnivell de 9 mm) en surt un centre a uns 2,18 m per sota de la peça i un <b>radi d'aproximadament 2,18 m</b> (càlcul fet aquí a partir d'aquestes dades). És una bona activitat de geometria per a 3r i 4t d'ESO: mediatrius, circumferència per tres punts i equacions de la recta.</p>
+
+    <div class="enllacos">
+      <a class="primari" href="https://mmaca.cat/moduls/cupules-leonardo/" target="_blank" rel="noopener">Cúpules de Leonardo al MMACA ↗</a>
+      <a href="https://mmaca.cat/docs/LEONARDOME_guiaampliadaA4_22pag.pdf" target="_blank" rel="noopener">Guia didàctica (PDF) ↗</a>
+      <a href="https://mmaca.cat/docs/LEONARDOME11patrons_fulls%20apaisats.pdf" target="_blank" rel="noopener">11 fitxes de patrons (PDF) ↗</a>
+      <a href="https://www.geogebra.org/m/caq6ejjs" target="_blank" rel="noopener">GeoGebra: radi de curvatura ↗</a>
+      <a href="http://www.leonardome.com" target="_blank" rel="noopener">LEONARDOME ↗</a>
+    </div>
+    <p class="hint">Informació adaptada de la pàgina del MMACA. Aquesta eina és independent: les mides de la peça són les del dibuix del MMACA, però el MMACA no n'és responsable.</p>
   </section>
 </div>
 </main>
