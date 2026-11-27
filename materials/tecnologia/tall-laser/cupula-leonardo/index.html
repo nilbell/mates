@@ -55,6 +55,11 @@ tr.cur td{background:#fbeede;font-weight:600}
 .info h3{font-size:.95rem;margin:1rem 0 .3rem;color:var(--accent-2)}
 .info p,.info li{font-size:.92rem}
 .info ul{margin:.3rem 0;padding-left:1.2rem}
+.patrons{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin:.6rem 0}
+.patro{border:1px solid var(--line);border-radius:10px;padding:.5rem;background:#fff;text-align:center}
+.patro svg{width:100%;height:auto;display:block}
+.patro b{display:block;font-size:.88rem;margin-top:.2rem}
+.patro small{color:var(--muted);font-size:.78rem}
 .enllacos{display:flex;flex-wrap:wrap;gap:.5rem;margin:1rem 0 .5rem}
 .enllacos a{display:inline-block;padding:.4rem .8rem;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--accent-2);text-decoration:none;font-size:.88rem}
 .enllacos a:hover{border-color:var(--accent)}
@@ -168,28 +173,23 @@ tr.cur td{background:#fbeede;font-weight:600}
 
   <section class="card info" id="info">
     <h2>Què és una cúpula de Leonardo?</h2>
-    <p>És una estructura de bastons <b>que es sostenen entre ells</b>, sense cargols ni cola: el mateix pes de les peces la manté dreta. Apareix als escrits de Leonardo da Vinci i l'escultor <b>Rinus Roelofs</b> va redescobrir aquests dibuixos i en va fer derivacions escultòriques. Inspirant-se en això, el <b>MMACA</b> (Museu de Matemàtiques de Catalunya) va desenvolupar el disseny <b>LEONARDOME</b>, amb bastons de <b>quatre osques</b>: són les peces d'aquesta eina.</p>
-
-    <h3>El taller del MMACA</h3>
-    <ul>
-      <li>Es construeix col·lectivament una cúpula d'uns <b>4 m de diàmetre</b> i aproximadament <b>1 m d'alçada</b>; en uns 10 minuts ja es veu créixer.</li>
-      <li>Hi ha infinits patrons possibles; el taller en proposa <b>11 models simples</b>.</li>
-      <li>És per a <b>8 anys en amunt</b>, amb entre 10 i 30 participants, durant una hora aproximadament.</li>
-      <li>Com que els bastons es sostenen entre ells, si un falla cau tot en cadena: cal anar amb compte!</li>
-    </ul>
+    <p>És una estructura de bastons <b>que es sostenen entre ells</b>, sense cargols ni cola: el mateix pes de les peces la manté dreta. Apareix als escrits de Leonardo da Vinci i l'escultor <b>Rinus Roelofs</b> va redescobrir aquests dibuixos i en va fer derivacions escultòriques. A partir d'aquí, el MMACA (Museu de Matemàtiques de Catalunya) va dissenyar el bastó de <b>quatre osques</b> que és la peça d'aquesta eina. Hi ha infinits patrons possibles; amb aquest bastó se'n poden construir 11 de simples i cúpules, per exemple, d'uns 4 m de diàmetre i 1 m d'alçada.</p>
 
     <h3>Les matemàtiques que hi ha al darrere</h3>
     <p>Els bastons se situen seguint una <b>superfície esfèrica</b>. Les quatre osques d'un bastó (A, B, C i D, d'esquerra a dreta) no són al mateix nivell: si ho fossin, la cúpula quedaria plana. Aquest <b>desnivell de 9 mm</b> és el que provoca la curvatura. La circumferència que passa per A, B, C i D té el mateix radi que l'esfera imaginària que completaria la cúpula sota terra.</p>
-    <p>El MMACA proposa un exercici: calcular el centre i el radi d'aquesta circumferència a partir de les mides del bastó, ja sigui amb regle i compàs (dues mediatrius, a escala 1:10 per cabre en un A4) o analíticament amb coordenades. Amb les dades de la seva pàgina (osques separades 140 mm i desnivell de 9 mm) en surt un centre a uns 2,18 m per sota de la peça i un <b>radi d'aproximadament 2,18 m</b> (càlcul fet aquí a partir d'aquestes dades). És una bona activitat de geometria per a 3r i 4t d'ESO: mediatrius, circumferència per tres punts i equacions de la recta.</p>
+    <p>Per trobar aquest radi es poden fer servir les mediatrius: dibuixant-ho amb regle i compàs (a escala 1:10 cap en un A4) o amb coordenades. Amb les mides d'aquesta peça (osques separades 140 mm i desnivell de 9 mm) en surt un centre a uns 2,18 m per sota de la peça i un <b>radi d'aproximadament 2,18 m</b>. És una bona activitat de geometria per a 3r i 4t d'ESO: mediatrius, circumferència per tres punts i equacions de la recta.</p>
+
+    <h3>Alguns patrons</h3>
+    <p>La cèl·lula bàsica és un <b>anell de <i>n</i> bastons</b>: cada bastó descansa sobre el següent i per sota de l'anterior, i al mig queda un forat en forma de polígon regular de <i>n</i> costats. Segons el nombre de bastons de l'anell s'obtenen forats triangulars, quadrats, pentagonals o hexagonals; combinant anells es fan malles més grans i, amb la curvatura, la cúpula. A les fitxes del MMACA es veuen malles amb forats triangulars, quadrats i hexagonals.</p>
+    <div class="patrons" id="patrons"></div>
+    <p class="hint">Dibuixos esquemàtics fets per a aquesta pàgina (cada bastó passa per sobre del següent). Els patrons complets, amb els passos de muntatge, són a les fitxes del MMACA.</p>
 
     <div class="enllacos">
       <a class="primari" href="https://mmaca.cat/moduls/cupules-leonardo/" target="_blank" rel="noopener">Cúpules de Leonardo al MMACA ↗</a>
-      <a href="https://mmaca.cat/docs/LEONARDOME_guiaampliadaA4_22pag.pdf" target="_blank" rel="noopener">Guia didàctica (PDF) ↗</a>
       <a href="https://mmaca.cat/docs/LEONARDOME11patrons_fulls%20apaisats.pdf" target="_blank" rel="noopener">11 fitxes de patrons (PDF) ↗</a>
       <a href="https://www.geogebra.org/m/caq6ejjs" target="_blank" rel="noopener">GeoGebra: radi de curvatura ↗</a>
-      <a href="http://www.leonardome.com" target="_blank" rel="noopener">LEONARDOME ↗</a>
     </div>
-    <p class="hint">Informació adaptada de la pàgina del MMACA. Aquesta eina és independent: les mides de la peça són les del dibuix del MMACA, però el MMACA no n'és responsable.</p>
+    <p class="hint">Font de la informació: mmaca.cat.</p>
   </section>
 </div>
 </main>
@@ -625,6 +625,35 @@ try{
     $('logoNom').textContent='Ara: «'+g.nom+'» (el llindar es pot tornar a ajustar pujant-lo un altre cop).';
   }
 }catch(e){}
+
+
+// ---------------------------------------------------------------- patrons (dibuixos esquemàtics propis)
+// Anell de n bastons: les rectes són tangents a una circumferència; cada bastó passa per sobre del següent.
+function dibuixaAnell(n){
+  const R=100,d=34,mig=d*Math.tan(Math.PI/n)+22,amp=9;   // d: distància al centre; mig: mig llarg del bastó
+  const cols=['#c8863b','#b5742c','#d99a4f','#a8641f','#c8863b','#b5742c'];
+  let defs='',base='',sobre='';
+  const pt=(i)=>{const a=2*Math.PI*i/n-Math.PI/2;return{a,cx:d*Math.cos(a),cy:d*Math.sin(a)}};
+  for(let i=0;i<n;i++){
+    const {a,cx,cy}=pt(i);
+    base+='<g transform="translate('+cx.toFixed(2)+','+cy.toFixed(2)+') rotate('+(a*180/Math.PI+90).toFixed(2)+')"><rect x="'+(-mig)+'" y="'+(-amp/2)+'" width="'+(2*mig)+'" height="'+amp+'" rx="2.5" fill="'+cols[i%cols.length]+'" stroke="#4a2c0c" stroke-width="1.2"/></g>';
+  }
+  // el bastó i passa per sobre del i+1: es torna a dibuixar al voltant del seu creuament
+  for(let i=0;i<n;i++){
+    const A=2*Math.PI*i/n-Math.PI/2,B=2*Math.PI*(i+1)/n-Math.PI/2,m=(A+B)/2;
+    const rv=d/Math.cos(Math.PI/n);                     // distància del creuament al centre
+    const x=rv*Math.cos(m),y=rv*Math.sin(m);
+    const id='cl'+n+'_'+i;
+    defs+='<clipPath id="'+id+'"><circle cx="'+x.toFixed(2)+'" cy="'+y.toFixed(2)+'" r="'+(amp*0.95).toFixed(2)+'"/></clipPath>';
+    const {a,cx,cy}=pt(i);
+    sobre+='<g clip-path="url(#'+id+')"><g transform="translate('+cx.toFixed(2)+','+cy.toFixed(2)+') rotate('+(a*180/Math.PI+90).toFixed(2)+')"><rect x="'+(-mig)+'" y="'+(-amp/2)+'" width="'+(2*mig)+'" height="'+amp+'" rx="2.5" fill="'+cols[i%cols.length]+'" stroke="#4a2c0c" stroke-width="1.2"/></g></g>';
+  }
+  return '<svg viewBox="-'+R+' -'+R+' '+2*R+' '+2*R+'" role="img" aria-label="Anell de '+n+' bastons"><defs>'+defs+'</defs>'+base+sobre+'</svg>';
+}
+(function(){
+  const noms={3:['Triangular','forat triangular'],4:['Quadrat','forat quadrat'],5:['Pentagonal','forat pentagonal'],6:['Hexagonal','forat hexagonal']};
+  $('patrons').innerHTML=[3,4,5,6].map(n=>'<div class="patro">'+dibuixaAnell(n)+'<b>'+noms[n][0]+'</b><small>'+n+' bastons · '+noms[n][1]+'</small></div>').join('');
+})();
 
 // primera càrrega: si l'estat desat no és vàlid, tornem als valors per defecte
 escriu();actualitza();
